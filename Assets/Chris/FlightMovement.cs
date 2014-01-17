@@ -5,11 +5,12 @@ using System.Collections;
 
 public class FlightMovement : MonoBehaviour {
 
-    public float m_forwardSpeed = 2.5f;
+    public float maxSpeed = 7.5f;
 
     private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
 
+    private float m_forwardSpeed = 10.0f;
     private float m_leftTurnSpeed = 0.0f;
     private float m_rightTurnSpeed = 0.0f;
 
@@ -49,16 +50,15 @@ public class FlightMovement : MonoBehaviour {
     void MoveForward(float delta = 1.0f)
     {
 	    // Update the forward speed movement based on the frame time
-		m_forwardSpeed += delta * 1.0f;
+	    m_forwardSpeed += delta * 1.0f;
 
-        if (m_forwardSpeed > delta * 5.0f)
-		{
-            m_forwardSpeed = delta * 5.0f;
-		}
+        if (m_forwardSpeed > maxSpeed)
+            m_forwardSpeed = maxSpeed;
+
+        if (m_forwardSpeed < 0.0f)
+            m_forwardSpeed = 0.0f;
 
         m_position += transform.forward * m_forwardSpeed;
-
-	    return;
     }
 
     void TurnLeft(float delta = 1.0f, bool keydown = false)
@@ -187,13 +187,10 @@ public class FlightMovement : MonoBehaviour {
             }
         }
 
-        if (transform.forward.y < -0.25f)
-            m_forwardSpeed += delta * 1.0f;
+        if (transform.forward.y < -0.1f)
+            m_forwardSpeed += delta * (m_pitchSpeed - (transform.forward.y / 1000.0f));
 
-        else if (transform.forward.y > 0.25f)
-            m_forwardSpeed -= delta * 1.0f;
-
-        else
-            m_forwardSpeed = 10.0f;
+        else if (transform.forward.y > 0.1f)
+            m_forwardSpeed -= delta * (m_pitchSpeed + (transform.forward.y / 1000.0f));
     }
 }
