@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour 
 {
-    float height = 16.0f;
+    public float height = 16.0f;
 
 	// Use this for initialization
 	void Start () 
