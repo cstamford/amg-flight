@@ -13,6 +13,8 @@ public class FlightMovement : MonoBehaviour {
     private float m_leftTurnSpeed = 0.0f;
     private float m_rightTurnSpeed = 0.0f;
 
+    private float m_pitchSpeed = 0.0f;
+
 	// Use this for initialization
 	void Start () 
     {
@@ -25,63 +27,43 @@ public class FlightMovement : MonoBehaviour {
     {
         float delta = Time.deltaTime * 100.0f;
 
-        Debug.Log(Time.deltaTime + " " + delta);
-        MoveForward(delta, true);
+        handlePitch(delta, Input.GetKey(KeyCode.S), Input.GetKey(KeyCode.W));
+
+        MoveForward(delta);
 
         if (Input.GetKey(KeyCode.A))
             TurnLeft(delta, true);
         else
-            TurnLeft();
+            TurnLeft(delta, false);
 
         if (Input.GetKey(KeyCode.D))
             TurnRight(delta, true);
         else
-            TurnRight();
+            TurnRight(delta, false);
 
-        transform.position = m_position;
         transform.eulerAngles = m_rotation;
+        transform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_pitchSpeed);
+        transform.position = m_position;
 	}
 
-    void MoveForward(float delta = 1.0f, bool keydown = false)
+    void MoveForward(float delta = 1.0f)
     {
-	    float radians;
+	    // Update the forward speed movement based on the frame time
+		m_forwardSpeed += delta * 1.0f;
 
-	    // Update the forward speed movement based on the frame time and whether the user is holding the key down or not.
-	    if(keydown)
-	    {
-		    m_forwardSpeed += delta * 1.0f;
+        if (m_forwardSpeed > delta * 5.0f)
+		{
+            m_forwardSpeed = delta * 5.0f;
+		}
 
-            if (m_forwardSpeed > delta * 5.0f)
-		    {
-                m_forwardSpeed = delta * 5.0f;
-		    }
-	    }
-	    else
-	    {
-            m_forwardSpeed -= delta * 5.0f;
-
-		    if(m_forwardSpeed < 0.0f)
-		    {
-                m_forwardSpeed = 0.0f;
-		    }
-	    }
-
-	    // Convert degrees to radians.
-	    radians = m_rotation.y * 0.0174532925f;
-
-	    // Update the position.
-	    m_position.x += Mathf.Sin(radians) * m_forwardSpeed;
-	    m_position.z += Mathf.Cos(radians) * m_forwardSpeed;
-	    m_position.y -= 1;
-
-        //transform.position += transform.forward * m_forwardSpeed;
+        m_position += transform.forward * m_forwardSpeed;
 
 	    return;
     }
 
     void TurnLeft(float delta = 1.0f, bool keydown = false)
     {
-	    float speed = 0.01f;
+        float speed = 0.05f;
 	    float maxSpeed = speed * 10;
 
 	    // Update the left turn speed movement based on the frame time and whether the user is holding the key down or not.
@@ -108,9 +90,9 @@ public class FlightMovement : MonoBehaviour {
         m_rotation.z += m_leftTurnSpeed;
 
 	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.z > 30.0f)
+        if (m_rotation.z > 45.0f)
 	    {
-            m_rotation.z = 30.0f;
+            m_rotation.z = 45.0f;
 	    }
         m_rotation.y -= m_leftTurnSpeed / 2;
 
@@ -128,8 +110,9 @@ public class FlightMovement : MonoBehaviour {
 
     void TurnRight(float delta = 1.0f, bool keydown = false)
     {
-	    float speed = 0.01f;
-	    float maxSpeed = speed * 5;
+        float speed = 0.05f;
+	    float maxSpeed = speed * 10;
+
 	    // Update the right turn speed movement based on the frame time and whether the user is holding the key down or not.
 	    if(keydown)
 	    {
@@ -154,9 +137,9 @@ public class FlightMovement : MonoBehaviour {
         m_rotation.z -= m_rightTurnSpeed;
 
 	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.z < -30.0f)
+        if (m_rotation.z < -45.0f)
 	    {
-            m_rotation.z = -30.0f;
+            m_rotation.z = -45.0f;
 	    }
 
         m_rotation.y += m_rightTurnSpeed / 2;
@@ -170,5 +153,47 @@ public class FlightMovement : MonoBehaviour {
         //transform.position += transform.right * m_rightTurnSpeed;
 
 	    return;
+    }
+
+    void handlePitch(float delta = 1.0f, bool sDown = false, bool wDown = false)
+    {
+        float speed = delta * 0.25f;
+
+        if (wDown)
+        {
+            m_pitchSpeed += speed;
+        }
+        else
+        {
+            if (!sDown)
+            {
+            }
+            else
+            {
+            }
+        }
+
+        if (sDown)
+        {
+            m_pitchSpeed -= speed;
+        }
+        else
+        {
+            if (!wDown)
+            {
+            }
+            else
+            {
+            }
+        }
+
+        if (transform.forward.y < -0.25f)
+            m_forwardSpeed += delta * 1.0f;
+
+        else if (transform.forward.y > 0.25f)
+            m_forwardSpeed -= delta * 1.0f;
+
+        else
+            m_forwardSpeed = 10.0f;
     }
 }
