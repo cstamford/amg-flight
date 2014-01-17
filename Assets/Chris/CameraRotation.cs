@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class Movement : MonoBehaviour
+public class CameraRotation : MonoBehaviour
 {
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
-    public float sensitivityX = 0.0f;
-    public float sensitivityY = 0.0f;
+    public float sensitivityX = 7.5f;
+    public float sensitivityY = 7.5f;
 
     public float minimumX = -360.0f;
     public float maximumX = 360.0f;
@@ -44,19 +44,6 @@ public class Movement : MonoBehaviour
             rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
 
             transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
-        }
-
-        // Move position
-	    if (Input.GetKey(KeyCode.W))
-	        transform.position += transform.forward;
-
-        if (Input.GetKey(KeyCode.A))
-            transform.position -= transform.right;
-
-        if (Input.GetKey(KeyCode.S))
-            transform.position -= transform.forward;
-
-        if (Input.GetKey(KeyCode.D))
-	        transform.position += transform.right;
+        }      
     }
 }
