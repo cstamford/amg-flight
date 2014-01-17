@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CameraRotation : MonoBehaviour
 {
+    // Worked on by Chris and Louis
+
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
     public float sensitivityX = 7.5f;
