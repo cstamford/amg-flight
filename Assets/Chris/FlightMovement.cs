@@ -3,26 +3,128 @@
 using UnityEngine;
 using System.Collections;
 
-public class FlightMovement : MonoBehaviour {
+public class FlightMovement : MonoBehaviour 
+{
+    private enum YawDirection
+    {
+        NONE= 0,
+        LEFT,
+        RIGHT
+    }
 
-    public float maxSpeed = 7.5f;
+    private enum PitchDirection
+    {
+        NONE = 0,
+        UP,
+        DOWN
+    }
 
-    private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
+    // Resting speed when pitch is neutral
+    [SerializeField]
+    private float m_restingSpeed = 7.5f;
+
+    // Maximum speed when diving
+    [SerializeField]
+    private float m_maxSpeed = 12.5f;
+
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
 
-    private float m_forwardSpeed = 10.0f;
-    private float m_leftTurnSpeed = 0.0f;
-    private float m_rightTurnSpeed = 0.0f;
+    private float m_forwardSpeed = 0.0f;
+    private float m_turnSpeed = 0.0f;
 
-    private float m_pitchSpeed = 0.0f;
-
-	// Use this for initialization
-	void Start () 
+	// Initialise the flight variables
+	void Start() 
     {
         m_position = transform.position;
         m_rotation = transform.eulerAngles;
+        m_forwardSpeed = m_restingSpeed;
 	}
-	
+
+    // Update the position
+    void Update()
+    {
+        float delta = Time.deltaTime;
+        handlePitchChange(delta);
+        handleYawChange(delta);
+        move(delta);
+    }
+
+    void handlePitchChange(float delta)
+    {
+        bool wDown = Input.GetKey(KeyCode.W);
+        bool sDown = Input.GetKey(KeyCode.S);
+
+        // Handle pitch changes
+        if (wDown || sDown)
+        {
+            if (wDown)
+                turnPitch(PitchDirection.DOWN, delta);
+
+            if (sDown)
+                turnPitch(PitchDirection.UP, delta);
+        }
+        else
+        {
+            turnPitch(PitchDirection.NONE, delta);
+        }
+    }
+
+    void handleYawChange(float delta)
+    {
+        bool aDown = Input.GetKey(KeyCode.A);
+        bool dDown = Input.GetKey(KeyCode.D);
+
+        // Handle yaw changes
+        if (aDown || dDown)
+        {
+            if (aDown)
+                turnYaw(YawDirection.LEFT, delta);
+
+            if (dDown)
+                turnYaw(YawDirection.RIGHT, delta);
+        }
+        else
+        {
+            turnYaw(YawDirection.NONE, delta);
+        }
+
+    }
+
+
+    void turnPitch(PitchDirection direction, float delta)
+    {
+    }
+
+    void turnYaw(YawDirection direction, float delta)
+    {
+    }
+
+    void move(float delta)
+    {
+        Debug.Log(m_forwardSpeed);
+
+        // Update the forward speed movement based on the frame time
+        // TODO: change based on vector
+        m_forwardSpeed += delta / 2.0f;
+
+        // TODO: change based on vector
+        if (m_forwardSpeed > m_maxSpeed)
+            m_forwardSpeed = m_maxSpeed;
+
+        if (m_forwardSpeed < 0.0f)
+            m_forwardSpeed = 0.0f;
+
+        m_position += transform.forward * m_forwardSpeed;
+
+        // Update the game object
+        transform.eulerAngles = m_rotation;
+        transform.position = m_position;
+    }
+
+
+
+    /*
 	// Update is called once per frame
 	void Update () 
     {
@@ -33,14 +135,14 @@ public class FlightMovement : MonoBehaviour {
         MoveForward(delta);
 
         if (Input.GetKey(KeyCode.A))
-            TurnLeft(delta, true);
+            TurnLeft(delta * 5.0f, true);
         else
-            TurnLeft(delta, false);
+            TurnLeft(delta * 5.0f, false);
 
         if (Input.GetKey(KeyCode.D))
-            TurnRight(delta, true);
+            TurnRight(delta * 5.0f, true);
         else
-            TurnRight(delta, false);
+            TurnRight(delta * 5.0f, false);
 
         transform.eulerAngles = m_rotation;
         transform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_pitchSpeed);
@@ -52,8 +154,8 @@ public class FlightMovement : MonoBehaviour {
 	    // Update the forward speed movement based on the frame time
 	    m_forwardSpeed += delta * 1.0f;
 
-        if (m_forwardSpeed > maxSpeed)
-            m_forwardSpeed = maxSpeed;
+        if (m_forwardSpeed > m_maxSpeed)
+            m_forwardSpeed = m_maxSpeed;
 
         if (m_forwardSpeed < 0.0f)
             m_forwardSpeed = 0.0f;
@@ -193,4 +295,6 @@ public class FlightMovement : MonoBehaviour {
         else if (transform.forward.y > 0.1f)
             m_forwardSpeed -= delta * (m_pitchSpeed + (transform.forward.y / 1000.0f));
     }
+     * 
+     * */
 }
