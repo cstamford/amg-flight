@@ -19,10 +19,10 @@ public class FlightMovement : MonoBehaviour
     }
 
     // Resting speed when pitch is neutral
-    [SerializeField] private const float m_restingSpeed = 7.5f;
+    [SerializeField] private float m_restingSpeed = 7.5f;
 
     // Maximum speed when diving
-    [SerializeField] private const float m_maxSpeed = 12.5f;
+    [SerializeField] private float m_maxSpeed = 12.5f;
 
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
