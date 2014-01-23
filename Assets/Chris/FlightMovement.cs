@@ -49,7 +49,7 @@ public class FlightMovement : MonoBehaviour
         float delta = Time.deltaTime;
 
         handleOrientationChange(delta);
-        move(delta);
+        handleMoveForward(delta);
     }
 
     private void handleOrientationChange(float delta)
@@ -183,7 +183,7 @@ public class FlightMovement : MonoBehaviour
     }
 
     // Handles moving forward
-    private void move(float delta)
+    private void handleMoveForward(float delta)
     {
         // Update the forward speed movement based on the frame time
         // TODO: change based on vector
