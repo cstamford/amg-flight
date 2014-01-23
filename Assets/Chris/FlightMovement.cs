@@ -94,10 +94,12 @@ public class FlightMovement : MonoBehaviour
 
     void turnPitch(PitchDirection direction, float delta)
     {
+		// Pitch
     }
 
     void turnYaw(YawDirection direction, float delta)
     {
+		// Yaw
     }
 
     void move(float delta)
