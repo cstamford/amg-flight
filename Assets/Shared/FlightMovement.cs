@@ -20,17 +20,17 @@ public class FlightMovement : MonoBehaviour
 
     // Inspector fields
     [SerializeField] private float m_playerMass = 1.0f;
-    [SerializeField] private float m_playerDrag = 0.0f;
+    [SerializeField] private float m_playerDrag = 1.0f;
     [SerializeField] private float m_playerLift = 1.0f;
-    [SerializeField] private float m_restingSpeed = 7.5f;
-    [SerializeField] private float m_maxSpeed = 12.5f;
+    [SerializeField] private float m_restingSpeed = 6.0f;
+    [SerializeField] private float m_maxSpeed = 10.0f;
     [SerializeField] private float m_maxRollAngle = 37.5f;
     [SerializeField] private float m_maxPitchAngle = 65.0f;
     [SerializeField] private float m_turnTightness = 2.0f;
-    [SerializeField] private float m_incrementTurnSpeed = 1.0f;
-    [SerializeField] private float m_returnTurnSpeed = 0.75f;
-    [SerializeField] private float m_incrementPitchSpeed = 1.0f;
-    [SerializeField] private float m_returnPitchSpeed = 0.25f;
+    [SerializeField] private float m_incrementTurnSpeed = 2.0f;
+    [SerializeField] private float m_returnTurnSpeed = 1.5f;
+    [SerializeField] private float m_incrementPitchSpeed = 2.0f;
+    [SerializeField] private float m_returnPitchSpeed = 1.5f;
 
     // Private variables
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
