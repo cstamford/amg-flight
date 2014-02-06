@@ -22,8 +22,8 @@ public class FlightMovement : MonoBehaviour
     [SerializeField] private float m_playerMass = 3.5f;
     [SerializeField] private float m_playerDrag = 1.0f;
     [SerializeField] private float m_playerLift = 1.0f;
-    [SerializeField] private float m_restingSpeed = 6.0f;
-    [SerializeField] private float m_maxSpeed = 10.0f;
+    [SerializeField] private float m_restingSpeed = 400.0f;
+    [SerializeField] private float m_maxSpeed = 750.0f;
     [SerializeField] private float m_maxRollAngle = 37.5f;
     [SerializeField] private float m_maxPitchAngle = 65.0f;
     [SerializeField] private float m_turnTightness = 2.0f;
@@ -61,6 +61,8 @@ public class FlightMovement : MonoBehaviour
     {
         if (m_playerController != null && !m_playerController.m_isFlying)
             return;
+
+        Debug.Log(m_restingSpeed + "" + m_airSpeed);
 
         float delta = Time.deltaTime;
 
@@ -115,7 +117,7 @@ public class FlightMovement : MonoBehaviour
         handleSinkSpeedChange(delta);
 
         // Update the game object
-        m_position += m_velocity;
+        m_position += m_velocity * delta;
         transform.position = m_position;
     }
 
@@ -274,7 +276,10 @@ public class FlightMovement : MonoBehaviour
         //          ie. based on the pitch of the camera
         
         
-        m_airSpeed += delta * (m_playerLift / m_playerDrag);
+        m_airSpeed += (m_playerLift / m_playerDrag);
+
+        if (m_airSpeed > m_maxSpeed)
+            m_airSpeed = m_maxSpeed;
 
         m_velocity = transform.forward * m_airSpeed;
     }
@@ -330,178 +335,4 @@ public class FlightMovement : MonoBehaviour
     {
         return value < bound ? bound : value;
     }
-
-    /*
-	// Update is called once per frame
-	void Update () 
-    {
-        float delta = Time.deltaTime * 100.0f;
-
-        handlePitch(delta, Input.GetKey(KeyCode.S), Input.GetKey(KeyCode.W));
-
-        MoveForward(delta);
-
-        if (Input.GetKey(KeyCode.A))
-            TurnLeft(delta * 5.0f, true);
-        else
-            TurnLeft(delta * 5.0f, false);
-
-        if (Input.GetKey(KeyCode.D))
-            TurnRight(delta * 5.0f, true);
-        else
-            TurnRight(delta * 5.0f, false);
-
-        transform.eulerAngles = m_rotation;
-        transform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_pitchSpeed);
-        transform.position = m_position;
-	}
-
-    void MoveForward(float delta = 1.0f)
-    {
-	    // Update the forward speed movement based on the frame time
-	    m_forwardSpeed += delta * 1.0f;
-
-        if (m_forwardSpeed > m_maxSpeed)
-            m_forwardSpeed = m_maxSpeed;
-
-        if (m_forwardSpeed < 0.0f)
-            m_forwardSpeed = 0.0f;
-
-        m_position += transform.forward * m_forwardSpeed;
-    }
-
-    void TurnLeft(float delta = 1.0f, bool keydown = false)
-    {
-        float speed = 0.05f;
-	    float maxSpeed = speed * 10;
-
-	    // Update the left turn speed movement based on the frame time and whether the user is holding the key down or not.
-	    if(keydown)
-	    {
-            m_leftTurnSpeed += delta * speed;
-
-            if (m_leftTurnSpeed > (delta * maxSpeed))
-		    {
-                m_leftTurnSpeed = delta * maxSpeed;
-		    }
-	    }
-	    else
-	    {
-            m_leftTurnSpeed -= delta * 0.005f;
-
-		    if(m_leftTurnSpeed < 0.0f)
-		    {
-			    m_leftTurnSpeed = 0.0f;
-		    }
-	    }
-
-	    // Update the rotation.
-        m_rotation.z += m_leftTurnSpeed;
-
-	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.z > 45.0f)
-	    {
-            m_rotation.z = 45.0f;
-	    }
-        m_rotation.y -= m_leftTurnSpeed / 2;
-
-	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.y < 0.0f)
-	    {
-            m_rotation.y += 360.0f;
-	    }
-
-        //transform.position += transform.right * -m_leftTurnSpeed;
-
-	    return;
-    }
-
-
-    void TurnRight(float delta = 1.0f, bool keydown = false)
-    {
-        float speed = 0.05f;
-	    float maxSpeed = speed * 10;
-
-	    // Update the right turn speed movement based on the frame time and whether the user is holding the key down or not.
-	    if(keydown)
-	    {
-            m_rightTurnSpeed += delta * speed;
-
-            if (m_rightTurnSpeed > delta * maxSpeed)
-		    {
-                m_rightTurnSpeed = delta * maxSpeed;
-		    }
-	    }
-	    else
-	    {
-            m_rightTurnSpeed -= delta * 0.005f;
-
-		    if(m_rightTurnSpeed < 0.0f)
-		    {
-			    m_rightTurnSpeed = 0.0f;
-		    }
-	    }
-
-	    // Update the rotation.
-        m_rotation.z -= m_rightTurnSpeed;
-
-	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.z < -45.0f)
-	    {
-            m_rotation.z = -45.0f;
-	    }
-
-        m_rotation.y += m_rightTurnSpeed / 2;
-
-	    // Keep the rotation in the 0 to 360 range.
-        if (m_rotation.y > 360.0f)
-	    {
-            m_rotation.y -= 360.0f;
-	    }
-
-        //transform.position += transform.right * m_rightTurnSpeed;
-
-	    return;
-    }
-
-    void handlePitch(float delta = 1.0f, bool sDown = false, bool wDown = false)
-    {
-        float speed = delta * 0.25f;
-
-        if (wDown)
-        {
-            m_pitchSpeed += speed;
-        }
-        else
-        {
-            if (!sDown)
-            {
-            }
-            else
-            {
-            }
-        }
-
-        if (sDown)
-        {
-            m_pitchSpeed -= speed;
-        }
-        else
-        {
-            if (!wDown)
-            {
-            }
-            else
-            {
-            }
-        }
-
-        if (transform.forward.y < -0.1f)
-            m_forwardSpeed += delta * (m_pitchSpeed - (transform.forward.y / 1000.0f));
-
-        else if (transform.forward.y > 0.1f)
-            m_forwardSpeed -= delta * (m_pitchSpeed + (transform.forward.y / 1000.0f));
-    }
-     * 
-     * */
 }
