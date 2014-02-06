@@ -1,8 +1,8 @@
-// Worked on by Chris, Sean
+// Worked on by Chris
 
 using UnityEngine;
 
-public class FlightMovement : MonoBehaviour 
+public class FlightMovementChris : MonoBehaviour 
 {
     private enum YawDirection
     {
@@ -19,9 +19,6 @@ public class FlightMovement : MonoBehaviour
     }
 
     // Inspector fields
-    [SerializeField] private float m_playerMass = 1.0f;
-    [SerializeField] private float m_playerDrag = 0.0f;
-    [SerializeField] private float m_playerLift = 1.0f;
     [SerializeField] private float m_restingSpeed = 7.5f;
     [SerializeField] private float m_maxSpeed = 12.5f;
     [SerializeField] private float m_maxRollAngle = 37.5f;
@@ -30,28 +27,20 @@ public class FlightMovement : MonoBehaviour
     [SerializeField] private float m_incrementTurnSpeed = 1.0f;
     [SerializeField] private float m_returnTurnSpeed = 0.75f;
     [SerializeField] private float m_incrementPitchSpeed = 1.0f;
-    [SerializeField] private float m_returnPitchSpeed = 0.25f;
-
+    [SerializeField] private float m_returnPitchSpeed = 0.75f;
 
 
     // Private variables
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
     private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
-    private Vector3 m_velocity = new Vector3(0.0f, 0.0f, 0.0f);
-    private float m_airSpeed;
-    private float m_sinkSpeed;
-    private float m_weight;
+    private float m_forwardSpeed;
 
 	// Initialise the flight variables
 	public void Start() 
     {
         m_position = transform.position;
         m_rotation = transform.eulerAngles;
-
-        m_airSpeed = m_restingSpeed;
-        m_weight = m_playerMass * Physics.gravity.y;
-
-        m_playerDrag = low(m_playerDrag, 0.01f);
+        m_forwardSpeed = m_restingSpeed;
 	}
 
     // Update the position
@@ -60,29 +49,16 @@ public class FlightMovement : MonoBehaviour
         float delta = Time.deltaTime;
 
         handleOrientationChange(delta);
-        handlePositionChange(delta);
+        handleMoveForward(delta);
     }
 
-    // Handles rotation
     private void handleOrientationChange(float delta)
     {
         handlePitchChange(delta);
         handleYawChange(delta);
         handleRollChange(delta);
 
-        // Update the game object
         transform.eulerAngles = m_rotation;
-    }
-    
-    // Handles movement
-    private void handlePositionChange(float delta)
-    {
-        handleForwardSpeedChange(delta);
-        handleSinkSpeedChange(delta);
-
-        // Update the game object
-        m_position += m_velocity;
-        transform.position = m_position;
     }
 
     // Handles the chagne in pitch based on the user input
@@ -166,22 +142,21 @@ public class FlightMovement : MonoBehaviour
     {
         m_rotation.x = high(m_rotation.x + (delta * m_incrementPitchSpeed * 25.0f), m_maxPitchAngle);
     }
-   
+
     // Changes pitch based on down user input
     private void turnVerticalDown(float delta)
     {
         m_rotation.x = low(m_rotation.x - (delta * m_incrementPitchSpeed * 25.0f), -m_maxPitchAngle);
     }
 
-    // Defaults the pitch on no user input
+    // Returns pitch to neutral on no user input
     private void turnVerticalNone(float delta)
     {
+        //  How do we want to tackle this? Do we want pitch returning to a 
+        //  neutral position? I added it in, purely so that it's not empty.
+        //  In my script I'll be fiddling with this, part. Change it to how
+        //  you feel it would best as a default
         
-        
-        //  Do we want our pitch to default to zero, or do we just 
-        //  want it to remain stationary when a button is not pressed?
-
-        /*
         if (m_rotation.x > 0.0f)
         {
             m_rotation.x -= delta * m_returnPitchSpeed * 25.0f;
@@ -196,7 +171,6 @@ public class FlightMovement : MonoBehaviour
             if (m_rotation.x > 0.0f)
                 m_rotation.x = 0.0f;
         }
-         */
     }
 
     // Changes roll based on left user input
@@ -231,24 +205,24 @@ public class FlightMovement : MonoBehaviour
 
     }
 
-    // Handles the effects of the forward speed
-    private void handleForwardSpeedChange(float delta)
-    {        
-        
-        // Changes velocity based on air speed
-        // TODO:    Change velocity based on "angle of attack"
-        //          ie. based on the pitch of the camera
-        
-        
-        m_airSpeed += delta * (m_playerLift / m_playerDrag);
-
-        m_velocity = transform.forward * m_airSpeed;
-    }
-
-    // Handles the effects of the sink speed
-    private void handleSinkSpeedChange(float delta)
+    // Handles moving forward
+    private void handleMoveForward(float delta)
     {
-        m_velocity.y += (delta * m_weight);
+        // Update the forward speed movement based on the frame time
+        // TODO: change based on vector
+        m_forwardSpeed += delta / 2.0f;
+
+        // TODO: change based on vector
+        if (m_forwardSpeed > m_maxSpeed)
+            m_forwardSpeed = m_maxSpeed;
+
+        if (m_forwardSpeed < 0.0f)
+            m_forwardSpeed = 0.0f;
+
+        m_position += transform.forward * m_forwardSpeed;
+
+        // Update the game object
+        transform.position = m_position;
     }
 
     // Wraps a value between positive numbers lowBound and highBound
