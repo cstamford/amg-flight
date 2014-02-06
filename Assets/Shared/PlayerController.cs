@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float m_maxPitch = 45.0f;
 	
 	// Collision variables
-    [SerializeField] private float m_playerHeight = 3.0f;
+    [SerializeField] public float m_playerHeight = 20.0f;
 	[SerializeField] private float m_colliderHeight = 0.0f;
     [SerializeField] private float m_respawnHeight = -6000.0f;
 
@@ -160,31 +160,19 @@ public class PlayerController : MonoBehaviour
 		{
 			// Increase turn speed
 			m_turnSpeed.x -= m_incrementWalkTurnSpeed * m_deltaTime;
-			
-			// Cap the turn speed
-			LimitValue(ref m_turnSpeed.x, -m_maxTurnSpeed * m_deltaTime, 0);
 		}
 		else if( m_downKey ) // Look down
 		{
 			// Increase turn speed
 			m_turnSpeed.x += m_incrementWalkTurnSpeed * m_deltaTime;
-			
-			// Cap the turn speed
-			LimitValue(ref m_turnSpeed.x, 0, m_maxTurnSpeed * m_deltaTime);
 		}
 		else
 		{
 			// Stop turning
 			m_turnSpeed.x = 0.0f;
 		}
-		
 		// Rotate the camera 
 		m_rotation.x += m_turnSpeed.x;
-		
-		// Stop the camera from tilting up/down too much
-		// When we add support for OR, we shouldnt need this?
-		// Value should be restricted based on users head angle
-		LimitValue(ref m_rotation.x, -m_maxPitch, m_maxPitch);
 	}
 
 	// Main function for handling movement in the axes
