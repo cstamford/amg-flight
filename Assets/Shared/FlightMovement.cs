@@ -19,7 +19,7 @@ public class FlightMovement : MonoBehaviour
     }
 
     // Inspector fields
-    [SerializeField] private float m_playerMass = 1.0f;
+    [SerializeField] private float m_playerMass = 3.5f;
     [SerializeField] private float m_playerDrag = 1.0f;
     [SerializeField] private float m_playerLift = 1.0f;
     [SerializeField] private float m_restingSpeed = 6.0f;
@@ -66,6 +66,7 @@ public class FlightMovement : MonoBehaviour
 
         handleOrientationChange(delta);
         handlePositionChange(delta);
+        handleCollisions();
     }
 
     public void SetPosition(Vector3 position)
@@ -86,6 +87,14 @@ public class FlightMovement : MonoBehaviour
     public Vector3 getRotation()
     {
         return m_rotation;
+    }
+
+    private void handleCollisions()
+    {
+        if (m_playerController != null && Physics.Raycast(m_position, new Vector3(0.0f, -1.0f, 0.0f), collider.bounds.extents.y + 20.0f))
+        {
+            m_playerController.m_isFlying = false;
+        }
     }
 
     // Handles rotation

@@ -20,28 +20,29 @@ public class PlayerController : MonoBehaviour
 	private Vector3 m_turnSpeed = new Vector3(0.0f, 0.0f, 0.0f);
 	
 	// Define how much to increase speeds by
-	private float m_forwardWalkSpeed = 0.2f;
-	private float m_backwardWalkSpeed = 0.075f;
-	private float m_frictionAmount = 0.5f;
-	private float m_strafeWalkSpeed = 0.15f;
-	private float m_incrementWalkTurnSpeed = 3.0f;
-	private float m_fallSpeed = 0.5f;
+    [SerializeField] private float m_forwardWalkSpeed = 50.0f;
+	[SerializeField] private float m_backwardWalkSpeed = 50.0f;
+	[SerializeField] private float m_frictionAmount = 50.0f;
+	[SerializeField] private float m_strafeWalkSpeed = 50.0f;
+	[SerializeField] private float m_incrementWalkTurnSpeed = 3.0f;
+	[SerializeField] private float m_fallSpeed = 20.0f;
 	
 	// Define the maximum values
-	private float m_maxForwardWalkSpeed = 10.0f;
-	private float m_maxBackwardWalkSpeed = -5.0f;
-	private float m_maxWalkStrafeSpeed = 7.0f;
-	private float m_maxTurnSpeed = 65.0f;
-	private float m_maxFallSpeed = -20.0f;
-	private float m_maxPitch = 45.0f;
-	
-	// Delta time
-	private float m_deltaTime = 0.0f;
+    [SerializeField] private float m_maxForwardWalkSpeed = 150.0f;
+	[SerializeField] private float m_maxBackwardWalkSpeed = -150.0f;
+	[SerializeField] private float m_maxWalkStrafeSpeed = 150.0f;
+	[SerializeField] private float m_maxTurnSpeed = 65.0f;
+	[SerializeField] private float m_maxFallSpeed = -100.0f;
+	[SerializeField] private float m_maxPitch = 45.0f;
 	
 	// Collision variables
-	private float m_playerHeight = 3.0f;
-	private float m_colliderHeight = 0.0f;
-	private float m_respawnHeight = -50.0f;
+    [SerializeField] private float m_playerHeight = 3.0f;
+	[SerializeField] private float m_colliderHeight = 0.0f;
+    [SerializeField] private float m_respawnHeight = -6000.0f;
+
+    // Delta time
+    private float m_deltaTime = 0.0f;
+
 	private bool m_isGrounded = false;
 	private bool m_hasWings = false;
 	
@@ -55,6 +56,8 @@ public class PlayerController : MonoBehaviour
 	private bool m_leftKey = false;
 	private bool m_rightKey = false;
 
+    private FlightMovement m_flight;
+
 	public void Start ()
 	{
 		// Take a copy of the cameras position
@@ -63,6 +66,8 @@ public class PlayerController : MonoBehaviour
 		
 		// Grab the size of the player collider box
 		m_colliderHeight = collider.bounds.extents.y;
+
+        m_flight = GetComponent("FlightMovement") as FlightMovement;
 	}
 
     public void Update()
@@ -84,6 +89,12 @@ public class PlayerController : MonoBehaviour
 
 		// Handle the movement keys
 		HandleMovement();
+
+        if (m_flight != null)
+        {
+            m_flight.SetRotation(m_rotation);
+            m_flight.SetPosition(m_position);
+        }
 	}
 
 	// Handle collisions
@@ -312,6 +323,8 @@ public class PlayerController : MonoBehaviour
 	{
 		// Check if we are colliding with the ground
 		m_isGrounded = Physics.Raycast (transform.position, -Vector3.up, m_colliderHeight + m_playerHeight + 0.1f);
+
+        Debug.Log(m_isGrounded);
 		
 		// If we are on the ground
 		if(m_isGrounded)
@@ -324,6 +337,7 @@ public class PlayerController : MonoBehaviour
 			{
 				// Disable falling
 				m_velocity.y = 0.0f;
+                m_hasWings = true;
 			}
 		}
 		else // We are falling
@@ -338,7 +352,6 @@ public class PlayerController : MonoBehaviour
 			{
 				// Apply gravity
 				HandleGravity();
-				Debug.Log ("Falling");
 			}
 		}
 	}
