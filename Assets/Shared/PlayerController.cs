@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 	// Collision variables
     [SerializeField] public float m_playerHeight = 20.0f;
 	[SerializeField] private float m_colliderHeight = 0.0f;
-    [SerializeField] private float m_respawnHeight = -8000.0f;
+    [SerializeField] private float m_respawnHeight = -6000.0f;
 
     // Delta time
     private float m_deltaTime = 0.0f;
