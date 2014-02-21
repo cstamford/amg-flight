@@ -1,7 +1,6 @@
 // Controller for the main character - a Seraph.
 // Handles gliding, flight, and ground movement mechanics.
-// Requires a box collider to be attached to the entity 
-// for collisions to properly work.
+// Requires a box collider and non-kinematic rigid body for collisions.
 
 using UnityEngine;
 
@@ -10,16 +9,16 @@ namespace cst
     public class SeraphController : MonoBehaviour
     {
         // Inspector fields
-        [SerializeField] private float m_restingSpeed = 2.5f;
-        [SerializeField] private float m_maxSpeed = 3.5f;
+        [SerializeField] private float RESTING_SPEED = 100.0f;
+        [SerializeField] private float MAX_SPEED = 250.0f;
 
-        private float m_maxRollAngle = 37.5f;
-        private float m_maxPitchAngle = 65.0f;
-        private float m_turnTightness = 2.0f;
-        private float m_incrementTurnSpeed = 35.0f;
-        private float m_returnTurnSpeed = 30.0f;
-        private float m_incrementPitchSpeed = 45.0f;
-        private float m_returnPitchSpeed = 30.0f;
+        private const float MAX_ROLL_ANGLE = 37.5f;
+        private const float MAX_PITCH_ANGLE = 65.0f;
+        private const float TURN_TIGHTNESS = 2.0f;
+        private const float INCREMENT_TURN_SPEED = 35.0f;
+        private const float RETURN_TURN_SPEED = 30.0f;
+        private const float INCREMENT_PITCH_SPEED = 45.0f;
+        private const float INCREMENT_FOWARD_SPEED = 15.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
@@ -30,14 +29,13 @@ namespace cst
         {
             m_position = transform.position;
             m_rotation = transform.eulerAngles;
-            m_forwardSpeed = m_restingSpeed;
+            m_forwardSpeed = RESTING_SPEED;
         }
 
         // Update the position
         public void Update()
         {
             float delta = Time.deltaTime;
-
             handleOrientationChange(delta);
             handleMoveForward(delta);
         }
@@ -87,8 +85,13 @@ namespace cst
         // Handles the change in yaw based on the current roll
         private void handleYawChange(float delta)
         {
+            float angle = m_rotation.z;
+
+            if (angle > 180.0f)
+                angle -= 360.0f;
+
             m_rotation.y = Helpers.wrapAngle(
-                m_rotation.y - (delta * m_rotation.z * m_turnTightness));
+                m_rotation.y - (delta * angle * TURN_TIGHTNESS));
         }
 
         // Handles the change in roll based on the user input
@@ -125,15 +128,25 @@ namespace cst
         // Changes pitch based on up user input
         private void turnVerticalUp(float delta)
         {
-            if (-(m_rotation.x - 360.0f) < m_maxPitchAngle)
-                m_rotation.x -= (delta * m_incrementPitchSpeed);
+            float angle = Helpers.getNormalizedAngle(m_rotation.x);
+
+            if (angle > -MAX_PITCH_ANGLE)
+            {
+                m_rotation.x = Helpers.wrapAngle(
+                    m_rotation.x - (delta*INCREMENT_PITCH_SPEED));
+            }
         }
 
         // Changes pitch based on down user input
         private void turnVerticalDown(float delta)
         {
-            if (-(m_rotation.x - 360.0f) > -m_maxPitchAngle)
-                m_rotation.x += (delta*m_incrementPitchSpeed);
+            float angle = Helpers.getNormalizedAngle(m_rotation.x);
+
+            if (angle < MAX_PITCH_ANGLE)
+            {
+                m_rotation.x = Helpers.wrapAngle(
+                    m_rotation.x + (delta*INCREMENT_PITCH_SPEED));
+            }
         }
 
         // Returns pitch to neutral on no user input
@@ -145,34 +158,46 @@ namespace cst
         // Changes roll based on left user input
         private void turnHorizontalLeft(float delta)
         {
-            m_rotation.z = Helpers.high(
-                m_rotation.z + (delta * m_incrementTurnSpeed), 
-                m_maxRollAngle);
+            float angle = Helpers.getNormalizedAngle(m_rotation.z);
+
+            if (angle < MAX_ROLL_ANGLE)
+            {
+                m_rotation.z = Helpers.wrapAngle(
+                    m_rotation.z + (delta * INCREMENT_PITCH_SPEED));
+            }
         }
 
         // Changes roll based on right user input
         private void turnHorizontalRight(float delta)
         {
-            m_rotation.z = Helpers.low(
-                m_rotation.z - (delta * m_incrementTurnSpeed), 
-                -m_maxRollAngle);
+            float angle = Helpers.getNormalizedAngle(m_rotation.z);
+
+            if (angle > -MAX_ROLL_ANGLE)
+            {
+                m_rotation.z = Helpers.wrapAngle(
+                    m_rotation.z - (delta * INCREMENT_PITCH_SPEED));
+            }
         }
 
         // Returns roll to neutral on no user input
         private void turnHorizontalNone(float delta)
         {
-            if (m_rotation.z > 0.0f)
-            {
-                m_rotation.z -= delta * m_returnTurnSpeed;
+            float angle = m_rotation.z - 180.0f;
 
-                if (m_rotation.z < 0.0f)
+            if (angle > 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(
+                    m_rotation.z + delta * RETURN_TURN_SPEED);
+
+                if (m_rotation.z - 180.0f < 0.0f)
                     m_rotation.z = 0.0f;
             }
             else
             {
-                m_rotation.z += delta * m_returnTurnSpeed;
+                m_rotation.z = Helpers.wrapAngle(
+                    m_rotation.z - delta * RETURN_TURN_SPEED);
 
-                if (m_rotation.z > 0.0f)
+                if (m_rotation.z - 180.0f > 0.0f)
                     m_rotation.z = 0.0f;
             }
 
@@ -181,15 +206,13 @@ namespace cst
         // Handles moving forward
         private void handleMoveForward(float delta)
         {
-            m_forwardSpeed += delta / 2.0f;
-
-            if (m_forwardSpeed > m_maxSpeed)
-                m_forwardSpeed = m_maxSpeed;
+            if (m_forwardSpeed > MAX_SPEED)
+                m_forwardSpeed = MAX_SPEED;
 
             if (m_forwardSpeed < 0.0f)
                 m_forwardSpeed = 0.0f;
 
-            m_position += transform.forward * m_forwardSpeed;
+            m_position += transform.forward*m_forwardSpeed*delta;
 
             // Update the game object
             transform.position = m_position;
