@@ -18,7 +18,7 @@ namespace cst
         private float m_turnTightness = 2.0f;
         private float m_incrementTurnSpeed = 35.0f;
         private float m_returnTurnSpeed = 30.0f;
-        private float m_incrementPitchSpeed = 35.0f;
+        private float m_incrementPitchSpeed = 45.0f;
         private float m_returnPitchSpeed = 30.0f;
 
         private Vector3 m_position;
@@ -42,6 +42,22 @@ namespace cst
             handleMoveForward(delta);
         }
 
+        public void OnCollisionEnter(Collision other)
+        {
+            Debug.Log("Collision ENTER!");
+        }
+
+        // Emergency!
+        public void OnCollisionStay(Collision other)
+        {
+            Debug.Log("Collision STAY!");
+        }
+
+        public void OnTriggerEnter(Collider other)
+        {
+            Debug.Log("Trigger ENTER!");
+        }
+
         private void handleOrientationChange(float delta)
         {
             handlePitchChange(delta);
@@ -56,11 +72,11 @@ namespace cst
         {
             if (Input.GetKey(KeyCode.W))
             {
-                turnVerticalUp(delta);
+                turnVerticalDown(delta);
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                turnVerticalDown(delta);
+                turnVerticalUp(delta);
             }
             else
             {
@@ -109,17 +125,15 @@ namespace cst
         // Changes pitch based on up user input
         private void turnVerticalUp(float delta)
         {
-            m_rotation.x = Helpers.high(
-                m_rotation.x + (delta * m_incrementPitchSpeed), 
-                m_maxPitchAngle);
+            if (-(m_rotation.x - 360.0f) < m_maxPitchAngle)
+                m_rotation.x -= (delta * m_incrementPitchSpeed);
         }
 
         // Changes pitch based on down user input
         private void turnVerticalDown(float delta)
         {
-            m_rotation.x = Helpers.low(
-                m_rotation.x - (delta * m_incrementPitchSpeed), 
-                -m_maxPitchAngle);
+            if (-(m_rotation.x - 360.0f) > -m_maxPitchAngle)
+                m_rotation.x += (delta*m_incrementPitchSpeed);
         }
 
         // Returns pitch to neutral on no user input

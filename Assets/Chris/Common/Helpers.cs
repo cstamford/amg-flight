@@ -1,5 +1,7 @@
 ﻿// Various useful helpers that aren't specific to one script
 
+using System;
+
 namespace cst
 {
     public static class Helpers
@@ -24,7 +26,7 @@ namespace cst
             return value;
         }
 
-        // Wraps between 0 ... 360
+        // Wraps between [0 ... 360]
         public static float wrapAngle(float value)
         {
             return wrapValue(value, 0.0f, 360.0f);
@@ -50,6 +52,12 @@ namespace cst
         public static float low(float value, float bound)
         {
             return value < bound ? bound : value;
+        }
+
+        // Returns the difference between two angles between [0 ... 180]
+        public static float differenceBetween(float angle1, float angle2)
+        {
+            return 180.0f - Math.Abs(Math.Abs(angle1 - angle2) - 180.0f);
         }
     }
 
