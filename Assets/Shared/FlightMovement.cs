@@ -22,15 +22,15 @@ public class FlightMovement : MonoBehaviour
     [SerializeField] private float m_playerMass = 3.5f;
     [SerializeField] private float m_playerDrag = 1.0f;
     [SerializeField] private float m_playerLift = 1.0f;
-    [SerializeField] private float m_restingSpeed = 400.0f;
-    [SerializeField] private float m_maxSpeed = 750.0f;
+    [SerializeField] private float m_restingSpeed = 250.0f;
+    [SerializeField] private float m_maxSpeed = 400.0f;
     [SerializeField] private float m_maxRollAngle = 37.5f;
     [SerializeField] private float m_maxPitchAngle = 65.0f;
     [SerializeField] private float m_turnTightness = 2.0f;
-    [SerializeField] private float m_incrementTurnSpeed = 2.0f;
-    [SerializeField] private float m_returnTurnSpeed = 1.5f;
-    [SerializeField] private float m_incrementPitchSpeed = 2.0f;
-    [SerializeField] private float m_returnPitchSpeed = 1.5f;
+    [SerializeField] private float m_incrementTurnSpeed = 1.25f;
+    [SerializeField] private float m_returnTurnSpeed = 1.0f;
+    [SerializeField] private float m_incrementPitchSpeed = 1.25f;
+    [SerializeField] private float m_returnPitchSpeed = 1.0f;
 
     // Private variables
     private Vector3 m_position = new Vector3(0.0f, 0.0f, 0.0f);
@@ -61,14 +61,12 @@ public class FlightMovement : MonoBehaviour
     {
         if (m_playerController != null && !m_playerController.m_isFlying)
             return;
-
-        Debug.Log(m_restingSpeed + "" + m_airSpeed);
-
+	
         float delta = Time.deltaTime;
 
         handleOrientationChange(delta);
         handlePositionChange(delta);
-        handleCollisions();
+        handleCollisions(delta);
     }
 
     public void SetPosition(Vector3 position)
@@ -91,11 +89,27 @@ public class FlightMovement : MonoBehaviour
         return m_rotation;
     }
 
-    private void handleCollisions()
+    private void handleCollisions(float delta)
     {
-        if (m_playerController != null && Physics.Raycast(m_position, new Vector3(0.0f, -1.0f, 0.0f), collider.bounds.extents.y + 20.0f))
+        if (m_playerController != null)
         {
-            m_playerController.m_isFlying = false;
+			// If collision below or front, drop out of flight
+			if (Physics.Raycast(m_position, new Vector3(0.0f, -1.0f, 0.0f), collider.bounds.extents.y + m_playerController.m_playerHeight))
+			{
+            	m_playerController.m_isFlying = false;
+				m_rotation.x = 0.0f;
+				m_rotation.z = 0.0f;
+			}
+
+			if (Physics.Raycast(m_position, transform.forward, collider.bounds.extents.y + m_playerController.m_playerHeight))
+			{
+				m_playerController.m_isFlying = false;
+				m_position -= m_velocity * delta;
+			}
+
+			transform.eulerAngles = m_rotation;
+			transform.position = m_position;
+
         }
     }
 

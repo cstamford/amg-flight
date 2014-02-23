@@ -165,19 +165,19 @@ public class FlatUI : MonoBehaviour {
 
             GUI.color = new Color(1.0f, 1.0f, 1.0f, UIOpacity);
 			
-            GUI.DrawTexture(new Rect(0, 0, sw, sh), backgroundTexture, ScaleMode.ScaleToFit, false);
+            GUI.DrawTexture(new Rect(0, 0, sw, sh), backgroundTexture);
 			
 			GUI.DrawTexture(new Rect(0, 0, sw/2, sh/2), cloud1Texture, ScaleMode.ScaleToFit, true);
 			GUI.DrawTexture(new Rect(sw/2, 0, sw/2, sh/2), cloud2Texture, ScaleMode.ScaleToFit, true);
             GUI.DrawTexture(new Rect(0, sh / 2, sw / 2, sh / 2), cloud3Texture, ScaleMode.ScaleToFit, true);
 			GUI.DrawTexture(new Rect(sw/2, sh/2, sw/2, sh/2), cloud4Texture, ScaleMode.ScaleToFit, true);
 
-            GUI.DrawTexture(new Rect(0, sh * 7 / 8, sw, sh / 8), borderTexture, ScaleMode.ScaleToFit, true);
+            GUI.DrawTexture(new Rect(0, sh * 7 / 8, sw, sh / 8), borderTexture);
 			
 			//GUIUtility.RotateAroundPivot(180, new Vector2(sw / 2, sh / 2));
             GUIUtility.ScaleAroundPivot(new Vector2(-1.0f, -1.0f), new Vector2(sw / 2, sh / 2));
 
-            GUI.DrawTexture(new Rect(0, sh * 7 / 8, sw, sh / 8), borderTexture, ScaleMode.ScaleToFit, true);
+            GUI.DrawTexture(new Rect(0, sh * 7 / 8, sw, sh / 8), borderTexture);
 
             //GUIUtility.RotateAroundPivot(180, new Vector2(sw / 2, sh / 2));
             GUIUtility.ScaleAroundPivot(new Vector2(-1.0f, -1.0f), new Vector2(sw / 2, sh / 2));
