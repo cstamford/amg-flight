@@ -19,7 +19,7 @@ namespace cst
         FLYING
     }
 
-    public enum FlightCapability
+    public enum SeraphCapability
     {
         NONE,
         GLIDE,
@@ -36,10 +36,14 @@ namespace cst
     public abstract class ControllerBase
     {
         public SeraphController controller
-        { get { return m_controller; } }
+        {
+            get { return m_controller; }
+        }
 
         protected Transform transform
-        { get { return m_controller.getTransform(); } }
+        {
+            get { return m_controller.getTransform(); }
+        }
 
         protected SeraphState state
         {
@@ -47,7 +51,7 @@ namespace cst
             set { m_controller.setState(value); }
         }
 
-        protected FlightCapability capability
+        protected SeraphCapability capability
         {
             get { return m_controller.getCapability(); }
             set { m_controller.setCapability(value); }
@@ -313,8 +317,8 @@ namespace cst
 
     public class SeraphController : MonoBehaviour
     {
-        [SerializeField] private FlightCapability m_capability 
-            = FlightCapability.NONE;
+        [SerializeField] private SeraphCapability m_capability 
+            = SeraphCapability.NONE;
 
         private SeraphState m_state = SeraphState.NONE;
 
@@ -400,12 +404,12 @@ namespace cst
             m_state = state;
         }
 
-        public FlightCapability getCapability()
+        public SeraphCapability getCapability()
         {
             return m_capability;
         }
 
-        public void setCapability(FlightCapability capability)
+        public void setCapability(SeraphCapability capability)
         {
             m_capability = capability;
         }
