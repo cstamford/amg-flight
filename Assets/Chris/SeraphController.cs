@@ -1,10 +1,8 @@
 // Controller for the main character - a Seraph.
 // Handles gliding, flight, and ground movement mechanics.
 //
-// Requires a box collider (set to trigger) and kinematic rigid body 
-// set on the object with this script for collisions.
-//
-// The rigid body needs constraints on all axis to be active.
+// Requires a box collider and kinematic rigid body on script object.
+// The rigid body needs constraints on all axes.
 
 using UnityEngine;
 
