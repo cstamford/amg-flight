@@ -14,7 +14,6 @@ namespace cst.Flight
     {
         NONE,
         GROUNDED,
-        FALLING,
         GLIDING,
         FLYING
     }
@@ -31,6 +30,8 @@ namespace cst.Flight
         [SerializeField] private SeraphCapability m_capability 
             = SeraphCapability.NONE;
         [SerializeField] private SeraphState m_state = SeraphState.NONE;
+
+        private SeraphState m_lastState = SeraphState.NONE;
 
         private GroundController m_groundController;
         private GlideController m_glideController;
@@ -75,7 +76,8 @@ namespace cst.Flight
             {
                 case SeraphState.NONE:
                     // TODO Determine new state automatically.
-                    m_activeController = m_glideController;
+                    setState(SeraphState.GROUNDED);
+                    m_activeController = m_groundController;
                     break;
 
                 case SeraphState.GLIDING:
@@ -89,6 +91,12 @@ namespace cst.Flight
                 default:
                     m_activeController = m_groundController;
                     break;
+            }
+
+            if (m_lastState != m_state)
+            {
+                m_lastState = m_state;
+                m_activeController.start();
             }
 
             m_activeController.update();

@@ -66,6 +66,22 @@ namespace cst
         {
             return angle > 180.0f ? angle - 360.0f : angle;
         }
+
+        // Quadratic interpolation - easing in
+        public static float quadraticInterp(float start, float max, float time,
+            float maxTime)
+        {
+            time /= maxTime;
+            return (max * (float)Math.Pow(time, 2.0f)) + start;
+        }
+
+        // Cubic interpolation - easing in
+        public static float cubicInterp(float start, float max, float time,
+            float maxTime)
+        {
+            time /= maxTime;
+            return (max * (float)Math.Pow(time, 3.0f)) + start;
+        }
     }
 
 }

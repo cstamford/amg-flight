@@ -4,8 +4,6 @@ namespace cst.Flight
 {
     public class FlightController : ControllerBase, IControllerBase
     {
-        private readonly SeraphController m_parent;
-
         public FlightController(SeraphController controller)
             : base(controller)
         {}

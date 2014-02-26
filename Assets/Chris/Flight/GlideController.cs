@@ -20,15 +20,15 @@ namespace cst.Flight
         private Vector3 m_position;
         private Vector3 m_rotation;
 
-        private float m_forwardSpeed = RESTING_VELOCITY;
+        private float m_forwardSpeed;
 
         public GlideController(SeraphController controller)
             : base(controller)
-        {
-        }
+        {}
 
         public void start()
         {
+            m_forwardSpeed = RESTING_VELOCITY;
         }
 
         public void update()
@@ -54,11 +54,12 @@ namespace cst.Flight
         {
             Debug.Log(GetType().Name + " collisionEnter()");
 
-            Vector3 downVec = new Vector3(0.0f, -1.0f, 0.0f);
-
             // Check if we've collided with something below us.
-            if (Physics.Raycast(transform.position, downVec, LANDING_DISTANCE))
+            if (Physics.Raycast(transform.position,
+                new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
+            {
                 handleLanding();
+            }
         }
 
         public void collisionExit(Collision other)
@@ -69,7 +70,7 @@ namespace cst.Flight
         // Handles landing on the ground
         private void handleLanding()
         {
-            controller.setState(SeraphState.FALLING);            
+            controller.setState(SeraphState.GROUNDED);            
         }
 
         private void handleOrientationChange(float delta)
@@ -248,7 +249,7 @@ namespace cst.Flight
 
             // Drop out of flight if we stall
             if (m_forwardSpeed < MIN_VELOCITY)
-                controller.setState(SeraphState.FALLING);
+                controller.setState(SeraphState.GROUNDED);
 
             m_position += transform.forward * m_forwardSpeed
                 * delta;
