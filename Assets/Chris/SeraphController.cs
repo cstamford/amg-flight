@@ -4,10 +4,28 @@
 // Requires a box collider and kinematic rigid body on script object.
 // The rigid body needs constraints on all axes.
 
+using System;
 using UnityEngine;
 
 namespace cst
 {
+    // Controller determines state if NONE.
+    public enum SeraphState
+    {
+        NONE,
+        GROUNDED,
+        FALLING,
+        GLIDING,
+        FLYING
+    }
+
+    public enum FlightCapability
+    {
+        NONE,
+        GLIDE,
+        FLIGHT
+    }
+
     public interface IControllerType
     {
         void update();
@@ -15,14 +33,39 @@ namespace cst
         void collisionEnter(Collision other);
     }
 
-    public class GroundController : IControllerType
+    public abstract class ControllerType
     {
-        private readonly SeraphController m_parent;
+        public SeraphController controller
+        { get { return m_controller; } }
 
-        public GroundController(SeraphController parent)
+        private readonly SeraphController m_controller;
+
+        protected Transform transform
+        { get { return m_controller.getTransform(); } }
+
+        protected SeraphState state
         {
-            m_parent = parent;
+            get { return m_controller.getState(); }
+            set { m_controller.setState(value); }
         }
+
+        protected FlightCapability capability
+        {
+            get { return m_controller.getCapability(); }
+            set { m_controller.setCapability(value); }
+        }
+
+        protected ControllerType(SeraphController controller)
+        {
+            m_controller = controller;
+        }
+    }
+
+    public class GroundController : ControllerType, IControllerType
+    {
+        public GroundController(SeraphController controller)
+            : base(controller)
+        {}
 
         public void update()
         {
@@ -39,10 +82,8 @@ namespace cst
         }
     }
 
-    public class GlideController : IControllerType
+    public class GlideController : ControllerType, IControllerType
     {
-        private readonly SeraphController m_parent;
-
         private const float MAX_ROLL_ANGLE = 37.5f;
         private const float MAX_PITCH_ANGLE = 65.0f;
         private const float TURN_TIGHTNESS = 2.0f;
@@ -56,18 +97,16 @@ namespace cst
         private Vector3 m_position;
         private Vector3 m_rotation;
 
-        private float m_forwardSpeed;
+        private float m_forwardSpeed = RESTING_SPEED;
 
-        public GlideController(SeraphController parent)
-        {
-            m_parent = parent;
-            m_forwardSpeed = RESTING_SPEED;
-        }
+        public GlideController(SeraphController controller)
+            : base(controller)
+        {}
 
         public void update()
         {
-            m_rotation = m_parent.getTransform().eulerAngles;
-            m_position = m_parent.getTransform().position;
+            m_rotation = transform.eulerAngles;
+            m_position = transform.position;
 
             handleOrientationChange(Time.deltaTime);
             handleMoveForward(Time.deltaTime);
@@ -81,8 +120,9 @@ namespace cst
         public void collisionEnter(Collision other)
         {
             Debug.Log(GetType().Name + " collisionEnter()");
-            m_parent.getTransform().position -= m_parent.getTransform().forward
-                * m_forwardSpeed * Time.deltaTime * 2.0f;
+
+            transform.position -= transform.forward * m_forwardSpeed 
+                * Time.deltaTime * 2.0f;
         }
 
         private void handleOrientationChange(float delta)
@@ -91,7 +131,7 @@ namespace cst
             handleYawChange(delta);
             handleRollChange(delta);
 
-            m_parent.getTransform().eulerAngles = m_rotation;
+            transform.eulerAngles = m_rotation;
         }
 
         // Handles the change in pitch based on the user input
@@ -119,8 +159,8 @@ namespace cst
             if (angle > 180.0f)
                 angle -= 360.0f;
 
-            m_rotation.y = Helpers.wrapAngle(
-                m_rotation.y - (delta * angle * TURN_TIGHTNESS));
+            m_rotation.y = Helpers.wrapAngle(m_rotation.y 
+                - (delta * angle * TURN_TIGHTNESS));
         }
 
         // Handles the change in roll based on the user input
@@ -161,8 +201,8 @@ namespace cst
 
             if (angle > -MAX_PITCH_ANGLE)
             {
-                m_rotation.x = Helpers.wrapAngle(
-                    m_rotation.x - (delta * INCREMENT_PITCH_SPEED));
+                m_rotation.x = Helpers.wrapAngle(m_rotation.x 
+                    - (delta * INCREMENT_PITCH_SPEED));
             }
         }
 
@@ -173,8 +213,8 @@ namespace cst
 
             if (angle < MAX_PITCH_ANGLE)
             {
-                m_rotation.x = Helpers.wrapAngle(
-                    m_rotation.x + (delta * INCREMENT_PITCH_SPEED));
+                m_rotation.x = Helpers.wrapAngle(m_rotation.x 
+                    + (delta * INCREMENT_PITCH_SPEED));
             }
         }
 
@@ -191,8 +231,8 @@ namespace cst
 
             if (angle < MAX_ROLL_ANGLE)
             {
-                m_rotation.z = Helpers.wrapAngle(
-                    m_rotation.z + (delta * INCREMENT_TURN_SPEED));
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z 
+                    + (delta * INCREMENT_TURN_SPEED));
             }
         }
 
@@ -215,16 +255,16 @@ namespace cst
 
             if (angle > 0.0f)
             {
-                m_rotation.z = Helpers.wrapAngle(
-                    m_rotation.z + delta * RETURN_TURN_SPEED);
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z 
+                    + delta * RETURN_TURN_SPEED);
 
                 if (m_rotation.z - 180.0f < 0.0f)
                     m_rotation.z = 0.0f;
             }
             else
             {
-                m_rotation.z = Helpers.wrapAngle(
-                    m_rotation.z - delta * RETURN_TURN_SPEED);
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z 
+                    - delta * RETURN_TURN_SPEED);
 
                 if (m_rotation.z - 180.0f > 0.0f)
                     m_rotation.z = 0.0f;
@@ -235,27 +275,26 @@ namespace cst
         // Handles moving forward
         private void handleMoveForward(float delta)
         {
-            if (m_forwardSpeed > m_maxSpeed)
-                m_forwardSpeed = m_maxSpeed;
+            if (m_forwardSpeed > MAX_SPEED)
+                m_forwardSpeed = MAX_SPEED;
 
             if (m_forwardSpeed < 0.0f)
                 m_forwardSpeed = 0.0f;
 
-            m_position += m_parent.getTransform().forward 
-                * m_forwardSpeed * delta;
+            m_position += transform.forward * m_forwardSpeed 
+                * delta;
 
-            m_parent.getTransform().position = m_position;
+            transform.position = m_position;
         }
     }
 
-    public class FlightController : IControllerType
+    public class FlightController : ControllerType, IControllerType
     {
         private readonly SeraphController m_parent;
 
-        public FlightController(SeraphController parent)
-        {
-            m_parent = parent;
-        }
+        public FlightController(SeraphController controller)
+            : base(controller)
+        {}
 
         public void update()
         {
@@ -274,23 +313,6 @@ namespace cst
 
     public class SeraphController : MonoBehaviour
     {
-        // Controller determines state if NONE.
-        public enum SeraphState
-        {
-            NONE,
-            GROUNDED,
-            FALLING,
-            GLIDING,
-            FLYING
-        }
-
-        public enum FlightCapability
-        {
-            NONE,
-            GLIDE,
-            FLIGHT
-        }
-
         [SerializeField] private FlightCapability m_capability 
             = FlightCapability.NONE;
 
@@ -303,6 +325,24 @@ namespace cst
 
         public void Start()
         {
+            if (rigidbody == null)
+            {
+                enabled = false;
+                throw new Exception("No rigidbody attached.");
+            }
+
+            if (rigidbody.isKinematic)
+            {
+                enabled = false;
+                throw new Exception("Attached rigidbody is kinematic.");
+            }
+
+            if (rigidbody.useGravity)
+            {
+                Debug.LogWarning("Gravity enabled on rigidbody - Seraph" +
+                                 "Controller has its own implementation.");
+            }
+
             m_groundController = new GroundController(this);
             m_glideController = new GlideController(this);
             m_flightController = new FlightController(this);
