@@ -60,7 +60,7 @@ namespace cst
             return 180.0f - Math.Abs(Math.Abs(angle1 - angle2) - 180.0f);
         }
 
-        // Return a normalized angle, from [-x/2 ... x/2]
+        // Return a normalized angle, from [-180 ... 180]
         // Assume the angle is wrapped between [0 ... 360]
         public static float getNormalizedAngle(float angle)
         {
