@@ -26,19 +26,17 @@ namespace cst
         FLIGHT
     }
 
-    public interface IControllerType
+    public interface IControllerBase
     {
         void update();
         void triggerEnter(Collider other);
         void collisionEnter(Collision other);
     }
 
-    public abstract class ControllerType
+    public abstract class ControllerBase
     {
         public SeraphController controller
         { get { return m_controller; } }
-
-        private readonly SeraphController m_controller;
 
         protected Transform transform
         { get { return m_controller.getTransform(); } }
@@ -55,13 +53,15 @@ namespace cst
             set { m_controller.setCapability(value); }
         }
 
-        protected ControllerType(SeraphController controller)
+        private readonly SeraphController m_controller;
+
+        protected ControllerBase(SeraphController controller)
         {
             m_controller = controller;
         }
     }
 
-    public class GroundController : ControllerType, IControllerType
+    public class GroundController : ControllerBase, IControllerBase
     {
         public GroundController(SeraphController controller)
             : base(controller)
@@ -82,7 +82,7 @@ namespace cst
         }
     }
 
-    public class GlideController : ControllerType, IControllerType
+    public class GlideController : ControllerBase, IControllerBase
     {
         private const float MAX_ROLL_ANGLE = 37.5f;
         private const float MAX_PITCH_ANGLE = 65.0f;
@@ -288,7 +288,7 @@ namespace cst
         }
     }
 
-    public class FlightController : ControllerType, IControllerType
+    public class FlightController : ControllerBase, IControllerBase
     {
         private readonly SeraphController m_parent;
 
@@ -321,7 +321,7 @@ namespace cst
         private GroundController m_groundController;
         private GlideController m_glideController;
         private FlightController m_flightController;
-        private IControllerType m_activeController;
+        private IControllerBase m_activeController;
 
         public void Start()
         {
