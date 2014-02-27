@@ -1,51 +1,60 @@
+// Basic camera rotation script for testing.
+// Adapted from Unity's built-in script by Chris Stamford.
+
 using UnityEngine;
-using System.Collections;
 
-public class CameraRotation : MonoBehaviour
+namespace cst
 {
-    // Worked on by Chris and Louis
-
-    public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
-    public RotationAxes axes = RotationAxes.MouseXAndY;
-    public float sensitivityX = 7.5f;
-    public float sensitivityY = 7.5f;
-
-    public float minimumX = -360.0f;
-    public float maximumX = 360.0f;
-
-    public float minimumY = -60.0f;
-    public float maximumY = 60.0f;
-
-    float rotationY = 0.0f;
-
-	// Use this for initialization
-	void Start () 
+    public class CameraRotation : MonoBehaviour
     {
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-        // Rotate camera
-        if (axes == RotationAxes.MouseXAndY)
+        private enum RotationAxes
         {
-            float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
-
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-            rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
-
-            transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+            MOUSE_X = 0,
+            MOUSE_Y,
+            MOUSE_X_AND_Y
         }
-        else if (axes == RotationAxes.MouseX)
-        {
-            transform.Rotate(0, Input.GetAxis("Mouse X") * sensitivityX, 0);
-        }
-        else
-        {
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-            rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
 
-            transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
-        }      
+        private RotationAxes m_axes = RotationAxes.MOUSE_X_AND_Y;
+        [SerializeField] private float m_sensitivityX = 7.5f;
+        [SerializeField] private float m_sensitivityY = 7.5f;
+        [SerializeField] private float m_minimumX = -360.0f;
+        [SerializeField] private float m_maximumX = 360.0f;
+        [SerializeField] private float m_minimumY = -60.0f;
+        [SerializeField] private float m_maximumY = 60.0f;
+        [SerializeField] private float m_rotationY = 0.0f;
+
+        // Use this for initialization
+        private void Start()
+        {
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
+            // Rotate camera
+            if (m_axes == RotationAxes.MOUSE_X_AND_Y)
+            {
+                float rotationX = transform.localEulerAngles.y 
+                    + Input.GetAxis("Mouse X") * m_sensitivityX;
+
+                m_rotationY += Input.GetAxis("Mouse Y") * m_sensitivityY;
+                m_rotationY = Mathf.Clamp(m_rotationY, m_minimumY, m_maximumY);
+
+                transform.localEulerAngles = new Vector3(-m_rotationY, 
+                    rotationX, 0);
+            }
+            else if (m_axes == RotationAxes.MOUSE_X)
+            {
+                transform.Rotate(0, Input.GetAxis("Mouse X") * m_sensitivityX, 0);
+            }
+            else if (m_axes == RotationAxes.MOUSE_Y)
+            {
+                m_rotationY += Input.GetAxis("Mouse Y") * m_sensitivityY;
+                m_rotationY = Mathf.Clamp(m_rotationY, m_minimumY, m_maximumY);
+
+                transform.localEulerAngles = new Vector3(-m_rotationY, 
+                    transform.localEulerAngles.y, 0);
+            }
+        }
     }
 }

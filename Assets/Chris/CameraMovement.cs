@@ -1,39 +1,37 @@
+// Basic camera movement script for testing.
+// Adapted from Unity's built-in script by Chris Stamford.
+
 using UnityEngine;
-using System.Collections;
 
-public class CameraMovement : MonoBehaviour 
+namespace cst
 {
-    public float height = 16.0f;
-
-	// Use this for initialization
-	void Start () 
+    public class CameraMovement : MonoBehaviour
     {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-        Vector3 position = transform.position;
+        // Use this for initialization
+        private void Start()
+        {
 
-        // Move position
-        if (Input.GetKey(KeyCode.W))
-            position += transform.forward;
+        }
 
-        if (Input.GetKey(KeyCode.A))
-            position -= transform.right;
+        // Update is called once per frame
+        private void Update()
+        {
+            Vector3 position = transform.position;
 
-        if (Input.GetKey(KeyCode.S))
-            position -= transform.forward;
+            // Move position
+            if (Input.GetKey(KeyCode.W))
+                position += transform.forward;
 
-        if (Input.GetKey(KeyCode.D))
-            position += transform.right;
+            if (Input.GetKey(KeyCode.A))
+                position -= transform.right;
 
-        float terrainHeight = Terrain.activeTerrain.SampleHeight(transform.position);
+            if (Input.GetKey(KeyCode.S))
+                position -= transform.forward;
 
-        if (position.y < terrainHeight + height)
-            position.y = terrainHeight + height;
+            if (Input.GetKey(KeyCode.D))
+                position += transform.right;
 
-        transform.position = position;
-	}
+            transform.position = position;
+        }
+    }
 }
