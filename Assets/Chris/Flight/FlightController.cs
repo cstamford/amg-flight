@@ -8,8 +8,10 @@ namespace cst.Flight
             : base(controller)
         {}
 
-        public void start()
-        { 
+        public void start(TransitionData data)
+        {
+            Debug.Log(GetType().Name + " received transition data: "
+                + data.velocity);
         }
 
         public void update()
@@ -34,6 +36,11 @@ namespace cst.Flight
         public void collisionExit(Collision other)
         {
             Debug.Log(GetType().Name + " collisionExit()");
+        }
+
+        public TransitionData transitionData()
+        {
+            return new TransitionData { velocity = new Vector3() };
         }
     }
 }

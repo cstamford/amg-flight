@@ -15,7 +15,7 @@ namespace cst.Flight
         private const float DECREMENT_VELOCITY = 25.0f;
         private const float RESTING_VELOCITY = 125.0f;
         private const float MAX_VELOCITY = RESTING_VELOCITY * 2.0f;
-        private const float MIN_VELOCITY = 25.0f;
+        private const float MIN_VELOCITY = 0.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
@@ -26,9 +26,12 @@ namespace cst.Flight
             : base(controller)
         {}
 
-        public void start()
+        public void start(TransitionData data)
         {
             m_forwardSpeed = RESTING_VELOCITY;
+
+            Debug.Log(GetType().Name + " received transition data: "
+                + data.velocity);
         }
 
         public void update()
@@ -65,6 +68,11 @@ namespace cst.Flight
         public void collisionExit(Collision other)
         {
             Debug.Log(GetType().Name + " collisionExit()");
+        }
+
+        public TransitionData transitionData()
+        {
+            return new TransitionData { velocity = transform.forward * m_forwardSpeed };
         }
 
         // Handles landing on the ground

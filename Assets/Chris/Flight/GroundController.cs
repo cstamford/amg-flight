@@ -8,24 +8,20 @@ namespace cst.Flight
     {
         private const float DEFAULT_HEIGHT = 32.0f;
         private const float START_FALL_VELOCITY = 50.0f;
+        private const float GLIDE_TRANSIFITION_MIN_VELOCITY = 100.0f;
         private const float MAX_FALL_VELOCTY = 250.0f;
         private const float MAX_FALL_TIME = 3.0f;
         private const float FORWARD_SPEED = 50.0f;
         private const float STRAFE_SPEED = 50.0f;
-        private const float TURN_SPEED = 90.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
         private float m_fallSpeed;
         private float m_fallTimer;
-        private float m_height;
-        private bool m_falling;
+        private readonly float m_height;
 
         public GroundController(SeraphController controller)
             : base(controller)
-        {}
-
-        public void start()
         {
             BoxCollider collider = transform.collider as BoxCollider;
 
@@ -33,6 +29,12 @@ namespace cst.Flight
                 m_height = collider.size.y + 1.0f;
             else
                 m_height = DEFAULT_HEIGHT + 1.0f;
+        }
+
+        public void start(TransitionData data)
+        {
+            Debug.Log(GetType().Name + " received transition data: " 
+                + data.velocity);
         }
 
         public void update()
@@ -44,12 +46,15 @@ namespace cst.Flight
             m_rotation.z = 0.0f;
 
             cameraControl();
-            checkFalling();
 
-            if (m_falling)
+            if (checkFalling())
             {
                 handleFalling();
                 handleTransition();
+            }
+            else
+            {
+                m_fallTimer = 0.0f;
             }
 
             handleMovement();
@@ -75,6 +80,11 @@ namespace cst.Flight
             Debug.Log(GetType().Name + " collisionExit()");
         }
 
+        public TransitionData transitionData()
+        {
+            return new TransitionData { velocity = new Vector3(0.0f, m_fallSpeed, 0.0f) };
+        }
+
         // Camera-mouse movement - only runs inside the editor
         [Conditional("UNITY_EDITOR")]
         private void cameraControl()
@@ -86,14 +96,11 @@ namespace cst.Flight
             m_rotation.y = rotationY;
         }
 
-        // Checks if we are currently falling, and resets the fall timer
-        private void checkFalling()
+        // Checks if we are currently falling
+        private bool checkFalling()
         {
-            m_falling = !Physics.Raycast(transform.position, 
+            return !Physics.Raycast(transform.position,
                 new Vector3(0.0f, -1.0f, 0.0f), m_height);
-
-            if (!m_falling)
-                m_fallTimer = 0.0f;
         }
 
         // Handles falling
@@ -142,10 +149,20 @@ namespace cst.Flight
             if (!Input.GetKey(KeyCode.Space))
                 return;
 
-            if (capability == SeraphCapability.GLIDE ||
-                capability == SeraphCapability.FLIGHT)
+            switch (capability)
             {
-                controller.setState(SeraphState.GLIDING);
+                case SeraphCapability.GLIDE:
+
+                    if (m_fallSpeed >= GLIDE_TRANSIFITION_MIN_VELOCITY)
+                        controller.setState(SeraphState.GLIDING);
+
+                    break;
+
+                case SeraphCapability.FLIGHT:
+
+                    controller.setState(SeraphState.GLIDING);
+
+                    break;
             }
         }
     }
