@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -8,7 +9,8 @@ namespace cst.Flight
     {
         private const float DEFAULT_HEIGHT = 32.0f;
         private const float START_FALL_VELOCITY = 50.0f;
-        private const float GLIDE_TRANSIFITION_MIN_VELOCITY = 100.0f;
+        private const float GLIDE_TRANSITION_MIN_VELOCITY = 100.0f;
+        private const float LANDING_TRANSITION_MAX_VELOCITY = 100.0f;
         private const float MAX_FALL_VELOCTY = 250.0f;
         private const float MAX_FALL_TIME = 3.0f;
         private const float FORWARD_SPEED = 50.0f;
@@ -17,6 +19,7 @@ namespace cst.Flight
         private Vector3 m_position;
         private Vector3 m_rotation;
         private float m_fallSpeed;
+        private float m_forwardTransitionSpeed;
         private float m_fallTimer;
         private readonly float m_height;
 
@@ -35,6 +38,10 @@ namespace cst.Flight
         {
             Debug.Log(GetType().Name + " received transition data: " 
                 + data.velocity);
+
+            // Extract the speed - component doesn't matter.
+            if (controller.getState() == SeraphState.LANDING)
+                m_forwardTransitionSpeed = data.velocity.x/transform.forward.x;
         }
 
         public void update()
@@ -45,7 +52,10 @@ namespace cst.Flight
             // Make sure there is no roll
             m_rotation.z = 0.0f;
 
-            cameraControl();
+            handleCamera();
+
+            if (controller.getState() == SeraphState.LANDING)
+                handleLandingTransition();
 
             if (checkFalling())
             {
@@ -87,13 +97,35 @@ namespace cst.Flight
 
         // Camera-mouse movement - only runs inside the editor
         [Conditional("UNITY_EDITOR")]
-        private void cameraControl()
+        private void handleCamera()
         {
             float rotationX = m_rotation.x - (Input.GetAxis("Mouse Y") * 5.0f);
             float rotationY = m_rotation.y + (Input.GetAxis("Mouse X") * 5.0f);
 
             m_rotation.x = rotationX;
             m_rotation.y = rotationY;
+        }
+
+        private void handleLandingTransition()
+        {
+            if (m_forwardTransitionSpeed > LANDING_TRANSITION_MAX_VELOCITY)
+                m_forwardTransitionSpeed = LANDING_TRANSITION_MAX_VELOCITY;
+
+            float step = LANDING_TRANSITION_MAX_VELOCITY*1.5f*Time.deltaTime;
+            m_forwardTransitionSpeed -= step;
+
+            if (m_forwardTransitionSpeed < step)
+            {
+                m_forwardTransitionSpeed = 0.0f;
+                controller.setState(SeraphState.GROUNDED);
+            }
+
+            Vector3 delta = transform.forward * m_forwardTransitionSpeed * Time.deltaTime;
+            // Strip the height component
+            delta.y = 0.0f;
+
+            m_position += delta;
+
         }
 
         // Checks if we are currently falling
@@ -153,7 +185,7 @@ namespace cst.Flight
             {
                 case SeraphCapability.GLIDE:
 
-                    if (m_fallSpeed >= GLIDE_TRANSIFITION_MIN_VELOCITY)
+                    if (m_fallSpeed >= GLIDE_TRANSITION_MIN_VELOCITY)
                         controller.setState(SeraphState.GLIDING);
 
                     break;

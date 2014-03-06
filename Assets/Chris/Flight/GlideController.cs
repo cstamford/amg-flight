@@ -28,10 +28,12 @@ namespace cst.Flight
 
         public void start(TransitionData data)
         {
-            m_forwardSpeed = RESTING_VELOCITY;
-
             Debug.Log(GetType().Name + " received transition data: "
                 + data.velocity);
+
+            m_forwardSpeed = data.velocity.y < RESTING_VELOCITY 
+                ? RESTING_VELOCITY 
+                : data.velocity.y;
         }
 
         public void update()
@@ -61,7 +63,7 @@ namespace cst.Flight
             if (Physics.Raycast(transform.position,
                 new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
             {
-                handleLanding();
+                controller.setState(SeraphState.LANDING);
             }
         }
 
@@ -73,12 +75,6 @@ namespace cst.Flight
         public TransitionData transitionData()
         {
             return new TransitionData { velocity = transform.forward * m_forwardSpeed };
-        }
-
-        // Handles landing on the ground
-        private void handleLanding()
-        {
-            controller.setState(SeraphState.GROUNDED);            
         }
 
         private void handleOrientationChange(float delta)

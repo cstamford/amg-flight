@@ -136,6 +136,7 @@ namespace cst.Flight
 
         public void setState(SeraphState state)
         {
+            Debug.Log("Seraph state set to " + state);
             m_state = state;
         }
 
