@@ -9,10 +9,8 @@ using UnityEngine;
 
 namespace cst.Flight
 {
-    // Controller determines state if NONE.
     public enum SeraphState
     {
-        NONE,
         GROUNDED,
         LANDING,
         GLIDING,
@@ -30,7 +28,7 @@ namespace cst.Flight
     {
         [SerializeField] private SeraphCapability m_capability 
             = SeraphCapability.NONE;
-        [SerializeField] private SeraphState m_state = SeraphState.NONE;
+        [SerializeField] private SeraphState m_state = SeraphState.GROUNDED;
 
         private GroundController m_groundController;
         private GlideController m_glideController;
@@ -75,12 +73,6 @@ namespace cst.Flight
 
             switch (m_state)
             {
-                case SeraphState.NONE:
-                    // TODO Determine new state automatically.
-                    setState(SeraphState.GROUNDED);            
-                    m_activeController = m_groundController;
-                    break;
-
                 case SeraphState.GLIDING:
                     m_activeController = m_glideController;
                     break;
