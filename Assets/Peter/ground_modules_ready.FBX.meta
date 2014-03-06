@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: d2e9d5ed589286e4bbeee975c928439a
 ModelImporter:
-  serializedVersion: 15
+  serializedVersion: 16
   fileIDToRecycleName:
     100000: Arch_001
     100002: Arch_fucked_001
@@ -102,4 +102,5 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  additionalBone: 0
   userData: 

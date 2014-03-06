@@ -2,14 +2,20 @@
 
 namespace cst.Flight
 {
+    public struct TransitionData
+    {
+        public Vector3 velocity { get; set; }
+    }
+
     public interface IControllerBase
     {
-        void start();
+        void start(TransitionData data);
         void update();
         void triggerEnter(Collider other);
         void triggerExit(Collider other);
         void collisionEnter(Collision other);
         void collisionExit(Collision other);
+        TransitionData transitionData();
     }
 
     public abstract class ControllerBase

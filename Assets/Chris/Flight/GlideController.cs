@@ -15,7 +15,7 @@ namespace cst.Flight
         private const float DECREMENT_VELOCITY = 25.0f;
         private const float RESTING_VELOCITY = 125.0f;
         private const float MAX_VELOCITY = RESTING_VELOCITY * 2.0f;
-        private const float MIN_VELOCITY = 25.0f;
+        private const float MIN_VELOCITY = 0.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
@@ -26,9 +26,14 @@ namespace cst.Flight
             : base(controller)
         {}
 
-        public void start()
+        public void start(TransitionData data)
         {
-            m_forwardSpeed = RESTING_VELOCITY;
+            Debug.Log(GetType().Name + " received transition data: "
+                + data.velocity);
+
+            m_forwardSpeed = data.velocity.y < RESTING_VELOCITY 
+                ? RESTING_VELOCITY 
+                : data.velocity.y;
         }
 
         public void update()
@@ -58,7 +63,7 @@ namespace cst.Flight
             if (Physics.Raycast(transform.position,
                 new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
             {
-                handleLanding();
+                controller.setState(SeraphState.LANDING);
             }
         }
 
@@ -67,10 +72,9 @@ namespace cst.Flight
             Debug.Log(GetType().Name + " collisionExit()");
         }
 
-        // Handles landing on the ground
-        private void handleLanding()
+        public TransitionData transitionData()
         {
-            controller.setState(SeraphState.GROUNDED);            
+            return new TransitionData { velocity = transform.forward * m_forwardSpeed };
         }
 
         private void handleOrientationChange(float delta)
