@@ -213,7 +213,7 @@ namespace cst.Flight
                 if (m_rotation.z - 180.0f < 0.0f)
                     m_rotation.z = 0.0f;
             }
-            else
+            else if (angle < 0.0f)
             {
                 m_rotation.z = Helpers.wrapAngle(m_rotation.z
                     - delta * RETURN_TURN_SPEED);
@@ -221,7 +221,6 @@ namespace cst.Flight
                 if (m_rotation.z - 180.0f > 0.0f)
                     m_rotation.z = 0.0f;
             }
-
         }
 
         // Handles moving forward
