@@ -1,4 +1,10 @@
-﻿// Authored by Sean
+﻿//==========================================================
+// Author: Sean Vieira
+// Version: 1.0
+// Function: Positions a crosshair in the centre of the 
+// screen. This is purely to aid with raycasting and 
+// object selection
+//==========================================================
 
 using UnityEngine;
 using System.Collections;
@@ -9,28 +15,28 @@ namespace sv
     {
         public Texture2D reticuleImage;
 
-        private Vector3 crosshairPos;
-        private float width, height;
+        private Vector3 m_crosshairPos;
+        private float m_width, m_height;
 
         // Initialise the variables;
         void Start()
         {
-            crosshairPos.x = 0;
-            crosshairPos.y = 0;
-            crosshairPos.z = 0;
+            m_crosshairPos.x = 0;
+            m_crosshairPos.y = 0;
+            m_crosshairPos.z = 0;
 
-            width = reticuleImage.width / 2.0f;
-            height = reticuleImage.height / 2.0f;
+            m_width = reticuleImage.width / 2.0f;
+            m_height = reticuleImage.height / 2.0f;
         }
 
         // Draws the crosshair onto the screen in the centre of the screen
         // TODO: Possibly set reticule to move with mouse/controller stick?
         void OnGUI()
         {
-            crosshairPos.x = (Screen.width / 2) - (reticuleImage.width / 2);
-            crosshairPos.y = (Screen.height / 2) - (reticuleImage.height / 2);
+            m_crosshairPos.x = (Screen.width / 2) - (reticuleImage.width / 2);
+            m_crosshairPos.y = (Screen.height / 2) - (reticuleImage.height / 2);
 
-            GUI.DrawTexture(new Rect(crosshairPos.x, crosshairPos.y, width, height), reticuleImage);
+            GUI.DrawTexture(new Rect(m_crosshairPos.x, m_crosshairPos.y, m_width, m_height), reticuleImage);
         }
     }
 }
