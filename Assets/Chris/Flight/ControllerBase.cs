@@ -4,7 +4,14 @@ namespace cst.Flight
 {
     public struct TransitionData
     {
-        public Vector3 velocity { get; set; }
+        public float velocity { get; set; }
+        public Vector3 direction { get; set; }
+
+        public override string ToString()
+        {
+            return "Direction: " + direction.ToString() +
+                   " Velocity: " + velocity;
+        }
     }
 
     public interface IControllerBase

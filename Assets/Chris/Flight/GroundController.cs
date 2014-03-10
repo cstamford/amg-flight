@@ -10,7 +10,9 @@ namespace cst.Flight
         private const float DEFAULT_HEIGHT = 32.0f;
         private const float START_FALL_VELOCITY = 50.0f;
         private const float GLIDE_TRANSITION_MIN_VELOCITY = 100.0f;
-        private const float LANDING_TRANSITION_MAX_VELOCITY = 100.0f;
+        private const float LANDING_TRANSITION_MAX_VELOCITY = 150.0f;
+        private const float LANDING_TRANSITION_TIME = 1.0f;
+        private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
         private const float MAX_FALL_VELOCTY = 250.0f;
         private const float MAX_FALL_TIME = 3.0f;
         private const float FORWARD_SPEED = 50.0f;
@@ -36,21 +38,16 @@ namespace cst.Flight
 
         public void start(TransitionData data)
         {
-            Debug.Log(GetType().Name + " received transition data: " 
-                + data.velocity);
+            Debug.Log(GetType().Name + " received transition data: " + data);
 
-            // Extract the speed - component doesn't matter.
             if (controller.getState() == SeraphState.LANDING)
-                m_forwardTransitionSpeed = data.velocity.x/transform.forward.x;
+                m_forwardTransitionSpeed = data.velocity;
         }
 
         public void update()
         {
             m_position = transform.position;
             m_rotation = transform.eulerAngles;
-
-            // Make sure there is no roll
-            m_rotation.z = 0.0f;
 
             handleCamera();
 
@@ -92,7 +89,11 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { velocity = new Vector3(0.0f, m_fallSpeed, 0.0f) };
+            return new TransitionData
+            {
+                direction = new Vector3(0.0f, -1.0f, 0.0f), 
+                velocity = m_fallSpeed
+            };
         }
 
         // Camera-mouse movement - only runs inside the editor
@@ -108,24 +109,56 @@ namespace cst.Flight
 
         private void handleLandingTransition()
         {
+            handleLandingTransitionSpeed();
+            handleLandingTransitionRoll();
+
+            if (m_rotation.z == 0.0f && m_forwardTransitionSpeed == 0.0f)
+                controller.setState(SeraphState.GROUNDED);
+        }
+
+        private void handleLandingTransitionSpeed()
+        {
             if (m_forwardTransitionSpeed > LANDING_TRANSITION_MAX_VELOCITY)
                 m_forwardTransitionSpeed = LANDING_TRANSITION_MAX_VELOCITY;
 
-            float step = LANDING_TRANSITION_MAX_VELOCITY*1.5f*Time.deltaTime;
-            m_forwardTransitionSpeed -= step;
+            float speedStep = (LANDING_TRANSITION_MAX_VELOCITY /
+                LANDING_TRANSITION_TIME) * Time.deltaTime;
 
-            if (m_forwardTransitionSpeed < step)
-            {
+            m_forwardTransitionSpeed -= speedStep;
+
+            if (m_forwardTransitionSpeed < speedStep)
                 m_forwardTransitionSpeed = 0.0f;
-                controller.setState(SeraphState.GROUNDED);
-            }
 
-            Vector3 delta = transform.forward * m_forwardTransitionSpeed * Time.deltaTime;
+            Vector3 delta = transform.forward * m_forwardTransitionSpeed *
+                Time.deltaTime;
+
             // Strip the height component
             delta.y = 0.0f;
 
             m_position += delta;
+        }
 
+        private void handleLandingTransitionRoll()
+        {
+            float angleStep = LANDING_TRANSITION_RETURN_ROLL_SPEED *
+                Time.deltaTime;
+
+            float angle = m_rotation.z - 180.0f;
+
+            if (angle > 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z + angleStep);
+
+                if (m_rotation.z - 180.0f < 0.0f)
+                    m_rotation.z = 0.0f;
+            }
+            else if (angle < 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z - angleStep);
+
+                if (m_rotation.z - 180.0f > 0.0f)
+                    m_rotation.z = 0.0f;
+            }
         }
 
         // Checks if we are currently falling
