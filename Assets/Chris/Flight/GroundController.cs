@@ -10,8 +10,8 @@ namespace cst.Flight
         private const float DEFAULT_HEIGHT = 32.0f;
         private const float START_FALL_VELOCITY = 50.0f;
         private const float GLIDE_TRANSITION_MIN_VELOCITY = 100.0f;
-        private const float LANDING_TRANSITION_MAX_VELOCITY = 100.0f;
-        private const float LANDING_TRANSITION_TIME = 2.0f;
+        private const float LANDING_TRANSITION_MAX_VELOCITY = 150.0f;
+        private const float LANDING_TRANSITION_TIME = 1.0f;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
         private const float MAX_FALL_VELOCTY = 250.0f;
         private const float MAX_FALL_TIME = 3.0f;
@@ -38,12 +38,10 @@ namespace cst.Flight
 
         public void start(TransitionData data)
         {
-            Debug.Log(GetType().Name + " received transition data: " 
-                + data.velocity);
+            Debug.Log(GetType().Name + " received transition data: " + data);
 
-            // Extract the speed - component doesn't matter.
             if (controller.getState() == SeraphState.LANDING)
-                m_forwardTransitionSpeed = data.velocity.x/transform.forward.x;
+                m_forwardTransitionSpeed = data.velocity;
         }
 
         public void update()
@@ -91,7 +89,11 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { velocity = new Vector3(0.0f, m_fallSpeed, 0.0f) };
+            return new TransitionData
+            {
+                direction = new Vector3(0.0f, -1.0f, 0.0f), 
+                velocity = m_fallSpeed
+            };
         }
 
         // Camera-mouse movement - only runs inside the editor
@@ -119,8 +121,8 @@ namespace cst.Flight
             if (m_forwardTransitionSpeed > LANDING_TRANSITION_MAX_VELOCITY)
                 m_forwardTransitionSpeed = LANDING_TRANSITION_MAX_VELOCITY;
 
-            float speedStep = LANDING_TRANSITION_MAX_VELOCITY *
-                LANDING_TRANSITION_TIME * Time.deltaTime;
+            float speedStep = (LANDING_TRANSITION_MAX_VELOCITY /
+                LANDING_TRANSITION_TIME) * Time.deltaTime;
 
             m_forwardTransitionSpeed -= speedStep;
 

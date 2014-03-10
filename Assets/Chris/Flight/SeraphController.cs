@@ -89,7 +89,8 @@ namespace cst.Flight
             if (lastController != m_activeController)
             {
                 TransitionData data = lastController == null 
-                    ? new TransitionData { velocity = new Vector3() } 
+                    ? new TransitionData 
+                    { direction = new Vector3(), velocity = 0.0f } 
                     : lastController.transitionData();
 
                 m_activeController.start(data);

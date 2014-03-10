@@ -28,12 +28,11 @@ namespace cst.Flight
 
         public void start(TransitionData data)
         {
-            Debug.Log(GetType().Name + " received transition data: "
-                + data.velocity);
+            Debug.Log(GetType().Name + " received transition data: " + data);
 
-            m_forwardSpeed = data.velocity.y < RESTING_VELOCITY 
-                ? RESTING_VELOCITY 
-                : data.velocity.y;
+            m_forwardSpeed = data.velocity < RESTING_VELOCITY 
+                ? RESTING_VELOCITY
+                : data.velocity;
         }
 
         public void update()
@@ -74,7 +73,11 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { velocity = transform.forward * m_forwardSpeed };
+            return new TransitionData
+            {
+                direction = transform.forward,
+                velocity = m_forwardSpeed
+            };
         }
 
         private void handleOrientationChange(float delta)

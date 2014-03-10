@@ -10,8 +10,7 @@ namespace cst.Flight
 
         public void start(TransitionData data)
         {
-            Debug.Log(GetType().Name + " received transition data: "
-                + data.velocity);
+            Debug.Log(GetType().Name + " received transition data: " + data);
         }
 
         public void update()
@@ -40,7 +39,7 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { velocity = new Vector3() };
+            return new TransitionData { direction = new Vector3() };
         }
     }
 }
