@@ -13,8 +13,11 @@ namespace sv
 {
     public class PuzzleKeypad : MonoBehaviour
     {
-        [SerializeField] private string keypadPassword; 
-       
+        [SerializeField] private string keypadPassword;
+
+        private const int m_numOfKeys = 10;
+        public GameObject[] m_keys;
+
         private string m_userPassword;
         private KeypadGUI m_keypadGUI;
         private bool m_trigger;
@@ -25,6 +28,7 @@ namespace sv
             m_trigger = false;
             m_keypadGUI = GetComponent<KeypadGUI>();
             m_userPassword = "";
+
         }
 
         // Update is called once per frame
@@ -46,6 +50,8 @@ namespace sv
                     Debug.Log("It's a match!");
                 }
             }
+
+            
             
         }
 
@@ -77,6 +83,11 @@ namespace sv
         public void DisplayGUI(bool b)
         {
             m_keypadGUI.ShowGUI(b);
+        }
+
+        public int GetNumOfKeys()
+        {
+            return m_numOfKeys;
         }
     }
 }
