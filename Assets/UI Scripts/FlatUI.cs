@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FlatUI : MonoBehaviour {
 	
@@ -30,6 +31,9 @@ public class FlatUI : MonoBehaviour {
 	public GUIStyle cursorStyle;
 	public GUIStyle borderStyle;
 
+	//	Apparently Rects don't like beign in containers...
+	List<Rect> cloudRect;
+
     enum Fading { fadeIn, fadeOut, noFade};
     Fading fading;
 
@@ -37,6 +41,14 @@ public class FlatUI : MonoBehaviour {
     float UIOpacity;
 
     float prevTime;
+
+	float cloudWidth;
+	float cloudHeight;
+
+	float maxCloudSpeed;
+	float minCloudSpeed;
+
+	List<float> cloudSpeed;
 	
 	// Use this for initialization
 	void Start ()
@@ -50,7 +62,45 @@ public class FlatUI : MonoBehaviour {
         fading = Fading.noFade;
         fadeRate = 2.0f; // alpha per second
         UIOpacity = 0.0f;
-        prevTime = Time.realtimeSinceStartup;
+		prevTime = Time.realtimeSinceStartup;
+
+		//	Cloud rect dimensions will be 3/4 screen width by 1/2 screen height
+		//	However, clouds maintain aspect ratio, so this won't be too important
+		
+		cloudWidth = Screen.width * 3 / 4;
+		cloudHeight = Screen.height / 2;
+		
+		//	Clouds will travel between 25 and 50 pixels per second
+		minCloudSpeed = 25.0f;
+		maxCloudSpeed = 50.0f;
+		
+		cloudSpeed = new List<float>(4);
+		
+		cloudRect = new List<Rect>(4);
+
+		for(int i = 0; i < 4; i++)
+		{
+			cloudSpeed.Add(0.0f);
+			cloudRect.Add(new Rect());
+		}
+	}
+
+	void resetClouds()
+	{
+		//	Clouds 1 and 2 will spawn randomly on the left
+		//	Clouds 3 and 4 will spawn randomly on the right
+		
+		cloudRect[0] = new Rect(-cloudWidth, Random.value*(Screen.height-cloudHeight), cloudWidth, cloudHeight);
+		cloudRect[1] = new Rect(-cloudWidth, Random.value*(Screen.height-cloudHeight), cloudWidth, cloudHeight);
+		
+		cloudRect[2] = new Rect(Screen.width, Random.value*(Screen.height-cloudHeight), cloudWidth, cloudHeight);
+		cloudRect[3] = new Rect(Screen.width, Random.value*(Screen.height-cloudHeight), cloudWidth, cloudHeight);
+		
+		cloudSpeed[0] = Random.value*(maxCloudSpeed-minCloudSpeed)+minCloudSpeed;
+		cloudSpeed[1] = Random.value*(maxCloudSpeed-minCloudSpeed)+minCloudSpeed;
+		
+		cloudSpeed[2] = -(Random.value*(maxCloudSpeed-minCloudSpeed)+minCloudSpeed);
+		cloudSpeed[3] = -(Random.value*(maxCloudSpeed-minCloudSpeed)+minCloudSpeed);
 	}
 	
 	// Update is called once per frame
@@ -109,6 +159,27 @@ public class FlatUI : MonoBehaviour {
                 }
 
             }
+
+			for(int i = 0; i < 4; i++)
+			{
+				Rect val = cloudRect[i];
+				val.x += cloudSpeed[i]*(Time.realtimeSinceStartup-prevTime);
+				cloudRect[i] = val;
+			}
+
+			//	If all clouds are off screen, then reset all clouds
+			bool reset = true;
+			Rect screen = new Rect(0, 0, Screen.width, Screen.height);
+			foreach(Rect r in cloudRect)
+			{
+				if(r.x > screen.width) continue;
+				if(r.x + r.width < 0.0f) continue;
+				reset = false;
+			}
+			if(reset == true)
+			{
+				resetClouds();
+			}
         }
 
         switch (fading)
@@ -143,6 +214,7 @@ public class FlatUI : MonoBehaviour {
             UIOpacity = 0.0f;
         }
         cursorPosition = CursorPosition.resume;
+		resetClouds();
     }
 
     void resume()
@@ -167,10 +239,10 @@ public class FlatUI : MonoBehaviour {
 			
             GUI.DrawTexture(new Rect(0, 0, sw, sh), backgroundTexture);
 			
-			GUI.DrawTexture(new Rect(0, 0, sw/2, sh/2), cloud1Texture, ScaleMode.ScaleToFit, true);
-			GUI.DrawTexture(new Rect(sw/2, 0, sw/2, sh/2), cloud2Texture, ScaleMode.ScaleToFit, true);
-            GUI.DrawTexture(new Rect(0, sh / 2, sw / 2, sh / 2), cloud3Texture, ScaleMode.ScaleToFit, true);
-			GUI.DrawTexture(new Rect(sw/2, sh/2, sw/2, sh/2), cloud4Texture, ScaleMode.ScaleToFit, true);
+			GUI.DrawTexture(cloudRect[0], cloud1Texture, ScaleMode.ScaleToFit, true);
+			GUI.DrawTexture(cloudRect[1], cloud2Texture, ScaleMode.ScaleToFit, true);
+			GUI.DrawTexture(cloudRect[2], cloud3Texture, ScaleMode.ScaleToFit, true);
+			GUI.DrawTexture(cloudRect[3], cloud4Texture, ScaleMode.ScaleToFit, true);
 
             GUI.DrawTexture(new Rect(0, sh * 7 / 8, sw, sh / 8), borderTexture);
 			
