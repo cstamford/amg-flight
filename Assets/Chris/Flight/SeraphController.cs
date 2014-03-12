@@ -33,8 +33,10 @@ namespace cst.Flight
         private GroundController m_groundController;
         private GlideController m_glideController;
         private FlightController m_flightController;
-
         private IControllerBase m_activeController;
+
+        private bool m_ambientSoundPlaying = false;
+        private AudioSource m_ambientSound;
 
         public void Start()
         {
@@ -63,8 +65,11 @@ namespace cst.Flight
             }
 
             m_groundController = new GroundController(this);
-            m_glideController = new GlideController(this);
+            m_glideController  = new GlideController(this);
             m_flightController = new FlightController(this);
+
+            m_ambientSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_ambientSound.clip = (AudioClip)Resources.Load("Ambient");
         }
 
         public void Update()
@@ -96,6 +101,7 @@ namespace cst.Flight
                 m_activeController.start(data);
             }
 
+            handleAudio();
             m_activeController.update();
         }
 
@@ -146,6 +152,16 @@ namespace cst.Flight
         public Transform getTransform()
         {
             return transform;
+        }
+
+        private void handleAudio()
+        {
+            if (!m_ambientSoundPlaying)
+            {
+                m_ambientSound.loop = true;
+                m_ambientSound.Play();
+                m_ambientSoundPlaying = true;
+            }
         }
     }
 }

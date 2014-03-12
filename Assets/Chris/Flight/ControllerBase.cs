@@ -9,8 +9,7 @@ namespace cst.Flight
 
         public override string ToString()
         {
-            return "Direction: " + direction.ToString() +
-                   " Velocity: " + velocity;
+            return "Direction: " + direction + " Velocity: " + velocity;
         }
     }
 

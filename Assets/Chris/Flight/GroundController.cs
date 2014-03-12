@@ -25,6 +25,11 @@ namespace cst.Flight
         private float m_fallTimer;
         private readonly float m_height;
 
+        private bool m_walking;
+        private bool m_falling;
+        private bool m_walkSoundPlaying;
+        private readonly AudioSource m_walkSound;
+
         public GroundController(SeraphController controller)
             : base(controller)
         {
@@ -34,6 +39,9 @@ namespace cst.Flight
                 m_height = collider.size.y + 1.0f;
             else
                 m_height = DEFAULT_HEIGHT + 1.0f;
+
+            m_walkSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_walkSound.clip = (AudioClip)Resources.Load("footsteps-1");
         }
 
         public void start(TransitionData data)
@@ -48,13 +56,14 @@ namespace cst.Flight
         {
             m_position = transform.position;
             m_rotation = transform.eulerAngles;
+            m_falling = checkFalling();
 
             handleCamera();
 
             if (controller.getState() == SeraphState.LANDING)
                 handleLandingTransition();
 
-            if (checkFalling())
+            if (m_falling)
             {
                 handleFalling();
                 handleTransition();
@@ -65,6 +74,7 @@ namespace cst.Flight
             }
 
             handleMovement();
+            handleAudio();
         }
 
         public void triggerEnter(Collider other)
@@ -94,6 +104,38 @@ namespace cst.Flight
                 direction = new Vector3(0.0f, -1.0f, 0.0f), 
                 velocity = m_fallSpeed
             };
+        }
+
+        private void handleAudio()
+        {
+            if (!m_falling)
+            {
+                if (m_walking)
+                {
+                    if (!m_walkSoundPlaying)
+                    {
+                        m_walkSound.loop = true;
+                        m_walkSound.playOnAwake = false;
+                        m_walkSound.Play();
+                        m_walkSoundPlaying = true;
+                    }
+                }
+                else
+                {
+                    if (m_walkSoundPlaying)
+                    {
+                        m_walkSound.loop = false;
+                        m_walkSound.playOnAwake = false;
+                        m_walkSound.Stop();
+                        m_walkSoundPlaying = false;
+                    }
+                }
+            }
+
+            if (m_falling)
+            {
+                m_walkSound.Stop();
+            }
         }
 
         // Camera-mouse movement - only runs inside the editor
@@ -192,18 +234,33 @@ namespace cst.Flight
             Vector3 rightVector = transform.right;
             rightVector.y = 0.0f;
 
-            if (Input.GetKey(KeyCode.W))
-                m_position += forwardVector * FORWARD_SPEED * Time.deltaTime;
+            bool walkedThisFrame = false;
 
-            if (Input.GetKey(KeyCode.S))
-                m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime;
+            if (Input.GetKey(KeyCode.W) || Input.GetAxis("ControllerVertical") < 0)
+            {
+                m_position += forwardVector*FORWARD_SPEED*Time.deltaTime;
+                walkedThisFrame = true;
+            }
 
-            if (Input.GetKey(KeyCode.D))
-                m_position += rightVector * STRAFE_SPEED * Time.deltaTime;
+            if (Input.GetKey(KeyCode.S) || Input.GetAxis("ControllerVertical") > 0)
+            {
+                m_position -= forwardVector*FORWARD_SPEED*Time.deltaTime;
+                walkedThisFrame = true;
+            }
 
-            if (Input.GetKey(KeyCode.A))
-                m_position -= rightVector * STRAFE_SPEED * Time.deltaTime;
+            if (Input.GetKey(KeyCode.D) || Input.GetAxis("ControllerHorizontal") > 0)
+            {
+                m_position += rightVector*STRAFE_SPEED*Time.deltaTime;
+                walkedThisFrame = true;
+            }
 
+            if (Input.GetKey(KeyCode.A) || Input.GetAxis("ControllerHorizontal") < 0)
+            {
+                m_position -= rightVector*STRAFE_SPEED*Time.deltaTime;
+                walkedThisFrame = true;
+            }
+
+            m_walking = walkedThisFrame;
             transform.eulerAngles = m_rotation;
             transform.position = m_position;
         }

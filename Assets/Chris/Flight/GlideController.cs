@@ -22,9 +22,15 @@ namespace cst.Flight
 
         private float m_forwardSpeed;
 
+        private bool m_glideSoundPlaying = false;
+        private readonly AudioSource m_glideSound;
+
         public GlideController(SeraphController controller)
             : base(controller)
-        {}
+        {
+            m_glideSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_glideSound.clip = (AudioClip)Resources.Load("Gliding");
+        }
 
         public void start(TransitionData data)
         {
@@ -42,6 +48,7 @@ namespace cst.Flight
 
             handleOrientationChange(Time.deltaTime);
             handleMoveForward(Time.deltaTime);
+            handleAudio();
         }
 
         public void triggerEnter(Collider other)
@@ -62,6 +69,7 @@ namespace cst.Flight
             if (Physics.Raycast(transform.position,
                 new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
             {
+                stopAudio();
                 controller.setState(SeraphState.LANDING);
             }
         }
@@ -80,6 +88,23 @@ namespace cst.Flight
             };
         }
 
+        private void handleAudio()
+        {
+            if (!m_glideSoundPlaying)
+            {
+                m_glideSound.loop = true;
+                m_glideSound.playOnAwake = false;
+                m_glideSound.Play();
+                m_glideSoundPlaying = true;
+            }
+        }
+
+        private void stopAudio()
+        {
+            m_glideSound.Stop();
+            m_glideSoundPlaying = false;
+        }
+
         private void handleOrientationChange(float delta)
         {
             handlePitchChange(delta);
@@ -92,11 +117,11 @@ namespace cst.Flight
         // Handles the change in pitch based on the user input
         private void handlePitchChange(float delta)
         {
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.W) || Input.GetAxis("ControllerVertical") < 0)
             {
                 turnVerticalDown(delta);
             }
-            else if (Input.GetKey(KeyCode.S))
+            else if (Input.GetKey(KeyCode.S) || Input.GetAxis("ControllerVertical") > 0)
             {
                 turnVerticalUp(delta);
             }
@@ -121,7 +146,7 @@ namespace cst.Flight
         // Handles the change in roll based on the user input
         private void handleRollChange(float delta)
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) || Input.GetAxis("ControllerHorizontal") < 0)
             {
                 if (m_rotation.z < 0.0f)
                 {
@@ -132,7 +157,7 @@ namespace cst.Flight
                     turnHorizontalLeft(delta);
                 }
             }
-            else if (Input.GetKey(KeyCode.D))
+            else if (Input.GetKey(KeyCode.D) || Input.GetAxis("ControllerHorizontal") > 0)
             {
                 if (m_rotation.z > 0.0f)
                 {
@@ -255,7 +280,10 @@ namespace cst.Flight
 
             // Drop out of flight if we stall
             if (m_forwardSpeed < MIN_VELOCITY)
+            {
+                stopAudio();
                 controller.setState(SeraphState.GROUNDED);
+            }
 
             m_position += transform.forward * m_forwardSpeed
                 * delta;
