@@ -139,7 +139,7 @@ namespace cst.Flight
         }
 
         // Camera-mouse movement - only runs inside the editor
-        [Conditional("UNITY_EDITOR")]
+        //[Conditional("UNITY_EDITOR")]
         private void handleCamera()
         {
             float rotationX = m_rotation.x - (Input.GetAxis("Mouse Y") * 5.0f);
