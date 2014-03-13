@@ -14,6 +14,7 @@ namespace sv
     public class ObjectSelection : MonoBehaviour
     {
         [SerializeField] private float m_rayLength;
+        [SerializeField] private GameObject m_cursor;
 
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
@@ -24,16 +25,29 @@ namespace sv
         // Use this for initialization
         void Start()
         {
-            /* Empty */
+            if (!m_cursor)
+            {
+                Debug.Log(this.name + " has no cursor attached.");
+            }
+            else
+            {
+                m_cursor.SetActive(false);
+            }
+
+
         }
 
         // Update is called once per frame
         void Update()
         {
+            m_cursor.SetActive(false);
+            
             if (CastRay())
             {
                 m_selected = m_hit.collider.gameObject;
 
+                
+                
                 if (!m_selected)
                 {
                     if (Input.GetMouseButtonDown(0))
@@ -42,14 +56,17 @@ namespace sv
                     }
                 }
                 else
-                {
+                {                    
+                    
                     // Check for keypad/keypad key objects
                     if (m_selected.tag == "keypad")
                     {
+                        m_cursor.SetActive(true);
                         AcquireKeypadObject(m_selected);
                     }
                     else if (m_selected.tag == "keypad key")
                     {
+                        m_cursor.SetActive(true);
                         AcquireKeypadButtonObject(m_selected);
                     }
                     

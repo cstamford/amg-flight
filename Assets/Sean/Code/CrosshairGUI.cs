@@ -33,8 +33,8 @@ namespace sv
         // TODO: Possibly set reticule to move with mouse/controller stick?
         void OnGUI()
         {
-            m_crosshairPos.x = (Screen.width / 2) - (m_reticuleImage.width / 2);
-            m_crosshairPos.y = (Screen.height / 2) - (m_reticuleImage.height / 2);
+            m_crosshairPos.x = (Screen.width / 2);
+            m_crosshairPos.y = (Screen.height / 2);
 
             GUI.DrawTexture(new Rect(m_crosshairPos.x, m_crosshairPos.y, m_width, m_height), m_reticuleImage);
         }
