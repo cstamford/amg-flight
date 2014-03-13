@@ -13,12 +13,13 @@ namespace sv
 {
     public class ObjectSelection : MonoBehaviour
     {
-        [SerializeField] private float rayLength;
+        [SerializeField] private float m_rayLength;
 
-        private RaycastHit hit;
-        private Ray crosshairRay;
-        private PuzzleKeypad keypad;
-        private GameObject selected;
+        private RaycastHit m_hit;
+        private Ray m_crosshairRay;
+        private PuzzleKeypad m_keypad;
+        private KeypadKeyClass m_keyPressed;
+        private GameObject m_selected;
 
         // Use this for initialization
         void Start()
@@ -31,9 +32,9 @@ namespace sv
         {
             if (CastRay())
             {
-                selected = hit.collider.gameObject;
+                m_selected = m_hit.collider.gameObject;
 
-                if (!selected)
+                if (!m_selected)
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
@@ -42,35 +43,42 @@ namespace sv
                 }
                 else
                 {
-
-                    if (selected.tag == "keypad")
+                    // Check for keypad/keypad key objects
+                    if (m_selected.tag == "keypad")
                     {
-                        if (Input.GetMouseButtonDown(0))
+                        AcquireKeypadObject(m_selected);
+                    }
+                    else if (m_selected.tag == "keypad key")
+                    {
+                        AcquireKeypadButtonObject(m_selected);
+                    }
+                    
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("Ray intersects with " + m_selected.name);
+                        
+                        if (m_selected.tag == "keypad key")
                         {
-                            Debug.Log("Ray intersects with " + selected.name);
-
-                            if (!keypad)
-                            {
-                                AcquireKeypadObject(selected);
-                            }
-
-                            keypad.DisplayTextTip(true);
+                            m_keypad.AddKeyToPassword(m_keyPressed.GetKeyValue());
                         }
-                        else if (Input.GetKeyDown(KeyCode.E))
-                        {
-                            if (!keypad)
-                            {
-                                AcquireKeypadObject(selected);
-                            }
-
-                            keypad.DisplayGUI(true);
-                        }
+                        
                     }
                     else
                     {
-                        if (Input.GetMouseButtonDown(0))
+                        if (Input.GetKeyDown(KeyCode.E))
                         {
-                            Debug.Log("Ray intersects with " + selected.name);
+                            if (m_selected.tag == "keypad")
+                            {
+                                AcquireKeypadObject(m_selected);
+
+                                m_keypad.DisplayTextTip(true);
+                            }
+                            else if (m_selected.tag == "keypad key")
+                            {
+                                AcquireKeypadObject(m_keyPressed.GetParent());
+
+                                m_keypad.DisplayTextTip(true);
+                            }
                         }
                     }
                 }
@@ -87,11 +95,11 @@ namespace sv
         // Casts a ray forward from the camera, returns true if intersection
         bool CastRay()
         {
-            crosshairRay = new Ray(transform.position, transform.forward);
+            m_crosshairRay = new Ray(transform.position, transform.forward);
 
-            Debug.DrawRay(transform.position, transform.forward * rayLength);
+            Debug.DrawRay(transform.position, transform.forward * m_rayLength);
 
-            if (Physics.Raycast(crosshairRay, out hit, rayLength))
+            if (Physics.Raycast(m_crosshairRay, out m_hit, m_rayLength))
             {
                 return true;
             }
@@ -102,10 +110,42 @@ namespace sv
         // Acquire the keypad component from target GameObject            
         void AcquireKeypadObject(GameObject target)
         {
-            if (target.tag == "keypad")
+            PuzzleKeypad temp = target.GetComponent<PuzzleKeypad>();
+
+            if (!m_keypad)
             {
-                keypad = target.GetComponent<PuzzleKeypad>();
-                Debug.Log("Keypad variable acquired");
+                m_keypad = temp;
+            }
+            else
+            {
+                if (m_keypad != temp)
+                {
+                    m_keypad = temp;
+                }
+            }
+        }
+
+        // Acquire the keypad key component from target GameObject  
+        void AcquireKeypadButtonObject(GameObject target)
+        {
+            KeypadKeyClass temp = target.GetComponent<KeypadKeyClass>();
+
+            if (!m_keyPressed)
+            {
+                m_keyPressed = temp;
+            }
+            else
+            {
+                if (m_keyPressed != temp)
+                {
+                    m_keyPressed = temp;
+                }
+            }
+
+            
+            if (!m_keypad)
+            {
+                AcquireKeypadObject(m_keyPressed.GetParent());
             }
         }
     }

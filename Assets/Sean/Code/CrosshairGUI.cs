@@ -13,7 +13,7 @@ namespace sv
 {
     public class CrosshairGUI : MonoBehaviour
     {
-        public Texture2D reticuleImage;
+        [SerializeField] public Texture2D m_reticuleImage;
 
         private Vector3 m_crosshairPos;
         private float m_width, m_height;
@@ -25,18 +25,18 @@ namespace sv
             m_crosshairPos.y = 0;
             m_crosshairPos.z = 0;
 
-            m_width = reticuleImage.width / 2.0f;
-            m_height = reticuleImage.height / 2.0f;
+            m_width = m_reticuleImage.width / 2.0f;
+            m_height = m_reticuleImage.height / 2.0f;
         }
 
         // Draws the crosshair onto the screen in the centre of the screen
         // TODO: Possibly set reticule to move with mouse/controller stick?
         void OnGUI()
         {
-            m_crosshairPos.x = (Screen.width / 2) - (reticuleImage.width / 2);
-            m_crosshairPos.y = (Screen.height / 2) - (reticuleImage.height / 2);
+            m_crosshairPos.x = (Screen.width / 2) - (m_reticuleImage.width / 2);
+            m_crosshairPos.y = (Screen.height / 2) - (m_reticuleImage.height / 2);
 
-            GUI.DrawTexture(new Rect(m_crosshairPos.x, m_crosshairPos.y, m_width, m_height), reticuleImage);
+            GUI.DrawTexture(new Rect(m_crosshairPos.x, m_crosshairPos.y, m_width, m_height), m_reticuleImage);
         }
     }
 }

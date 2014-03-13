@@ -14,10 +14,10 @@ namespace sv
 {
     public class KeypadGUI : MonoBehaviour
     {
-        public GUIText textTip;
-        [SerializeField] private float guiWidth;
-        [SerializeField] private float guiHeight;
-        [SerializeField] private Vector3 guiPosition;
+        [SerializeField] private GUIText m_textTip, m_passwordMatch, m_passwordIncorrect;
+        [SerializeField] private float m_guiWidth;
+        [SerializeField] private float m_guiHeight;
+        [SerializeField] private Vector3 m_guiPosition;
 
         private bool m_isEnabled;
         private bool m_passwordEntered;
@@ -29,8 +29,8 @@ namespace sv
         {
             m_isEnabled = false;
             m_passwordEntered = false;
-            m_pos.x = (Screen.width * guiPosition.x) - (guiWidth / 2);
-            m_pos.y = Screen.height - ((Screen.height * guiPosition.y) - (guiHeight / 2));
+            m_pos.x = (Screen.width * m_guiPosition.x) - (m_guiWidth / 2);
+            m_pos.y = Screen.height - ((Screen.height * m_guiPosition.y) - (m_guiHeight / 2));
             m_pos.z = 0.0f;
 
             m_input = "";
@@ -56,7 +56,7 @@ namespace sv
                 else
                 {                    
                     // Limit text field to numbers only
-                    m_input = GUI.TextField(new Rect(m_pos.x, m_pos.y, guiWidth, guiHeight), m_input, 10);
+                    m_input = GUI.TextField(new Rect(m_pos.x, m_pos.y, m_guiWidth, m_guiHeight), m_input, 10);
                     m_input = Regex.Replace(m_input, @"[^0-9]", "");
 
                     m_passwordEntered = false;
@@ -76,7 +76,17 @@ namespace sv
 
         public void ShowTextTip(bool b)
         {
-            textTip.enabled = b;
+            m_textTip.enabled = b;
+        }
+
+        public void ShowIncorrectPasswordText(bool b)
+        {
+            m_passwordIncorrect.enabled = b;
+        }
+
+        public void ShowCorrectPasswordText(bool b)
+        {
+            m_passwordMatch.enabled = b;
         }
 
         public string GetInput()
