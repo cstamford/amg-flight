@@ -8,7 +8,8 @@ public class DoorTrigger : MonoBehaviour {
 	void OnTriggerEnter(Collider col)
 	{
 		print ("DoorTrigger enter");
-		if(col.gameObject.tag == "MainCamera")
+
+		if(col.gameObject.tag == "Player")
 		{
 			print ("Warp to " + warp);
 			Application.LoadLevel(warp);

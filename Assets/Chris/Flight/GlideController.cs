@@ -4,25 +4,23 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
-        private const float LANDING_DISTANCE = 32.0f;
-        private const float MAX_ROLL_ANGLE = 37.5f;
-        private const float MAX_PITCH_ANGLE = 65.0f;
-        private const float TURN_TIGHTNESS = 2.0f;
-        private const float INCREMENT_TURN_SPEED = 35.0f;
-        private const float RETURN_TURN_SPEED = 30.0f;
+        private const float LANDING_DISTANCE      = 32.0f;
+        private const float MAX_ROLL_ANGLE        = 37.5f;
+        private const float MAX_PITCH_ANGLE       = 65.0f;
+        private const float TURN_TIGHTNESS        = 2.0f;
+        private const float INCREMENT_TURN_SPEED  = 35.0f;
+        private const float RETURN_TURN_SPEED     = 30.0f;
         private const float INCREMENT_PITCH_SPEED = 45.0f;
-        private const float INCREMENT_VELOCITY = 40.0f;
-        private const float DECREMENT_VELOCITY = 25.0f;
-        private const float RESTING_VELOCITY = 125.0f;
-        private const float MAX_VELOCITY = RESTING_VELOCITY * 2.0f;
-        private const float MIN_VELOCITY = 0.0f;
+        private const float INCREMENT_VELOCITY    = 40.0f;
+        private const float DECREMENT_VELOCITY    = 25.0f;
+        private const float RESTING_VELOCITY      = 125.0f;
+        private const float MAX_VELOCITY          = RESTING_VELOCITY * 2.0f;
+        private const float MIN_VELOCITY          = 0.0f;
 
-        private Vector3 m_position;
-        private Vector3 m_rotation;
-
-        private float m_forwardSpeed;
-
-        private bool m_glideSoundPlaying = false;
+        private Vector3              m_position;
+        private Vector3              m_rotation;
+        private float                m_forwardSpeed;
+        private bool                 m_glideSoundPlaying;
         private readonly AudioSource m_glideSound;
 
         public GlideController(SeraphController controller)
