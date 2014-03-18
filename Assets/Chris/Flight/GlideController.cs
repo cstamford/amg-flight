@@ -26,7 +26,7 @@ namespace cst.Flight
         public GlideController(SeraphController controller)
             : base(controller)
         {
-            m_glideSound      = (AudioSource)controller.getGameObject().AddComponent("AudioSource");
+            m_glideSound      = (AudioSource)gameObject.AddComponent("AudioSource");
             m_glideSound.clip = (AudioClip)Resources.Load("Gliding");
         }
 
@@ -68,7 +68,7 @@ namespace cst.Flight
                 new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
             {
                 stopAudio();
-                controller.setState(SeraphState.LANDING);
+                state = SeraphState.LANDING;
             }
         }
 
@@ -82,7 +82,7 @@ namespace cst.Flight
             return new TransitionData
             {
                 direction = transform.forward,
-                velocity = m_forwardSpeed
+                velocity  = m_forwardSpeed
             };
         }
 
@@ -280,7 +280,7 @@ namespace cst.Flight
             if (m_forwardSpeed < MIN_VELOCITY)
             {
                 stopAudio();
-                controller.setState(SeraphState.GROUNDED);
+                state = SeraphState.GROUNDED;
             }
 
             m_position += transform.forward * m_forwardSpeed

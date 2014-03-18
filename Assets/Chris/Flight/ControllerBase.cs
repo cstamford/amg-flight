@@ -32,21 +32,26 @@ namespace cst.Flight
             get { return m_controller; }
         }
 
-        protected Transform transform
-        {
-            get { return m_controller.getTransform(); }
-        }
-
         protected SeraphState state
         {
-            get { return m_controller.getState(); }
-            set { m_controller.setState(value); }
+            get { return m_controller.state; }
+            set { m_controller.state = value; }
         }
 
         protected SeraphCapability capability
         {
-            get { return m_controller.getCapability(); }
-            set { m_controller.setCapability(value); }
+            get { return m_controller.capability; }
+            set { m_controller.capability = value; }
+        }
+
+        protected Transform transform
+        {
+            get { return m_controller.transform; }
+        }
+
+        protected GameObject gameObject
+        {
+            get { return m_controller.gameObject; }
         }
 
         private readonly SeraphController m_controller;

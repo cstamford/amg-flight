@@ -26,7 +26,7 @@ namespace cst.Flight
 
     public class SeraphController : MonoBehaviour
     {
-        [SerializeField] private SeraphCapability m_capability = SeraphCapability.NONE;
+        [SerializeField] private SeraphCapability m_capability = SeraphCapability.GLIDE;
         [SerializeField] private SeraphState      m_state      = SeraphState.GROUNDED;
 
         private GroundController m_groundController;
@@ -126,35 +126,34 @@ namespace cst.Flight
             m_activeController.triggerExit(other);
         }
 
-        public SeraphState getState()
+        public SeraphState state
         {
-            return m_state;
+            get { return m_state; }
+            set
+            {
+                Debug.Log("Seraph state set to " + value);
+                m_state = value;
+            }
         }
 
-        public void setState(SeraphState state)
+        public SeraphCapability capability
         {
-            Debug.Log("Seraph state set to " + state);
-            m_state = state;
+            get { return m_capability; }
+            set
+            {
+                Debug.Log("Seraph capability set to " + value);
+                m_capability = value;
+            }
         }
 
-        public SeraphCapability getCapability()
+        public new Transform transform
         {
-            return m_capability;
+            get { return base.transform; }
         }
 
-        public void setCapability(SeraphCapability capability)
+        public new GameObject gameObject
         {
-            m_capability = capability;
-        }
-
-        public Transform getTransform()
-        {
-            return transform;
-        }
-
-        public GameObject getGameObject()
-        {
-            return gameObject;
+            get { return base.gameObject; }
         }
 
         private void handleAudio()

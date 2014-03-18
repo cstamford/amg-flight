@@ -124,17 +124,17 @@ public class PauseMenu : MonoBehaviour
 				PlayerPrefs.SetFloat("PLAYER_ROTATION_Z", rotation.z);
 				
 				//	Getting state from controller
-				string playerCapability = seraphController.getCapability().ToString();
+				string playerCapability = seraphController.capability.ToString();
 				print ("Capability: " + playerCapability);
 				PlayerPrefs.SetString("PLAYER_CAPABILITY", playerCapability);
 
-				string playerState = seraphController.getState().ToString();
+				string playerState = seraphController.state.ToString();
 				print ("State: " + playerState);
 				PlayerPrefs.SetString("PLAYER_STATE", playerState);
 
 				//	Not sure if I need this right now
 				//	Depending on the state, get various properties from player
-				switch(seraphController.getState())
+				switch(seraphController.state)
 				{
 				case cst.Flight.SeraphState.FLYING:
 					
@@ -182,8 +182,8 @@ public class PauseMenu : MonoBehaviour
 					seraphController.transform.rotation = rotation;
 
 					//	Loading player prefs
-					seraphController.setState((cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE")));
-					seraphController.setCapability((cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY")));
+					seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
+					seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
 				}
 			}
 
@@ -193,6 +193,6 @@ public class PauseMenu : MonoBehaviour
 
 	void OnApplicationQuit()
 	{
-		//	Clear position based UserPrefs
+		//	Clear position based UserPrefs  
 	}
 }

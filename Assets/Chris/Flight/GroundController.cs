@@ -37,7 +37,7 @@ namespace cst.Flight
             else
                 m_height = DEFAULT_HEIGHT + 1.0f;
 
-            m_walkSound      = (AudioSource)controller.getGameObject().AddComponent("AudioSource");
+            m_walkSound      = (AudioSource)gameObject.AddComponent("AudioSource");
             m_walkSound.clip = (AudioClip)Resources.Load("footsteps-1");
         }
 
@@ -45,7 +45,7 @@ namespace cst.Flight
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
 
-            if (controller.getState() == SeraphState.LANDING)
+            if (state == SeraphState.LANDING)
                 m_forwardTransitionSpeed = data.velocity;
         }
 
@@ -57,7 +57,7 @@ namespace cst.Flight
 
             handleCamera();
 
-            if (controller.getState() == SeraphState.LANDING)
+            if (state == SeraphState.LANDING)
                 handleLandingTransition();
 
             if (m_falling)
@@ -152,7 +152,7 @@ namespace cst.Flight
             handleLandingTransitionRoll();
 
             if (m_rotation.z == 0.0f && m_forwardTransitionSpeed == 0.0f)
-                controller.setState(SeraphState.GROUNDED);
+                state = SeraphState.GROUNDED;
         }
 
         private void handleLandingTransitionSpeed()
@@ -273,13 +273,13 @@ namespace cst.Flight
                 case SeraphCapability.GLIDE:
 
                     if (m_fallSpeed >= GLIDE_TRANSITION_MIN_VELOCITY)
-                        controller.setState(SeraphState.GLIDING);
+                        state = SeraphState.GLIDING;
 
                     break;
 
                 case SeraphCapability.FLIGHT:
 
-                    controller.setState(SeraphState.GLIDING);
+                    state = SeraphState.GLIDING;
 
                     break;
             }
