@@ -26,17 +26,15 @@ namespace cst.Flight
 
     public class SeraphController : MonoBehaviour
     {
-        [SerializeField] private SeraphCapability m_capability 
-            = SeraphCapability.NONE;
-        [SerializeField] private SeraphState m_state = SeraphState.GROUNDED;
+        [SerializeField] private SeraphCapability m_capability = SeraphCapability.NONE;
+        [SerializeField] private SeraphState      m_state      = SeraphState.GROUNDED;
 
         private GroundController m_groundController;
-        private GlideController m_glideController;
+        private GlideController  m_glideController;
         private FlightController m_flightController;
-        private IControllerBase m_activeController;
-
-        private bool m_ambientSoundPlaying = false;
-        private AudioSource m_ambientSound;
+        private IControllerBase  m_activeController;
+        private bool             m_ambientSoundPlaying;
+        private AudioSource      m_ambientSound;
 
         public void Start()
         {
@@ -68,7 +66,7 @@ namespace cst.Flight
             m_glideController  = new GlideController(this);
             m_flightController = new FlightController(this);
 
-            m_ambientSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_ambientSound      = (AudioSource)gameObject.AddComponent("AudioSource");
             m_ambientSound.clip = (AudioClip)Resources.Load("Ambient");
         }
 
@@ -152,6 +150,11 @@ namespace cst.Flight
         public Transform getTransform()
         {
             return transform;
+        }
+
+        public GameObject getGameObject()
+        {
+            return gameObject;
         }
 
         private void handleAudio()

@@ -7,27 +7,26 @@ namespace cst.Flight
 {
     public class GroundController : ControllerBase, IControllerBase
     {
-        private const float DEFAULT_HEIGHT = 32.0f;
-        private const float START_FALL_VELOCITY = 50.0f;
-        private const float GLIDE_TRANSITION_MIN_VELOCITY = 100.0f;
-        private const float LANDING_TRANSITION_MAX_VELOCITY = 150.0f;
-        private const float LANDING_TRANSITION_TIME = 1.0f;
+        private const float DEFAULT_HEIGHT                       = 32.0f;
+        private const float START_FALL_VELOCITY                  = 50.0f;
+        private const float GLIDE_TRANSITION_MIN_VELOCITY        = 100.0f;
+        private const float LANDING_TRANSITION_MAX_VELOCITY      = 150.0f;
+        private const float LANDING_TRANSITION_TIME              = 1.0f;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
-        private const float MAX_FALL_VELOCTY = 250.0f;
-        private const float MAX_FALL_TIME = 3.0f;
-        private const float FORWARD_SPEED = 50.0f;
-        private const float STRAFE_SPEED = 50.0f;
+        private const float MAX_FALL_VELOCTY                     = 250.0f;
+        private const float MAX_FALL_TIME                        = 3.0f;
+        private const float FORWARD_SPEED                        = 50.0f;
+        private const float STRAFE_SPEED                         = 50.0f;
 
-        private Vector3 m_position;
-        private Vector3 m_rotation;
-        private float m_fallSpeed;
-        private float m_forwardTransitionSpeed;
-        private float m_fallTimer;
-        private readonly float m_height;
-
-        private bool m_walking;
-        private bool m_falling;
-        private bool m_walkSoundPlaying;
+        private Vector3              m_position;
+        private Vector3              m_rotation;
+        private float                m_fallSpeed;
+        private float                m_forwardTransitionSpeed;
+        private float                m_fallTimer;
+        private readonly float       m_height;
+        private bool                 m_walking;
+        private bool                 m_falling;
+        private bool                 m_walkSoundPlaying;
         private readonly AudioSource m_walkSound;
 
         public GroundController(SeraphController controller)
@@ -40,7 +39,7 @@ namespace cst.Flight
             else
                 m_height = DEFAULT_HEIGHT + 1.0f;
 
-            m_walkSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_walkSound      = (AudioSource)controller.getGameObject().AddComponent("AudioSource");
             m_walkSound.clip = (AudioClip)Resources.Load("footsteps-1");
         }
 

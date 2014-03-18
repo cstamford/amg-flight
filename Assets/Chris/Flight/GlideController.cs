@@ -28,7 +28,7 @@ namespace cst.Flight
         public GlideController(SeraphController controller)
             : base(controller)
         {
-            m_glideSound      = (AudioSource)GameObject.Find("Camera").AddComponent("AudioSource");
+            m_glideSound      = (AudioSource)controller.getGameObject().AddComponent("AudioSource");
             m_glideSound.clip = (AudioClip)Resources.Load("Gliding");
         }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace cst.Flight
 {
@@ -52,6 +53,9 @@ namespace cst.Flight
 
         protected ControllerBase(SeraphController controller)
         {
+            if (controller == null)
+                throw new ArgumentNullException("Provided controller is null.");
+
             m_controller = controller;
         }
     }
