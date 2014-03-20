@@ -1,9 +1,11 @@
 ﻿//==========================================================
 // Author: Sean Vieira
-// Version: 1.0
-// Function: Handles the GUI relating to the keypad, 
-// including the text tip that is shown when the keypad
-// is pressed and the input of the password to a textfield
+// Version: 2.0
+// Function: Handles the GUI relating to the puzzle 
+// objects, including text tips that are displayed if
+// the objective of the puzzle is complete or not,
+// and an [old] gui that appears if a password is
+// needing entered
 //==========================================================
 
 using UnityEngine;
@@ -12,9 +14,9 @@ using System.Text.RegularExpressions;
 
 namespace sv
 {
-    public class KeypadGUI : MonoBehaviour
+    public class PuzzleGUI : MonoBehaviour
     {
-        [SerializeField] private GUIText m_textTip, m_passwordMatch, m_passwordIncorrect;
+        [SerializeField] private GUIText m_textTip, m_objectiveIncompleteText, m_objectiveCompletedText;
         [SerializeField] private float m_guiWidth;
         [SerializeField] private float m_guiHeight;
         [SerializeField] private Vector3 m_guiPosition;
@@ -79,14 +81,14 @@ namespace sv
             m_textTip.enabled = b;
         }
 
-        public void ShowIncorrectPasswordText(bool b)
+        public void ShowIncompletedText(bool b)
         {
-            m_passwordIncorrect.enabled = b;
+            m_objectiveIncompleteText.enabled = b;
         }
 
-        public void ShowCorrectPasswordText(bool b)
+        public void ShowCompletedText(bool b)
         {
-            m_passwordMatch.enabled = b;
+            m_objectiveCompletedText.enabled = b;
         }
 
         public string GetInput()

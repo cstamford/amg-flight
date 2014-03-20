@@ -1,6 +1,6 @@
 ﻿//==========================================================
 // Author: Sean Vieira
-// Version: 1.0
+// Version: 1.1
 // Function: Handles the selection of objects, through the 
 // use of a ray that is cast from the centre of the screen 
 // in the direction the camera is facing
@@ -11,16 +11,22 @@ using System.Collections;
 
 namespace sv
 {
+    public struct SelectableObjectsStruct
+    {
+        public PuzzleCollect        puzzleTypeCollect;
+        public PuzzlePassword       puzzleTypePassword;
+        public PuzzleCollectObject  puzzleCollectable;
+        public PuzzlePasswordKey    puzzlePasswordKey;
+    }
+    
     public class ObjectSelection : MonoBehaviour
     {
         [SerializeField] private float m_rayLength;
         [SerializeField] private GameObject m_cursor;
-
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
-        private PuzzleKeypad m_keypad;
-        private KeypadKeyClass m_keyPressed;
         private GameObject m_selected;
+        private SelectableObjectsStruct m_componentSelected;
 
         // Use this for initialization
         void Start()
@@ -34,20 +40,21 @@ namespace sv
                 m_cursor.SetActive(false);
             }
 
-
+            ResetSelectableComponents();            
         }
 
         // Update is called once per frame
         void Update()
         {
+            // Reset variables at start of frame
             m_cursor.SetActive(false);
-            
+            ResetSelectableComponents();            
+
+            // If the ray collides with an object
             if (CastRay())
             {
                 m_selected = m_hit.collider.gameObject;
-
-                
-                
+                  
                 if (!m_selected)
                 {
                     if (Input.GetMouseButtonDown(0))
@@ -58,25 +65,24 @@ namespace sv
                 else
                 {                    
                     
-                    // Check for keypad/keypad key objects
-                    if (m_selected.tag == "keypad")
+                    // Check for puzzles/puzzle objects
+                    if (m_selected.tag == "PuzzleCollect")
                     {
                         m_cursor.SetActive(true);
-                        AcquireKeypadObject(m_selected);
                     }
-                    else if (m_selected.tag == "keypad key")
+                    else if (m_selected.tag == "PuzzleCollectObject")
                     {
                         m_cursor.SetActive(true);
-                        AcquireKeypadButtonObject(m_selected);
+
                     }
                     
                     if (Input.GetMouseButtonDown(0))
                     {
                         Debug.Log("Ray intersects with " + m_selected.name);
-                        
-                        if (m_selected.tag == "keypad key")
+
+                        if (m_selected.tag == "PuzzleCollect")
                         {
-                            m_keypad.AddKeyToPassword(m_keyPressed.GetKeyValue());
+                            
                         }
                         
                     }
@@ -86,15 +92,15 @@ namespace sv
                         {
                             if (m_selected.tag == "keypad")
                             {
-                                AcquireKeypadObject(m_selected);
+                                //AcquireKeypadObject(m_selected);
 
-                                m_keypad.DisplayTextTip(true);
+                                //m_keypad.DisplayTextTip(true);
                             }
                             else if (m_selected.tag == "keypad key")
                             {
-                                AcquireKeypadObject(m_keyPressed.GetParent());
+                                //AcquireKeypadObject(m_keyPressed.GetParent());
 
-                                m_keypad.DisplayTextTip(true);
+                                //m_keypad.DisplayTextTip(true);
                             }
                         }
                     }
@@ -125,9 +131,9 @@ namespace sv
         }
 
         // Acquire the keypad component from target GameObject            
-        void AcquireKeypadObject(GameObject target)
+        /*void AcquireKeypadObject(GameObject target)
         {
-            PuzzleKeypad temp = target.GetComponent<PuzzleKeypad>();
+            PuzzlePassword temp = target.GetComponent<PuzzlePassword>();
 
             if (!m_keypad)
             {
@@ -145,7 +151,7 @@ namespace sv
         // Acquire the keypad key component from target GameObject  
         void AcquireKeypadButtonObject(GameObject target)
         {
-            KeypadKeyClass temp = target.GetComponent<KeypadKeyClass>();
+            PuzzlePasswordKey temp = target.GetComponent<PuzzlePasswordKey>();
 
             if (!m_keyPressed)
             {
@@ -158,12 +164,39 @@ namespace sv
                     m_keyPressed = temp;
                 }
             }
-
             
             if (!m_keypad)
             {
                 AcquireKeypadObject(m_keyPressed.GetParent());
             }
+        }*/
+
+        private T AcquireObjectComponent<T>(GameObject target, T component) where T : Component
+        {
+            T temp = target.GetComponent<T>();
+            
+            if (!component)
+            {
+                component = temp;
+            }
+            else
+            {
+                if (component != temp)
+                {
+                    component = temp;
+                }
+            }
+
+            return component;
+        }
+
+        // Set all selectables to null            
+        private void ResetSelectableComponents()
+        {
+            m_componentSelected.puzzleCollectable = null;
+            m_componentSelected.puzzlePasswordKey = null;
+            m_componentSelected.puzzleTypeCollect = null;
+            m_componentSelected.puzzleTypePassword = null;
         }
     }
 }
