@@ -11,14 +11,6 @@ using System.Collections;
 
 namespace sv
 {
-    public struct SelectableObjectsStruct
-    {
-        public PuzzleCollect        puzzleTypeCollect;
-        public PuzzlePassword       puzzleTypePassword;
-        public PuzzleCollectObject  puzzleCollectable;
-        public PuzzlePasswordKey    puzzlePasswordKey;
-    }
-    
     public class ObjectSelection : MonoBehaviour
     {
         [SerializeField] private float m_rayLength;
@@ -26,7 +18,10 @@ namespace sv
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
         private GameObject m_selected;
-        private SelectableObjectsStruct m_componentSelected;
+        private PuzzleCollect m_puzzleTypeCollect;
+        private PuzzlePassword m_puzzleTypePassword;
+        private PuzzleCollectObject m_puzzleCollectable;
+        private PuzzlePasswordKey m_puzzlePasswordKey;
 
         // Use this for initialization
         void Start()
@@ -38,17 +33,13 @@ namespace sv
             else
             {
                 m_cursor.SetActive(false);
-            }
-
-            ResetSelectableComponents();            
+            }          
         }
 
         // Update is called once per frame
         void Update()
         {
-            // Reset variables at start of frame
-            m_cursor.SetActive(false);
-            ResetSelectableComponents();            
+            m_cursor.SetActive(false);          
 
             // If the ray collides with an object
             if (CastRay())
@@ -63,46 +54,41 @@ namespace sv
                     }
                 }
                 else
-                {                    
+                {                   
                     
-                    // Check for puzzles/puzzle objects
+                    // Check to see if selectable objects have been acquired
                     if (m_selected.tag == "PuzzleCollect")
                     {
                         m_cursor.SetActive(true);
+                        m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);                        
                     }
                     else if (m_selected.tag == "PuzzleCollectObject")
                     {
                         m_cursor.SetActive(true);
+                        m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
 
+                        // Acquire the puzzle controller if it isn't already acquired. 
+                        // ie it's necessary to do here since it may not necessarily have a mesh
+                        if (!m_puzzleTypeCollect)
+                        {
+                            m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
+                        }
                     }
                     
                     if (Input.GetMouseButtonDown(0))
                     {
                         Debug.Log("Ray intersects with " + m_selected.name);
 
-                        if (m_selected.tag == "PuzzleCollect")
+                        if (m_selected.tag == "PuzzleCollectObject")
                         {
-                            
+                            // Set the object state as collected, and de-activate it (so it no longer affects the scene)
+                            m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                            m_selected.SetActive(false);
                         }
-                        
                     }
                     else
                     {
-                        if (Input.GetKeyDown(KeyCode.E))
-                        {
-                            if (m_selected.tag == "keypad")
-                            {
-                                //AcquireKeypadObject(m_selected);
-
-                                //m_keypad.DisplayTextTip(true);
-                            }
-                            else if (m_selected.tag == "keypad key")
-                            {
-                                //AcquireKeypadObject(m_keyPressed.GetParent());
-
-                                //m_keypad.DisplayTextTip(true);
-                            }
-                        }
+                        /* Any other input method here */
                     }
                 }
             }
@@ -130,6 +116,8 @@ namespace sv
             return false;
         }
 
+
+        // Legacy code -----------------------------------------
         // Acquire the keypad component from target GameObject            
         /*void AcquireKeypadObject(GameObject target)
         {
@@ -170,8 +158,10 @@ namespace sv
                 AcquireKeypadObject(m_keyPressed.GetParent());
             }
         }*/
+        //--------------------------------------------------------
 
-        private T AcquireObjectComponent<T>(GameObject target, T component) where T : Component
+        // Generic function for acquiring/storing a specific type of component
+        T AcquireObjectComponent<T>(GameObject target, T component) where T : Component
         {
             T temp = target.GetComponent<T>();
             
@@ -188,15 +178,6 @@ namespace sv
             }
 
             return component;
-        }
-
-        // Set all selectables to null            
-        private void ResetSelectableComponents()
-        {
-            m_componentSelected.puzzleCollectable = null;
-            m_componentSelected.puzzlePasswordKey = null;
-            m_componentSelected.puzzleTypeCollect = null;
-            m_componentSelected.puzzleTypePassword = null;
         }
     }
 }

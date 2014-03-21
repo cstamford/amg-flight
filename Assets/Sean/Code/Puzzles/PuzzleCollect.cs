@@ -39,12 +39,12 @@ namespace sv
             // Prints a statement in debug
             if (!m_trigger)
             {
-                if (CompletionCheck())
+                if (IsCompleted())
                 {
                     m_trigger = true;
 
                     Debug.Log("Trigger has been activated!");
-                    //DisplayCompletedText()
+                    ActivateTrigger();
                 }
             }
         }        
@@ -78,7 +78,7 @@ namespace sv
         }
 
         // Check to see if all puzzle objects have been collected
-        private bool CompletionCheck()
+        public bool IsCompleted()
         {
             for (int i = 0; i < m_numOfObjects; i++)
             {
@@ -95,7 +95,10 @@ namespace sv
 
         private void ActivateTrigger()
         {
-            /* Empty */
+            if (m_triggerTarget)
+            {
+                m_triggerTarget.SetActive(false);
+            }
         }
     }
 }

@@ -50,6 +50,11 @@ namespace sv
             m_index = i;
         }
 
+        public int GetIndex()
+        {
+            return m_index;
+        }
+
         public GameObject GetParent()
         {
             return m_parentObject;
