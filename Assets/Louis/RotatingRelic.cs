@@ -1,11 +1,23 @@
-﻿using UnityEngine;
+﻿//
+// Filename : RotatingRelic.cs
+// Author : Louis Dimmock
+// Date : 10th Feburary 2014
+//
+// Version : 1.0
+// Version Info : 
+// 		Simple script that rotates a relic around its center pivot
+//
+
+using UnityEngine;
 using System.Collections;
 
-public class WingsControllerLouis : MonoBehaviour
+public class RotatingRelic : MonoBehaviour
 {
+	// Speed that the relic rotates at
+	public float m_rotationSpeed = 15.0f;
+
+	// Current rotation
 	private Vector3 m_rotation = new Vector3(0.0f, 0.0f, 0.0f);
-	private float m_deltaTime = 0.0f;
-	private float m_rotationSpeed = 15.0f;
 
 	// Use this for initialization
 	void Start ()
@@ -16,11 +28,8 @@ public class WingsControllerLouis : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		// Get frame time
-		m_deltaTime = Time.deltaTime;
-
 		// Apply rotation
-		m_rotation.y += m_rotationSpeed * m_deltaTime;
+		m_rotation.y += m_rotationSpeed * Time.deltaTime;
 
 		// Make sure rotation remains between 0 and 360
 		Wrap(ref m_rotation.y);

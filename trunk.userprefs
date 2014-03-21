@@ -1,14 +1,20 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Johnny\NarrationTrigger.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Louis\Water.shader">
     <Files>
-      <File FileName="Assets\Johnny\NarrationTrigger.cs" Line="14" Column="30" />
-      <File FileName="Assets\Chris\Flight\SeraphController.cs" Line="19" Column="2" />
+      <File FileName="Assets\Louis\Water.shader" Line="54" Column="9" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Assembly-CSharp" selected="True" />
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Chris" expanded="True">
+              <Node name="Flight" expanded="True" />
+            </Node>
+            <Node name="Louis" expanded="True">
+              <Node name="Water.shader" selected="True" />
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>

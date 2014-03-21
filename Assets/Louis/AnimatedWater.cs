@@ -9,15 +9,13 @@ public class ShaderTexture
 	// Variable to store how fast to offset
 	public float m_Speed = 0.0f;
 	// Variable to store how many times to tile the texture
-	public Vector2 m_Tile = new Vector2(1,1);
-	// Variable used by normal maps to determine density
-	public float m_Depth = 1.0f;
+	public Vector2 m_Tile = new Vector2(1.0f, 1.0f);
 }
 
-public class WaterScript : MonoBehaviour
+public class AnimatedWater : MonoBehaviour
 {
-	// The color to tint the water (default white)
-	public Color m_Tint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+	// The color to tint the water (default to clear black)
+	public Color m_Tint = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	// The color to tint the water (default white)
 	public Color m_specularColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -57,23 +55,17 @@ public class WaterScript : MonoBehaviour
 		{
 			// Set the texture and the tiling
 			SetTexture("_BumpMapA", m_waterTexture);
-
-			// Set normal map depth
-			SetFloat("_BumpDepthA", m_normalTextureA.m_Depth);
 		}
 		if(m_normalTextureB.m_Texture != null)
 		{
 			// Set the texture and the tiling
 			SetTexture("_BumpMapB", m_waterTexture);
-			
-			// Set normal map depth
-			SetFloat("_BumpDepthB", m_normalTextureA.m_Depth);
 		}
 
-		// The color to tint the water (default white)
+		// The color to tint the water
 		SetColor("_Color", m_Tint);
 		
-		// The color to tint the water (default white)
+		// The color to tint the water
 		SetColor("_SpecularColor", m_specularColor);
 		
 		// How shiny the water is
