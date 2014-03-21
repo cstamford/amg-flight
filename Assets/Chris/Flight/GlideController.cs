@@ -5,7 +5,6 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
-        private const float LANDING_DISTANCE      = 32.0f;
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
@@ -18,9 +17,10 @@ namespace cst.Flight
         private const float MAX_VELOCITY          = RESTING_VELOCITY * 2.0f;
         private const float MIN_VELOCITY          = 0.0f;
 
-        private Vector3              m_position;
-        private Vector3              m_rotation;
-        private float                m_forwardSpeed;
+        private Vector3 m_position;
+        private Vector3 m_rotation;
+        private float   m_forwardSpeed;
+        public float    forwardSpeed { get { return m_forwardSpeed; } }
 
         public GlideController(SeraphController controller)
             : base(controller)
@@ -40,8 +40,12 @@ namespace cst.Flight
             m_rotation = transform.eulerAngles;
             m_position = transform.position;
 
-            handleOrientationChange(Time.deltaTime);
-            handleMoveForward(Time.deltaTime);
+            handleOrientationChange();
+            handleMoveForward();
+            handleTransition();
+
+            transform.eulerAngles = m_rotation;
+            transform.position    = m_position;
         }
 
         public void triggerEnter(Collider other)
@@ -57,13 +61,7 @@ namespace cst.Flight
         public void collisionEnter(Collision other)
         {
             Debug.Log(GetType().Name + " collisionEnter()");
-
-            // Check if we've collided with something below us.
-            if (Physics.Raycast(transform.position,
-                new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
-            {
-                state = SeraphState.LANDING;
-            }
+            state = SeraphState.FALLING;
         }
 
         public void collisionExit(Collision other)
@@ -73,41 +71,37 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData
-            {
-                direction = transform.forward,
-                velocity  = m_forwardSpeed
-            };
+            return new TransitionData { direction = transform.forward, velocity = m_forwardSpeed };
         }
 
-        private void handleOrientationChange(float delta)
+        private void handleOrientationChange()
         {
-            handlePitchChange(delta);
-            handleYawChange(delta);
-            handleRollChange(delta);
+            handlePitchChange();
+            handleYawChange();
+            handleRollChange();
 
             transform.eulerAngles = m_rotation;
         }
 
         // Handles the change in pitch based on the user input
-        private void handlePitchChange(float delta)
+        private void handlePitchChange()
         {
             if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
-                turnVerticalDown(delta * inputManager.actionDelta(Action.MOVE_FORWARD));
+                turnVerticalDown(inputManager.actionDelta(Action.MOVE_FORWARD));
             }
             else if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
-                turnVerticalUp(delta * inputManager.actionDelta(Action.MOVE_BACKWARD));
+                turnVerticalUp(inputManager.actionDelta(Action.MOVE_BACKWARD));
             }
             else
             {
-                turnVerticalNone(delta);
+                turnVerticalNone();
             }
         }
 
         // Handles the change in yaw based on the current roll
-        private void handleYawChange(float delta)
+        private void handleYawChange()
         {
             float angle = m_rotation.z;
 
@@ -115,37 +109,37 @@ namespace cst.Flight
                 angle -= 360.0f;
 
             m_rotation.y = Helpers.wrapAngle(m_rotation.y
-                - (delta * angle * TURN_TIGHTNESS));
+                - (Time.deltaTime * angle * TURN_TIGHTNESS));
         }
 
         // Handles the change in roll based on the user input
-        private void handleRollChange(float delta)
+        private void handleRollChange()
         {
             if (inputManager.actionFired(Action.MOVE_LEFT))
             {
                 if (m_rotation.z < 0.0f)
                 {
-                    turnHorizontalLeft(delta * 1.25f * inputManager.actionDelta(Action.MOVE_LEFT));
+                    turnHorizontalLeft(1.25f * inputManager.actionDelta(Action.MOVE_LEFT));
                 }
                 else
                 {
-                    turnHorizontalLeft(delta * inputManager.actionDelta(Action.MOVE_LEFT));
+                    turnHorizontalLeft(inputManager.actionDelta(Action.MOVE_LEFT));
                 }
             }
             else if (inputManager.actionFired(Action.MOVE_RIGHT))
             {
                 if (m_rotation.z > 0.0f)
                 {
-                    turnHorizontalRight(delta * 1.25f * inputManager.actionDelta(Action.MOVE_RIGHT));
+                    turnHorizontalRight(1.25f * inputManager.actionDelta(Action.MOVE_RIGHT));
                 }
                 else
                 {
-                    turnHorizontalRight(delta * inputManager.actionDelta(Action.MOVE_RIGHT));
+                    turnHorizontalRight(inputManager.actionDelta(Action.MOVE_RIGHT));
                 }
             }
             else
             {
-                turnHorizontalNone(delta);
+                turnHorizontalNone();
             }
         }
 
@@ -157,7 +151,7 @@ namespace cst.Flight
             if (angle > -MAX_PITCH_ANGLE)
             {
                 m_rotation.x = Helpers.wrapAngle(m_rotation.x
-                    - (delta * INCREMENT_PITCH_SPEED));
+                    - (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
             }
         }
 
@@ -169,12 +163,12 @@ namespace cst.Flight
             if (angle < MAX_PITCH_ANGLE)
             {
                 m_rotation.x = Helpers.wrapAngle(m_rotation.x
-                    + (delta * INCREMENT_PITCH_SPEED));
+                    + (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
             }
         }
 
         // Returns pitch to neutral on no user input
-        private void turnVerticalNone(float delta)
+        private void turnVerticalNone()
         {
             // Intentionally left empty - no return pitch behaviour
         }
@@ -187,7 +181,7 @@ namespace cst.Flight
             if (angle < MAX_ROLL_ANGLE)
             {
                 m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    + (delta * INCREMENT_TURN_SPEED));
+                    + (delta * Time.deltaTime * INCREMENT_TURN_SPEED));
             }
         }
 
@@ -198,20 +192,20 @@ namespace cst.Flight
 
             if (angle > -MAX_ROLL_ANGLE)
             {
-                m_rotation.z = Helpers.wrapAngle(
-                    m_rotation.z - (delta * INCREMENT_TURN_SPEED));
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z 
+                    - (delta * Time.deltaTime *INCREMENT_TURN_SPEED));
             }
         }
 
         // Returns roll to neutral on no user input
-        private void turnHorizontalNone(float delta)
+        private void turnHorizontalNone()
         {
             float angle = m_rotation.z - 180.0f;
 
             if (angle > 0.0f)
             {
                 m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    + delta * RETURN_TURN_SPEED);
+                    + Time.deltaTime * RETURN_TURN_SPEED);
 
                 if (m_rotation.z - 180.0f < 0.0f)
                     m_rotation.z = 0.0f;
@@ -219,7 +213,7 @@ namespace cst.Flight
             else if (angle < 0.0f)
             {
                 m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    - delta * RETURN_TURN_SPEED);
+                    - Time.deltaTime * RETURN_TURN_SPEED);
 
                 if (m_rotation.z - 180.0f > 0.0f)
                     m_rotation.z = 0.0f;
@@ -227,7 +221,7 @@ namespace cst.Flight
         }
 
         // Handles moving forward
-        private void handleMoveForward(float delta)
+        private void handleMoveForward()
         {
             // Get the normalized pitch
             float pitch = Helpers.getNormalizedAngle(m_rotation.x);
@@ -240,7 +234,7 @@ namespace cst.Flight
             pitch /= MAX_PITCH_ANGLE;
 
             // Calculate the step each frame
-            float step = pitch * delta;
+            float step = pitch * Time.deltaTime;
 
             // Don't go above the calculated rest speed
             if (m_forwardSpeed > restSpeed && pitch > 0.0f)
@@ -258,14 +252,15 @@ namespace cst.Flight
                 state = SeraphState.GROUNDED;
 
             m_position += transform.forward * m_forwardSpeed
-                * delta;
-
-            transform.position = m_position;
+                * Time.deltaTime;
         }
 
-		public float ForwardSpeed
-		{
-			get { return m_forwardSpeed; }
-		}
+        private void handleTransition()
+        {
+            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height);
+
+            if (distanceToGround.HasValue)
+                state = SeraphState.LANDING;
+        }
     }
 }

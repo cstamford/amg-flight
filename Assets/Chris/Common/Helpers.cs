@@ -1,6 +1,7 @@
 ﻿// Various useful helpers that aren't specific to one script
 
 using System;
+using UnityEngine;
 
 namespace cst.Common
 {
@@ -81,6 +82,22 @@ namespace cst.Common
         {
             time /= maxTime;
             return (max * (float)Math.Pow(time, 3.0f)) + start;
+        }
+
+        // Returns the nearest ray hit projected with the provided unit vector
+        public static float? nearestHit(Vector3 position, Vector3 direction, float distance)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(position, direction, distance);
+
+            float? dist = null;
+
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.distance < distance && (!dist.HasValue || hit.distance < dist.Value))
+                    dist = hit.distance;
+            }
+
+            return dist;
         }
     }
 

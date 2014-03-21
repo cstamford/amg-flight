@@ -14,6 +14,7 @@ namespace cst.Flight
     {
         GROUNDED,
         LANDING,
+        FALLING,
         GLIDING,
         FLYING
     }
@@ -28,14 +29,16 @@ namespace cst.Flight
     public class SeraphController : MonoBehaviour
     {
         [SerializeField] private SeraphCapability m_capability = SeraphCapability.GLIDE;
-        [SerializeField] private SeraphState      m_state      = SeraphState.GROUNDED;
+        [SerializeField] private SeraphState      m_state      = SeraphState.FALLING;
         [SerializeField] private GameObject       m_inputManagerObject;
         
-        private InputManager     m_inputManager;
-        private GroundController m_groundController;
-        private GlideController  m_glideController;		
-        private FlightController m_flightController;
-        private IControllerBase  m_activeController;
+        private InputManager      m_inputManager;
+        private GroundController  m_groundController;
+        private FallingController m_fallingController;
+        private LandingController m_landingController;
+        private GlideController   m_glideController;		
+        private FlightController  m_flightController;
+        private IControllerBase   m_activeController;
 
         public void Start()
         {
@@ -69,9 +72,11 @@ namespace cst.Flight
                                  "Controller has its own implementation.");
             }
 
-            m_groundController = new GroundController(this);
-            m_glideController  = new GlideController(this);
-            m_flightController = new FlightController(this);
+            m_groundController  = new GroundController(this);
+            m_fallingController = new FallingController(this);
+            m_landingController = new LandingController(this);
+            m_glideController   = new GlideController(this);
+            m_flightController  = new FlightController(this);
 
             m_inputManager = m_inputManagerObject.GetComponent<InputManager>();
 
@@ -88,6 +93,18 @@ namespace cst.Flight
 
             switch (m_state)
             {
+                case SeraphState.GROUNDED:
+                    m_activeController = m_groundController;
+                    break;
+
+                case SeraphState.FALLING:
+                    m_activeController = m_fallingController;
+                    break;
+
+                case SeraphState.LANDING:
+                    m_activeController = m_landingController;
+                    break;
+
                 case SeraphState.GLIDING:
                     m_activeController = m_glideController;
                     break;
@@ -95,17 +112,12 @@ namespace cst.Flight
                 case SeraphState.FLYING:
                     m_activeController = m_flightController;
                     break;
-
-                default:
-                    m_activeController = m_groundController;
-                    break;
             }
 
             if (lastController != m_activeController)
             {
                 TransitionData data = lastController == null 
-                    ? new TransitionData 
-                    { direction = new Vector3(), velocity = 0.0f } 
+                    ? new TransitionData { direction = Vector3.zero, velocity = 0.0f } 
                     : lastController.transitionData();
 
                 m_activeController.start(data);
@@ -124,7 +136,7 @@ namespace cst.Flight
             m_activeController.collisionExit(other);
 
             // Hack - remove rigidbody velocity
-            rigidbody.velocity = new Vector3();
+            rigidbody.velocity = Vector3.zero;
         }
 
         public void OnTriggerEnter(Collider other)
@@ -174,7 +186,7 @@ namespace cst.Flight
 
 		public float SeraphGlideVelocity
 		{
-			get { return m_glideController.ForwardSpeed; }
+			get { return m_glideController.forwardSpeed; }
 		}
     }
 }

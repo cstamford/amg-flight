@@ -39,7 +39,7 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { direction = new Vector3() };
+            return new TransitionData { direction = Vector3.zero, velocity = 0.0f };
         }
     }
 }
