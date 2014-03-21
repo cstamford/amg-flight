@@ -36,7 +36,7 @@ namespace cst.Common
 
         private readonly Dictionary<Action, bool>  m_actions;
         private readonly Dictionary<Action, float> m_actionDeltas;
-        private const float MOUSE_SENSITIVITY = 25.0f;
+        private const float MOUSE_SENSITIVITY = 5.0f;
 
         public InputManager()
         {
