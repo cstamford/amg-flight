@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using cst.Common;
+using UnityEngine;
 
 namespace cst.Flight
 {
@@ -20,15 +21,10 @@ namespace cst.Flight
         private Vector3              m_position;
         private Vector3              m_rotation;
         private float                m_forwardSpeed;
-        private bool                 m_glideSoundPlaying;
-        private readonly AudioSource m_glideSound;
 
         public GlideController(SeraphController controller)
             : base(controller)
-        {
-            m_glideSound      = (AudioSource)gameObject.AddComponent("AudioSource");
-            m_glideSound.clip = (AudioClip)Resources.Load("Gliding");
-        }
+        { }
 
         public void start(TransitionData data)
         {
@@ -46,7 +42,6 @@ namespace cst.Flight
 
             handleOrientationChange(Time.deltaTime);
             handleMoveForward(Time.deltaTime);
-            handleAudio();
         }
 
         public void triggerEnter(Collider other)
@@ -67,7 +62,6 @@ namespace cst.Flight
             if (Physics.Raycast(transform.position,
                 new Vector3(0.0f, -1.0f, 0.0f), LANDING_DISTANCE))
             {
-                stopAudio();
                 state = SeraphState.LANDING;
             }
         }
@@ -86,23 +80,6 @@ namespace cst.Flight
             };
         }
 
-        private void handleAudio()
-        {
-            if (!m_glideSoundPlaying)
-            {
-                m_glideSound.loop = true;
-                m_glideSound.playOnAwake = false;
-                m_glideSound.Play();
-                m_glideSoundPlaying = true;
-            }
-        }
-
-        private void stopAudio()
-        {
-            m_glideSound.Stop();
-            m_glideSoundPlaying = false;
-        }
-
         private void handleOrientationChange(float delta)
         {
             handlePitchChange(delta);
@@ -115,13 +92,13 @@ namespace cst.Flight
         // Handles the change in pitch based on the user input
         private void handlePitchChange(float delta)
         {
-            if (Input.GetKey(KeyCode.W) || Input.GetAxis("ControllerVertical") < 0)
+            if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
-                turnVerticalDown(delta);
+                turnVerticalDown(delta * inputManager.actionDelta(Action.MOVE_FORWARD));
             }
-            else if (Input.GetKey(KeyCode.S) || Input.GetAxis("ControllerVertical") > 0)
+            else if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
-                turnVerticalUp(delta);
+                turnVerticalUp(delta * inputManager.actionDelta(Action.MOVE_BACKWARD));
             }
             else
             {
@@ -144,26 +121,26 @@ namespace cst.Flight
         // Handles the change in roll based on the user input
         private void handleRollChange(float delta)
         {
-            if (Input.GetKey(KeyCode.A) || Input.GetAxis("ControllerHorizontal") < 0)
+            if (inputManager.actionFired(Action.MOVE_LEFT))
             {
                 if (m_rotation.z < 0.0f)
                 {
-                    turnHorizontalLeft(delta * 1.25f);
+                    turnHorizontalLeft(delta * 1.25f * inputManager.actionDelta(Action.MOVE_LEFT));
                 }
                 else
                 {
-                    turnHorizontalLeft(delta);
+                    turnHorizontalLeft(delta * inputManager.actionDelta(Action.MOVE_LEFT));
                 }
             }
-            else if (Input.GetKey(KeyCode.D) || Input.GetAxis("ControllerHorizontal") > 0)
+            else if (inputManager.actionFired(Action.MOVE_RIGHT))
             {
                 if (m_rotation.z > 0.0f)
                 {
-                    turnHorizontalRight(delta * 1.25f);
+                    turnHorizontalRight(delta * 1.25f * inputManager.actionDelta(Action.MOVE_RIGHT));
                 }
                 else
                 {
-                    turnHorizontalRight(delta);
+                    turnHorizontalRight(delta * inputManager.actionDelta(Action.MOVE_RIGHT));
                 }
             }
             else
@@ -278,15 +255,17 @@ namespace cst.Flight
 
             // Drop out of flight if we stall
             if (m_forwardSpeed < MIN_VELOCITY)
-            {
-                stopAudio();
                 state = SeraphState.GROUNDED;
-            }
 
             m_position += transform.forward * m_forwardSpeed
                 * delta;
 
             transform.position = m_position;
         }
+
+		public float ForwardSpeed
+		{
+			get { return m_forwardSpeed; }
+		}
     }
 }

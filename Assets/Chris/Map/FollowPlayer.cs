@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace cst
+namespace cst.Map
 {
     public class FollowPlayer : MonoBehaviour
     {

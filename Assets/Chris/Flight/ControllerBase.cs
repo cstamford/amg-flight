@@ -1,4 +1,5 @@
 ﻿using System;
+using cst.Common;
 using UnityEngine;
 
 namespace cst.Flight
@@ -30,6 +31,11 @@ namespace cst.Flight
         public SeraphController controller
         {
             get { return m_controller; }
+        }
+
+        protected InputManager inputManager
+        {
+            get { return m_controller.inputManager; }
         }
 
         protected SeraphState state

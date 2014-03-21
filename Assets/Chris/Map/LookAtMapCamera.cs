@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace cst
+namespace cst.Map
 {
     public class LookAtMapCamera : MonoBehaviour
     {

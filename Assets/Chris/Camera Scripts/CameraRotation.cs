@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace cst
+namespace cst.Camera
 {
     public class CameraRotation : MonoBehaviour
     {

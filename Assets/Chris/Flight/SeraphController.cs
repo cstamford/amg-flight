@@ -5,6 +5,7 @@
 // The rigid body needs constraints on all rotational axes.
 
 using System;
+using cst.Common;
 using UnityEngine;
 
 namespace cst.Flight
@@ -28,26 +29,32 @@ namespace cst.Flight
     {
         [SerializeField] private SeraphCapability m_capability = SeraphCapability.GLIDE;
         [SerializeField] private SeraphState      m_state      = SeraphState.GROUNDED;
-
+        [SerializeField] private GameObject       m_inputManagerObject;
+        
+        private InputManager     m_inputManager;
         private GroundController m_groundController;
-        private GlideController  m_glideController;
+        private GlideController  m_glideController;		
         private FlightController m_flightController;
         private IControllerBase  m_activeController;
-        private bool             m_ambientSoundPlaying;
-        private AudioSource      m_ambientSound;
 
         public void Start()
         {
-            if (rigidbody == null)
-            {
-                enabled = false;
-                throw new Exception("No rigidbody attached.");
-            }
-
             if (collider == null)
             {
                 enabled = false;
                 throw new Exception("No collider attached.");
+            }
+
+            if (m_inputManagerObject == null)
+            {
+                enabled = false;
+                throw new Exception("No input manager added to the Seraph. Please define one in the inspector.");
+            }
+
+            if (rigidbody == null)
+            {
+                enabled = false;
+                throw new Exception("No rigidbody attached.");
             }
 
             if (rigidbody.isKinematic)
@@ -66,8 +73,13 @@ namespace cst.Flight
             m_glideController  = new GlideController(this);
             m_flightController = new FlightController(this);
 
-            m_ambientSound      = (AudioSource)gameObject.AddComponent("AudioSource");
-            m_ambientSound.clip = (AudioClip)Resources.Load("Ambient");
+            m_inputManager = m_inputManagerObject.GetComponent<InputManager>();
+
+            if (m_inputManager == null)
+            {
+                enabled = false;
+                throw new Exception("No InputManager script detected on the provided InputManagerObject.");
+            }
         }
 
         public void Update()
@@ -99,7 +111,6 @@ namespace cst.Flight
                 m_activeController.start(data);
             }
 
-            handleAudio();
             m_activeController.update();
         }
 
@@ -124,6 +135,11 @@ namespace cst.Flight
         public void OnTriggerExit(Collider other)
         {
             m_activeController.triggerExit(other);
+        }
+
+        public InputManager inputManager
+        {
+            get { return m_inputManager; }
         }
 
         public SeraphState state
@@ -156,14 +172,9 @@ namespace cst.Flight
             get { return base.gameObject; }
         }
 
-        private void handleAudio()
-        {
-            if (!m_ambientSoundPlaying)
-            {
-                m_ambientSound.loop = true;
-                m_ambientSound.Play();
-                m_ambientSoundPlaying = true;
-            }
-        }
+		public float SeraphGlideVelocity
+		{
+			get { return m_glideController.ForwardSpeed; }
+		}
     }
 }

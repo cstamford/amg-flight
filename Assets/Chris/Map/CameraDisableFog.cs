@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace cst
+namespace cst.Map
 {
     public class CameraDisableFog : MonoBehaviour
     {

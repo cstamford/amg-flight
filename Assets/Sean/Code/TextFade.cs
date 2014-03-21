@@ -21,7 +21,7 @@ namespace sv
         void Start()
         {
             m_timer = 0.0f;            
-            fadeLength = cst.Helpers.low(fadeLength, 0.5f);
+            fadeLength = cst.Common.Helpers.low(fadeLength, 0.5f);
 
             m_color = Color.white;
             guiText.color = m_color;

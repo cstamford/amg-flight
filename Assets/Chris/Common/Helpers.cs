@@ -2,7 +2,7 @@
 
 using System;
 
-namespace cst
+namespace cst.Common
 {
     public static class Helpers
     {

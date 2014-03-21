@@ -1,10 +1,14 @@
-﻿using UnityEngine;
-using Debug = UnityEngine.Debug;
+﻿using cst.Common;
+using UnityEditor.VersionControl;
+using UnityEngine;
 
 namespace cst.Flight
 {
     public class GroundController : ControllerBase, IControllerBase
     {
+        public bool walking { get; set; }
+        public bool falling { get; set; }
+
         private const float DEFAULT_HEIGHT                       = 32.0f;
         private const float START_FALL_VELOCITY                  = 50.0f;
         private const float GLIDE_TRANSITION_MIN_VELOCITY        = 100.0f;
@@ -15,6 +19,8 @@ namespace cst.Flight
         private const float MAX_FALL_TIME                        = 3.0f;
         private const float FORWARD_SPEED                        = 50.0f;
         private const float STRAFE_SPEED                         = 50.0f;
+        private const float LOOK_SENSITIVITY                     = 100.0f;
+        private const bool  CAMERA_PITCH                         = true;
 
         private Vector3              m_position;
         private Vector3              m_rotation;
@@ -22,10 +28,6 @@ namespace cst.Flight
         private float                m_forwardTransitionSpeed;
         private float                m_fallTimer;
         private readonly float       m_height;
-        private bool                 m_walking;
-        private bool                 m_falling;
-        private bool                 m_walkSoundPlaying;
-        private readonly AudioSource m_walkSound;
 
         public GroundController(SeraphController controller)
             : base(controller)
@@ -37,8 +39,8 @@ namespace cst.Flight
             else
                 m_height = DEFAULT_HEIGHT + 1.0f;
 
-            m_walkSound      = (AudioSource)gameObject.AddComponent("AudioSource");
-            m_walkSound.clip = (AudioClip)Resources.Load("footsteps-1");
+            walking = false;
+            falling = false;
         }
 
         public void start(TransitionData data)
@@ -53,14 +55,14 @@ namespace cst.Flight
         {
             m_position = transform.position;
             m_rotation = transform.eulerAngles;
-            m_falling = checkFalling();
+            falling = checkFalling();
 
             handleCamera();
 
             if (state == SeraphState.LANDING)
                 handleLandingTransition();
 
-            if (m_falling)
+            if (falling)
             {
                 handleFalling();
                 handleTransition();
@@ -71,7 +73,6 @@ namespace cst.Flight
             }
 
             handleMovement();
-            handleAudio();
         }
 
         public void triggerEnter(Collider other)
@@ -103,47 +104,43 @@ namespace cst.Flight
             };
         }
 
-        private void handleAudio()
-        {
-            if (!m_falling)
-            {
-                if (m_walking)
-                {
-                    if (!m_walkSoundPlaying)
-                    {
-                        m_walkSound.loop = true;
-                        m_walkSound.playOnAwake = false;
-                        m_walkSound.Play();
-                        m_walkSoundPlaying = true;
-                    }
-                }
-                else
-                {
-                    if (m_walkSoundPlaying)
-                    {
-                        m_walkSound.loop = false;
-                        m_walkSound.playOnAwake = false;
-                        m_walkSound.Stop();
-                        m_walkSoundPlaying = false;
-                    }
-                }
-            }
-
-            if (m_falling)
-            {
-                m_walkSound.Stop();
-            }
-        }
-
         // Camera-mouse movement - only runs inside the editor
-        //[Conditional("UNITY_EDITOR")]
         private void handleCamera()
         {
-            float rotationX = m_rotation.x - (Input.GetAxis("Mouse Y") * 5.0f);
-            float rotationY = m_rotation.y + (Input.GetAxis("Mouse X") * 5.0f);
+            Vector3 rotation = m_rotation;
 
-            m_rotation.x = rotationX;
-            m_rotation.y = rotationY;
+            if (CAMERA_PITCH)
+            {
+                if (inputManager.actionFired(Action.LOOK_UP))
+                {
+                    float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
+                    float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_UP) * LOOK_SENSITIVITY;
+
+                    if (normalisedPitch - change > -85.0f)
+                        rotation.x -= change;
+                }
+                else if (inputManager.actionFired(Action.LOOK_DOWN))
+                {
+                    float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
+                    float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_DOWN) * LOOK_SENSITIVITY;
+
+                    if (normalisedPitch + change < 85.0f)
+                        rotation.x += change;
+                }
+            }
+
+            if (inputManager.actionFired(Action.LOOK_LEFT))
+            {
+                float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_LEFT) * LOOK_SENSITIVITY;
+                rotation.y -= change;
+            }
+            else if (inputManager.actionFired(Action.LOOK_RIGHT))
+            {
+                float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_RIGHT) * LOOK_SENSITIVITY;
+                rotation.y += change;
+            }
+
+            m_rotation = rotation;
         }
 
         private void handleLandingTransition()
@@ -226,38 +223,37 @@ namespace cst.Flight
         {
             // Strip the height component from our vectors
             Vector3 forwardVector = transform.forward;
-            forwardVector.y = 0.0f;
-
             Vector3 rightVector = transform.right;
+            forwardVector.y = 0.0f;
             rightVector.y = 0.0f;
 
             bool walkedThisFrame = false;
 
-            if (Input.GetKey(KeyCode.W) || Input.GetAxis("ControllerVertical") < 0)
+            if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
-                m_position += forwardVector*FORWARD_SPEED*Time.deltaTime;
+                m_position += forwardVector * FORWARD_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_FORWARD);
                 walkedThisFrame = true;
             }
 
-            if (Input.GetKey(KeyCode.S) || Input.GetAxis("ControllerVertical") > 0)
+            if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
-                m_position -= forwardVector*FORWARD_SPEED*Time.deltaTime;
+                m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_BACKWARD);
                 walkedThisFrame = true;
             }
 
-            if (Input.GetKey(KeyCode.D) || Input.GetAxis("ControllerHorizontal") > 0)
+            if (inputManager.actionFired(Action.MOVE_LEFT))
             {
-                m_position += rightVector*STRAFE_SPEED*Time.deltaTime;
+                m_position -= rightVector * STRAFE_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_LEFT);
                 walkedThisFrame = true;
             }
 
-            if (Input.GetKey(KeyCode.A) || Input.GetAxis("ControllerHorizontal") < 0)
+            if (inputManager.actionFired(Action.MOVE_RIGHT))
             {
-                m_position -= rightVector*STRAFE_SPEED*Time.deltaTime;
+                m_position += rightVector * STRAFE_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_RIGHT);
                 walkedThisFrame = true;
             }
 
-            m_walking = walkedThisFrame;
+            walking = walkedThisFrame;
             transform.eulerAngles = m_rotation;
             transform.position = m_position;
         }
@@ -265,7 +261,7 @@ namespace cst.Flight
         // Handles transitioning between falling and gliding
         private void handleTransition()
         {
-            if (!Input.GetKey(KeyCode.Space))
+            if (!inputManager.actionFired(Action.INTERACT))
                 return;
 
             switch (capability)
@@ -274,6 +270,10 @@ namespace cst.Flight
 
                     if (m_fallSpeed >= GLIDE_TRANSITION_MIN_VELOCITY)
                         state = SeraphState.GLIDING;
+
+                    // TODO pick up items
+                    //else
+
 
                     break;
 
