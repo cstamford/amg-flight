@@ -31,7 +31,7 @@ namespace sv
 
         void RotateOrb(float delta)
         {
-            m_rotation.y = cst.Helpers.wrapAngle(m_rotation.y + (ROTATION_SPEED * delta));
+            m_rotation.y = cst.Common.Helpers.wrapAngle(m_rotation.y + (ROTATION_SPEED * delta));
 
             transform.eulerAngles = m_rotation;
         }
