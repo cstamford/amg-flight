@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b6a2b28a9745dc844933090479d95728
+guid: 7e1cf27593bf861498c4d0ca2e01ce28
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -7,7 +7,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Small_Chimney001
+    4300000: Standard_Flag_003
     7400000: Take 001
     9500000: //RootNode
   materials:
@@ -33,7 +33,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     weldVertices: 1

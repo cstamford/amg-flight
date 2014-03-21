@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 4f09258ee15be4e1eb9ea19344bf8bc4
 ModelImporter:
-  serializedVersion: 15
+  serializedVersion: 16
   fileIDToRecycleName:
     100000: polySurface21
     100002: polySurface34
@@ -46,7 +46,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     weldVertices: 1
@@ -74,4 +74,5 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  additionalBone: 0
   userData: 

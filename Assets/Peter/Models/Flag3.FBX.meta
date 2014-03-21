@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6360883816f7fe44f8df8fc4d29d4de6
+guid: d8d60d8ed7ae06f4a9bdcecdd60fa04d
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -7,7 +7,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Large_Shack_001
+    4300000: Standard_Flag_004
     7400000: Take 001
     9500000: //RootNode
   materials:
@@ -33,7 +33,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     weldVertices: 1

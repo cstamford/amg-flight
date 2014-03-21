@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 70e151fe5c1b546849bd4aace3c0cee2
 ModelImporter:
-  serializedVersion: 15
+  serializedVersion: 16
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
@@ -32,7 +32,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     weldVertices: 1
@@ -60,4 +60,5 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  additionalBone: 0
   userData: 
