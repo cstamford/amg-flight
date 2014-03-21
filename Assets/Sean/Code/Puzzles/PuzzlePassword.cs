@@ -1,9 +1,8 @@
 ﻿//==========================================================
 // Author: Sean Vieira
 // Version: 1.0
-// Function: Handles the keypad object. This stores the
-// required password (that can be edited in the editor)
-// and a copy of the keypadGUI class
+// Function: Handles puzzles that require a code to
+// be entered in a specific order
 //==========================================================
 
 using UnityEngine;
@@ -11,25 +10,25 @@ using System.Collections;
 
 namespace sv
 {
-    public class PuzzleKeypad : MonoBehaviour
+    public class PuzzlePassword : MonoBehaviour
     {
         [SerializeField] private string m_keypadPassword;
         private string m_userPassword;
-        private KeypadGUI m_keypadGUI;
+        private PuzzleGUI m_puzzleGUI;
         private bool m_trigger;
         
         // Use this for initialization
         void Start()
         {
             m_trigger = false;
-            m_keypadGUI = GetComponent<KeypadGUI>();
+            m_puzzleGUI = GetComponent<PuzzleGUI>();
             m_userPassword = "";            
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (m_keypadGUI.PasswordIsEntered())
+            if (m_puzzleGUI.PasswordIsEntered())
             {
                 SetUserPassword();                
             }
@@ -85,27 +84,27 @@ namespace sv
 
         public void SetUserPassword()
         {
-            m_userPassword = m_keypadGUI.GetInput();
+            m_userPassword = m_puzzleGUI.GetInput();
         }
 
         public void DisplayTextTip(bool b)
         {
-            m_keypadGUI.ShowTextTip(b);
+            m_puzzleGUI.ShowTextTip(b);
         }
 
         public void DisplayIncorrectPasswordText(bool b)
         {
-            m_keypadGUI.ShowIncorrectPasswordText(b);
+            m_puzzleGUI.ShowIncompletedText(b);
         }
 
         public void DisplayCorrectPasswordText(bool b)
         {
-            m_keypadGUI.ShowCorrectPasswordText(b);
+            m_puzzleGUI.ShowCompletedText(b);
         }
 
         public void DisplayGUI(bool b)
         {
-            m_keypadGUI.ShowGUI(b);
+            m_puzzleGUI.ShowGUI(b);
         }
     }
 }
