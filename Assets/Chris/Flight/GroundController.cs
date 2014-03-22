@@ -63,7 +63,7 @@ namespace cst.Flight
             if (!distanceToGround.HasValue)
                 state = SeraphState.FALLING;
             else
-                m_position.y -= (distanceToGround.Value - height);
+                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
         }
 
         private void interpolateHeight()
