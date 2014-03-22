@@ -1,5 +1,6 @@
 ﻿using cst.Common;
 using UnityEngine;
+using Action = cst.Common.Action;
 
 namespace cst.Flight
 {
@@ -9,7 +10,8 @@ namespace cst.Flight
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
         private const float INCREMENT_TURN_SPEED  = 35.0f;
-        private const float RETURN_TURN_SPEED     = 30.0f;
+        private const float MIN_RETURN_TURN_SPEED = 10.0f;
+        private const float MAX_RETURN_TURN_SPEED = 30.0f;
         private const float INCREMENT_PITCH_SPEED = 45.0f;
         private const float INCREMENT_VELOCITY    = 40.0f;
         private const float DECREMENT_VELOCITY    = 25.0f;
@@ -119,7 +121,7 @@ namespace cst.Flight
             {
                 if (m_rotation.z < 0.0f)
                 {
-                    turnHorizontalLeft(1.25f * inputManager.actionDelta(Action.MOVE_LEFT));
+                    turnHorizontalLeft(inputManager.actionDelta(Action.MOVE_LEFT) * 1.5f);
                 }
                 else
                 {
@@ -130,7 +132,7 @@ namespace cst.Flight
             {
                 if (m_rotation.z > 0.0f)
                 {
-                    turnHorizontalRight(1.25f * inputManager.actionDelta(Action.MOVE_RIGHT));
+                    turnHorizontalRight(inputManager.actionDelta(Action.MOVE_RIGHT) * 1.5f);
                 }
                 else
                 {
@@ -200,22 +202,27 @@ namespace cst.Flight
         // Returns roll to neutral on no user input
         private void turnHorizontalNone()
         {
-            float angle = m_rotation.z - 180.0f;
+            float angle = Helpers.getNormalizedAngle(m_rotation.z);
+            float posAngle = angle < 0.0f ? -angle : angle;
+
+            if (posAngle > MAX_RETURN_TURN_SPEED)
+                posAngle = MAX_RETURN_TURN_SPEED;
+
+            else if (posAngle < MIN_RETURN_TURN_SPEED)
+                posAngle = MIN_RETURN_TURN_SPEED;
 
             if (angle > 0.0f)
             {
-                m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    + Time.deltaTime * RETURN_TURN_SPEED);
+                m_rotation.z -= posAngle * Time.deltaTime;
 
-                if (m_rotation.z - 180.0f < 0.0f)
+                if (Helpers.getNormalizedAngle(m_rotation.z) < 0.0f)
                     m_rotation.z = 0.0f;
             }
             else if (angle < 0.0f)
             {
-                m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    - Time.deltaTime * RETURN_TURN_SPEED);
+                m_rotation.z += posAngle * Time.deltaTime; ;
 
-                if (m_rotation.z - 180.0f > 0.0f)
+                if (Helpers.getNormalizedAngle(m_rotation.z) > 0.0f)
                     m_rotation.z = 0.0f;
             }
         }
