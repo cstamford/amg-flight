@@ -84,7 +84,7 @@ namespace cst.Flight
             {
                 state = SeraphState.GROUNDED;
             }
-            else if (inputManager.actionFired(Action.INTERACT) && 
+            else if (inputManager.actionFired(Action.TOGGLE_STATE) && 
                      capability >= SeraphCapability.GLIDE &&
                      m_fallSpeed > MIN_GLIDE_VELOCITY)
             {

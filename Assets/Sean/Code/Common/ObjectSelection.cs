@@ -7,16 +7,23 @@
 //==========================================================
 
 using UnityEngine;
-using System.Collections;
+using System;
+using cst.Common;
+using Action = cst.Common.Action;
+
 
 namespace sv
 {
     public class ObjectSelection : MonoBehaviour
     {
         [SerializeField] private float m_rayLength;
+        [SerializeField] private GameObject m_inputManagerObject;
         [SerializeField] private GameObject m_cursor;
+
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
+
+        private InputManager m_inputManager;
         private GameObject m_selected;
         private PuzzleCollect m_puzzleTypeCollect;
         private PuzzlePassword m_puzzleTypePassword;
@@ -33,7 +40,23 @@ namespace sv
             else
             {
                 m_cursor.SetActive(false);
-            }          
+            }
+
+            if (!m_inputManagerObject)
+            {
+                enabled = false;
+                Debug.Log("No input manager added to the Seraph. Please define one in the inspector.");
+            }
+            else
+            {
+                m_inputManager = m_inputManagerObject.GetComponent<InputManager>();
+
+                if (!m_inputManager)
+                {
+                    enabled = false;
+                    throw new Exception("No InputManager script detected on the provided InputManagerObject.");
+                }
+            }
         }
 
         // Update is called once per frame
@@ -48,21 +71,15 @@ namespace sv
                   
                 if (!m_selected)
                 {
-                    if (Input.GetMouseButtonDown(0))
+                    if (m_inputManager.actionFired(Action.INTERACT))
                     {
                         Debug.Log("Nothing has been selected");
                     }
                 }
                 else
                 {                   
-                    
                     // Check to see if selectable objects have been acquired
-                    if (m_selected.tag == "PuzzleCollect")
-                    {
-                        m_cursor.SetActive(true);
-                        m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);                        
-                    }
-                    else if (m_selected.tag == "PuzzleCollectObject")
+                    if (m_selected.tag == "PuzzleCollectObject")
                     {
                         m_cursor.SetActive(true);
                         m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
@@ -74,8 +91,13 @@ namespace sv
                             m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                         }
                     }
-                    
-                    if (Input.GetMouseButtonDown(0))
+                    else if (m_selected.tag == "PuzzleCollect")
+                    {
+                        m_cursor.SetActive(true);
+                        m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
+                    }
+
+                    if (m_inputManager.actionFired(Action.INTERACT))
                     {
                         Debug.Log("Ray intersects with " + m_selected.name);
 
@@ -86,15 +108,11 @@ namespace sv
                             m_selected.SetActive(false);
                         }
                     }
-                    else
-                    {
-                        /* Any other input method here */
-                    }
                 }
             }
             else
             {
-                if (Input.GetMouseButtonDown(0))
+                if (m_inputManager.actionFired(Action.INTERACT))
                 {
                     Debug.Log("Ray has no intersections");
                 }

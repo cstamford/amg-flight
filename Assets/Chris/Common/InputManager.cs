@@ -1,5 +1,17 @@
 ﻿// This is ugly code.
 
+//==============================================================
+// Adapted to include object selection
+// 
+// Revision 1.1 by Sean Vieira
+//
+// - Added in new TOGGLE_STATE action        
+// - When Space/RB is pressed switches from FALLING to GLIDING
+// - INTERACT now casts a ray for object selection
+// - INTERACT buttons are Keyboard-E/360 Pad-A
+//==============================================================
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +31,9 @@ namespace cst.Common
         LOOK_LEFT,
         LOOK_RIGHT,
 
-        INTERACT
+        TOGGLE_STATE,
+        INTERACT,
+
     }
 
     public class InputManager : MonoBehaviour
@@ -74,7 +88,8 @@ namespace cst.Common
             m_actions[Action.LOOK_LEFT]  = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
             m_actions[Action.LOOK_RIGHT] = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.INTERACT] = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton0);
+            m_actions[Action.TOGGLE_STATE] = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton5);
+            m_actions[Action.INTERACT] = Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.JoystickButton0);
 
             // Action deltas
             m_actionDeltas[Action.MOVE_FORWARD]  = (m_actions[Action.MOVE_FORWARD]  ? (leftStickY < 0.0f ? -leftStickY : 1.0f) : 0.0f);
@@ -88,6 +103,7 @@ namespace cst.Common
             m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
 
             // TODO Get controller pressure.
+            m_actionDeltas[Action.TOGGLE_STATE] = m_actions[Action.TOGGLE_STATE] ? 1.0f : 0.0f;
             m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT] ? 1.0f : 0.0f;
         }
 
