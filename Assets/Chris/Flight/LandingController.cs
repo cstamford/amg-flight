@@ -25,8 +25,9 @@ namespace cst.Flight
 
         public override void update()
         {
-            m_position = transform.position;
-            m_rotation = transform.eulerAngles;
+            m_position      = transform.position;
+            m_rotation      = transform.eulerAngles;
+            m_desiredHeight = m_position.y;
 
             handleFacing();
             handleLandingTransitionSpeed();

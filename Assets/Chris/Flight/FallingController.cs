@@ -1,5 +1,7 @@
-﻿using cst.Common;
+﻿using System;
+using cst.Common;
 using UnityEngine;
+using Action = cst.Common.Action;
 
 namespace cst.Flight
 {
@@ -9,9 +11,15 @@ namespace cst.Flight
         private const float START_FALL_VELOCITY = 50.0f;
         private const float MAX_FALL_VELOCTY    = 350.0f;
         private const float MAX_FALL_TIME       = 3.0f;
+        private const float MAX_FORWARD_TIME    = 3.0f;
+        private const float RETURN_ROLL_SPEED  = 180.0f;
 
         private float m_fallSpeed;
         private float m_fallTimer;
+
+        private float m_initialForwardSpeed;
+        private float m_forwardSpeed;
+        private float m_forwardTimer;
 
         public FallingController(SeraphController controller)
             : base(controller)
@@ -20,7 +28,10 @@ namespace cst.Flight
         public override void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
-            m_fallTimer = 0.0f;
+            m_fallTimer           = 0.0f;
+            m_initialForwardSpeed = data.velocity;
+            m_forwardSpeed        = data.velocity;
+            m_forwardTimer        = MAX_FALL_TIME;
         }
 
         public override void update()
@@ -30,8 +41,12 @@ namespace cst.Flight
 
             handleFacing();
             handleMovement();
+            handleRoll();
             handleFalling();
+            handleForwardVelocity();
             handleTransition();
+
+            Debug.Log(String.Format("{0} :: {1}", m_forwardSpeed, m_fallSpeed));
 
             transform.position    = m_position;
             transform.eulerAngles = m_rotation;
@@ -60,7 +75,7 @@ namespace cst.Flight
 
         public override TransitionData transitionData()
         {
-            return new TransitionData { direction = Vector3.down, velocity = m_fallSpeed };
+            return new TransitionData { direction = Vector3.down, velocity = getActualSpeed() };
         }
 
         private void handleFalling()
@@ -70,26 +85,59 @@ namespace cst.Flight
             if (m_fallTimer > MAX_FALL_TIME)
                 m_fallTimer = MAX_FALL_TIME;
 
-            m_fallSpeed = Helpers.quadraticInterp(START_FALL_VELOCITY,
-                MAX_FALL_VELOCTY, m_fallTimer, MAX_FALL_TIME);
+            m_fallSpeed = Helpers.quadraticInterp(START_FALL_VELOCITY, MAX_FALL_VELOCTY, m_fallTimer, MAX_FALL_TIME);
 
             m_position.y -= m_fallSpeed * Time.deltaTime;
         }
 
+        private void handleForwardVelocity()
+        {
+            m_forwardTimer -= Time.deltaTime;
+
+            if (m_forwardTimer < 0.0f)
+                m_forwardTimer = 0.0f;
+
+            m_forwardSpeed = Helpers.quadraticInterp(0.0f, m_initialForwardSpeed, m_forwardTimer, MAX_FORWARD_TIME);
+
+            m_position += transform.forward * m_forwardSpeed * Time.deltaTime;
+        }
+
+        private void handleRoll()
+        {
+            float angleStep = RETURN_ROLL_SPEED * Time.deltaTime;
+            float angle = m_rotation.z - 180.0f;
+
+            if (angle > 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z + angleStep);
+
+                if (m_rotation.z - 180.0f < 0.0f)
+                    m_rotation.z = 0.0f;
+            }
+            else if (angle < 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z - angleStep);
+
+                if (m_rotation.z - 180.0f > 0.0f)
+                    m_rotation.z = 0.0f;
+            }
+        }
+
         private void handleTransition()
         {
-            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height);
-
-            if (distanceToGround.HasValue)
-            {
+            if (Helpers.nearestHit(transform.position, Vector3.down, height).HasValue)
                 state = SeraphState.GROUNDED;
-            }
-            else if (inputManager.actionFired(Action.TOGGLE_STATE) && 
-                     capability >= SeraphCapability.GLIDE &&
-                     m_fallSpeed > MIN_GLIDE_VELOCITY)
-            {
+
+            if (inputManager.actionFired(Action.GLIDE_STATE) && capability >= SeraphCapability.GLIDE && getActualSpeed() > MIN_GLIDE_VELOCITY)
                 state = SeraphState.GLIDING;
-            }
+
+            if (inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT)
+                state = SeraphState.FLYING;
+        }
+
+        private float getActualSpeed()
+        {
+            return (float) Math.Sqrt(Math.Pow(m_fallSpeed, 2.0f) + Math.Pow(m_forwardSpeed, 2.0f));
         }
     }
 }

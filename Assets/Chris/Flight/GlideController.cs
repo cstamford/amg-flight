@@ -264,10 +264,14 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height);
-
-            if (distanceToGround.HasValue)
+            if (Helpers.nearestHit(transform.position, Vector3.down, height).HasValue)
                 state = SeraphState.LANDING;
+
+            if (inputManager.actionFired(Action.CLEAR_STATE))
+                state = SeraphState.FALLING;
+
+            if (inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT)
+                state = SeraphState.FLYING;
         }
     }
 }

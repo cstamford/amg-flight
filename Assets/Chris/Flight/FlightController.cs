@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using cst.Common;
+using UnityEngine;
 
 namespace cst.Flight
 {
@@ -15,6 +16,8 @@ namespace cst.Flight
 
         public void update()
         {
+            if (inputManager.actionFired(Action.CLEAR_STATE))
+                state = SeraphState.FALLING;
         }
 
         public void triggerEnter(Collider other)

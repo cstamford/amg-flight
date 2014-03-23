@@ -19,13 +19,14 @@ namespace cst.Flight
 
         public override void update()
         {
-            m_position = transform.position;
-            m_rotation = transform.eulerAngles;
+            m_position      = transform.position;
+            m_rotation      = transform.eulerAngles;
+            m_desiredHeight = m_position.y;
 
             handleFacing();
             handleMovement();
-            handleTransition();
             interpolateHeight();
+            handleTransition();
 
             transform.eulerAngles = m_rotation;
             transform.position    = m_position;
@@ -56,18 +57,13 @@ namespace cst.Flight
             return new TransitionData { direction = Vector3.zero, velocity = 0.0f };
         }
 
-        private void handleTransition()
-        {
-            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height + 5.0f);
-
-            if (!distanceToGround.HasValue)
-                state = SeraphState.FALLING;
-            else
-                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
-        }
-
         private void interpolateHeight()
         {
+            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height * 2.0f);
+
+            if (distanceToGround.HasValue)
+                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
+
             if (m_position.y > m_desiredHeight)
             {
                 m_position.y -= HEIGHT_INTERP_STEP * Time.deltaTime;
@@ -82,6 +78,15 @@ namespace cst.Flight
                 if (m_position.y >= m_desiredHeight)
                     m_position.y = m_desiredHeight;
             }
+        }
+
+        private void handleTransition()
+        {
+            if (!Helpers.nearestHit(transform.position, Vector3.down, height + 5.0f).HasValue)
+                state = SeraphState.FALLING;
+
+            if ((inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT))
+                state = SeraphState.FLYING;
         }
     }
 }

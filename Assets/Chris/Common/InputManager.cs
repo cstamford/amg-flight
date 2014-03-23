@@ -31,14 +31,18 @@ namespace cst.Common
         LOOK_LEFT,
         LOOK_RIGHT,
 
-        TOGGLE_STATE,
+        FLIGHT_STATE,
+        GLIDE_STATE,
+        CLEAR_STATE,
+
         INTERACT,
+        EXIT,
 
     }
 
     public class InputManager : MonoBehaviour
     {
-        private struct InputAxisTags
+        public struct InputAxisTags
         {
             public const string CONTROLLER_LEFT_STICK_X_AXIS  = "ControllerHorizontal";
             public const string CONTROLLER_LEFT_STICK_Y_AXIS  = "ControllerVertical";
@@ -48,15 +52,9 @@ namespace cst.Common
             public const string MOUSE_Y_AXIS                  = "Mouse Y";
         }
 
-        private readonly Dictionary<Action, bool>  m_actions;
-        private readonly Dictionary<Action, float> m_actionDeltas;
+        private readonly Dictionary<Action, bool> m_actions       = new Dictionary<Action, bool>();
+        private readonly Dictionary<Action, float> m_actionDeltas = new Dictionary<Action, float>();
         private const float MOUSE_SENSITIVITY = 5.0f;
-
-        public InputManager()
-        {
-            m_actions      = new Dictionary<Action, bool>();
-            m_actionDeltas = new Dictionary<Action, float>();
-        }
 
         public bool actionFired(Action action)
         {
@@ -88,8 +86,11 @@ namespace cst.Common
             m_actions[Action.LOOK_LEFT]  = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
             m_actions[Action.LOOK_RIGHT] = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.TOGGLE_STATE] = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton5);
-            m_actions[Action.INTERACT] = Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.JoystickButton0);
+            m_actions[Action.INTERACT]     = Input.GetKey(KeyCode.E)         || Input.GetKey(KeyCode.JoystickButton0); // A
+            m_actions[Action.CLEAR_STATE]  = Input.GetKey(KeyCode.Return)    || Input.GetKey(KeyCode.JoystickButton3); // Y
+            m_actions[Action.GLIDE_STATE]  = Input.GetKey(KeyCode.Space)     || Input.GetKey(KeyCode.JoystickButton4); // Left bumper
+            m_actions[Action.FLIGHT_STATE] = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton5); // Right bumper
+            m_actions[Action.EXIT]         = Input.GetKey(KeyCode.Escape)    || Input.GetKey(KeyCode.JoystickButton6); // Back button
 
             // Action deltas
             m_actionDeltas[Action.MOVE_FORWARD]  = (m_actions[Action.MOVE_FORWARD]  ? (leftStickY < 0.0f ? -leftStickY : 1.0f) : 0.0f);
@@ -97,14 +98,17 @@ namespace cst.Common
             m_actionDeltas[Action.MOVE_LEFT]     = (m_actions[Action.MOVE_LEFT]     ? (leftStickX < 0.0f ? -leftStickX : 1.0f) : 0.0f);
             m_actionDeltas[Action.MOVE_RIGHT]    = (m_actions[Action.MOVE_RIGHT]    ? (leftStickX > 0.0f ? leftStickX  : 1.0f) : 0.0f);
 
-            m_actionDeltas[Action.LOOK_UP]    = (m_actions[Action.LOOK_UP]    ? (rightStickY < 0.0f ? -rightStickY : mouseY > 0.0f ? mouseY : 1.0f) : 0.0f);
-            m_actionDeltas[Action.LOOK_DOWN]  = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY  : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_UP]    = (m_actions[Action.LOOK_UP]    ? (rightStickY < 0.0f ? -rightStickY : mouseY > 0.0f ? mouseY  : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_DOWN]  = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_LEFT]  = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
 
             // TODO Get controller pressure.
-            m_actionDeltas[Action.TOGGLE_STATE] = m_actions[Action.TOGGLE_STATE] ? 1.0f : 0.0f;
-            m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT] ? 1.0f : 0.0f;
+            m_actionDeltas[Action.INTERACT]     = m_actions[Action.INTERACT]     ? 1.0f : 0.0f;
+            m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
+            m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
+            m_actionDeltas[Action.FLIGHT_STATE] = m_actions[Action.FLIGHT_STATE] ? 1.0f : 0.0f;
+            m_actionDeltas[Action.EXIT]         = m_actions[Action.EXIT]         ? 1.0f : 0.0f;
         }
 
         private void dumpDebug()
