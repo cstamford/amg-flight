@@ -49,7 +49,6 @@ namespace cst.Flight
         private LandingController m_landingController;
         private GlideController   m_glideController;		
         private FlightController  m_flightController;
-        private IControllerBase   m_activeController;
 
         public void Start()
         {
@@ -100,51 +99,51 @@ namespace cst.Flight
 
         public void Update()
         {
-            IControllerBase lastController = m_activeController;
+            IControllerBase lastController = activeController;
 
             switch (m_state)
             {
                 case SeraphState.GROUNDED:
-                    m_activeController = m_groundController;
+                    activeController = m_groundController;
                     break;
 
                 case SeraphState.FALLING:
-                    m_activeController = m_fallingController;
+                    activeController = m_fallingController;
                     break;
 
                 case SeraphState.LANDING:
-                    m_activeController = m_landingController;
+                    activeController = m_landingController;
                     break;
 
                 case SeraphState.GLIDING:
-                    m_activeController = m_glideController;
+                    activeController = m_glideController;
                     break;
 
                 case SeraphState.FLYING:
-                    m_activeController = m_flightController;
+                    activeController = m_flightController;
                     break;
             }
 
-            if (lastController != m_activeController)
+            if (lastController != activeController)
             {
                 TransitionData data = lastController == null 
                     ? new TransitionData { direction = Vector3.zero, velocity = 0.0f } 
                     : lastController.transitionData();
 
-                m_activeController.start(data);
+                activeController.start(data);
             }
 
-            m_activeController.update();
+            activeController.update();
         }
 
         public void OnCollisionEnter(Collision other)
         {
-            m_activeController.collisionEnter(other);
+            activeController.collisionEnter(other);
         }
 
         public void OnCollisionExit(Collision other)
         {
-            m_activeController.collisionExit(other);
+            activeController.collisionExit(other);
 
             // Hack - remove rigidbody velocity
             rigidbody.velocity = Vector3.zero;
@@ -152,12 +151,17 @@ namespace cst.Flight
 
         public void OnTriggerEnter(Collider other)
         {
-            m_activeController.triggerEnter(other);
+            activeController.triggerEnter(other);
         }
 
         public void OnTriggerExit(Collider other)
         {
-            m_activeController.triggerExit(other);
+            activeController.triggerExit(other);
+        }
+        public IControllerBase activeController 
+        { 
+            get; 
+            private set; 
         }
 
         public InputManager inputManager
@@ -194,10 +198,5 @@ namespace cst.Flight
         {
             get { return base.gameObject; }
         }
-
-		public float SeraphGlideVelocity
-		{
-			get { return m_glideController.forwardSpeed; }
-		}
     }
 }

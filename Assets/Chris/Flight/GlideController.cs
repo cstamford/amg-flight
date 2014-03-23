@@ -23,7 +23,7 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
-        public float forwardSpeed { get { return m_forwardSpeed; } }
+        public float forwardSpeed { get; private set; }
 
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
@@ -40,7 +40,6 @@ namespace cst.Flight
 
         private Vector3 m_position;
         private Vector3 m_rotation;
-        private float   m_forwardSpeed;
 
         public GlideController(SeraphController controller)
             : base(controller)
@@ -50,9 +49,7 @@ namespace cst.Flight
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
 
-            m_forwardSpeed = data.velocity < RESTING_VELOCITY 
-                ? RESTING_VELOCITY
-                : data.velocity;
+            forwardSpeed = data.velocity < RESTING_VELOCITY ? RESTING_VELOCITY : data.velocity;
         }
 
         public void update()
@@ -91,7 +88,7 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { direction = transform.forward, velocity = m_forwardSpeed };
+            return new TransitionData { direction = transform.forward, velocity = forwardSpeed };
         }
 
         private void handleOrientationChange()
@@ -99,8 +96,6 @@ namespace cst.Flight
             handlePitchChange();
             handleYawChange();
             handleRollChange();
-
-            transform.eulerAngles = m_rotation;
         }
 
         // Handles the change in pitch based on the user input
@@ -128,8 +123,7 @@ namespace cst.Flight
             if (angle > 180.0f)
                 angle -= 360.0f;
 
-            m_rotation.y = Helpers.wrapAngle(m_rotation.y
-                - (Time.deltaTime * angle * TURN_TIGHTNESS));
+            m_rotation.y = Helpers.wrapAngle(m_rotation.y - (Time.deltaTime * angle * TURN_TIGHTNESS));
         }
 
         // Handles the change in roll based on the user input
@@ -169,10 +163,7 @@ namespace cst.Flight
             float angle = Helpers.getNormalizedAngle(m_rotation.x);
 
             if (angle > -MAX_PITCH_ANGLE)
-            {
-                m_rotation.x = Helpers.wrapAngle(m_rotation.x
-                    - (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
-            }
+                m_rotation.x = Helpers.wrapAngle(m_rotation.x - (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
         }
 
         // Changes pitch based on down user input
@@ -181,10 +172,7 @@ namespace cst.Flight
             float angle = Helpers.getNormalizedAngle(m_rotation.x);
 
             if (angle < MAX_PITCH_ANGLE)
-            {
-                m_rotation.x = Helpers.wrapAngle(m_rotation.x
-                    + (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
-            }
+                m_rotation.x = Helpers.wrapAngle(m_rotation.x + (delta * Time.deltaTime * INCREMENT_PITCH_SPEED));
         }
 
         // Returns pitch to neutral on no user input
@@ -199,10 +187,7 @@ namespace cst.Flight
             float angle = Helpers.getNormalizedAngle(m_rotation.z);
 
             if (angle < MAX_ROLL_ANGLE)
-            {
-                m_rotation.z = Helpers.wrapAngle(m_rotation.z
-                    + (delta * Time.deltaTime * INCREMENT_TURN_SPEED));
-            }
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z + (delta * Time.deltaTime * INCREMENT_TURN_SPEED));
         }
 
         // Changes roll based on right user input
@@ -211,10 +196,7 @@ namespace cst.Flight
             float angle = Helpers.getNormalizedAngle(m_rotation.z);
 
             if (angle > -MAX_ROLL_ANGLE)
-            {
-                m_rotation.z = Helpers.wrapAngle(m_rotation.z 
-                    - (delta * Time.deltaTime *INCREMENT_TURN_SPEED));
-            }
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z - (delta * Time.deltaTime * INCREMENT_TURN_SPEED));
         }
 
         // Returns roll to neutral on no user input
@@ -238,7 +220,7 @@ namespace cst.Flight
             }
             else if (angle < 0.0f)
             {
-                m_rotation.z += posAngle * Time.deltaTime; ;
+                m_rotation.z += posAngle * Time.deltaTime;
 
                 if (Helpers.getNormalizedAngle(m_rotation.z) > 0.0f)
                     m_rotation.z = 0.0f;
@@ -252,8 +234,7 @@ namespace cst.Flight
             float pitch = Helpers.getNormalizedAngle(m_rotation.x);
 
             // Get rest speed based on pitch
-            float restSpeed = RESTING_VELOCITY + (pitch *
-                ((MAX_VELOCITY - RESTING_VELOCITY) / MAX_PITCH_ANGLE));
+            float restSpeed = RESTING_VELOCITY + ((pitch * MAX_VELOCITY - RESTING_VELOCITY) / MAX_PITCH_ANGLE);
 
             // Convert pitch to a unit vector
             pitch /= MAX_PITCH_ANGLE;
@@ -262,7 +243,7 @@ namespace cst.Flight
             float step = pitch * Time.deltaTime;
 
             // Don't go above the calculated rest speed
-            if (m_forwardSpeed > restSpeed && pitch > 0.0f)
+            if (forwardSpeed > restSpeed && pitch > 0.0f)
                 step = -step;
 
             if (step > 0.0f)
@@ -270,14 +251,13 @@ namespace cst.Flight
             else
                 step *= DECREMENT_VELOCITY;
 
-            m_forwardSpeed += step;
+            forwardSpeed += step;
 
             // Drop out of flight if we stall
-            if (m_forwardSpeed < MIN_VELOCITY)
+            if (forwardSpeed < MIN_VELOCITY)
                 state = SeraphState.GROUNDED;
 
-            m_position += transform.forward * m_forwardSpeed
-                * Time.deltaTime;
+            m_position += transform.forward * forwardSpeed * Time.deltaTime;
         }
 
         private void handleTransition()

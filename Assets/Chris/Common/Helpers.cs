@@ -13,8 +13,7 @@ namespace cst.Common
     public static class Helpers
     {
         // Wraps a value between positive numbers lowBound and highBound
-        public static float wrapValue(float value, 
-            float lowBound, float highBound)
+        public static float wrapValue(float value,  float lowBound, float highBound)
         {
             if (highBound < lowBound)
                 return -1.0f;
@@ -39,8 +38,7 @@ namespace cst.Common
         }
 
         // Clamp a value between lowBound and highBound;
-        public static float clamp(float value,
-            float lowBound, float highBound)
+        public static float clamp(float value, float lowBound, float highBound)
         {
             value = high(value, highBound);
             value = low(value, lowBound);
@@ -74,16 +72,14 @@ namespace cst.Common
         }
 
         // Quadratic interpolation - easing in
-        public static float quadraticInterp(float start, float max, float time,
-            float maxTime)
+        public static float quadraticInterp(float start, float max, float time, float maxTime)
         {
             time /= maxTime;
             return (max * (float)Math.Pow(time, 2.0f)) + start;
         }
 
         // Cubic interpolation - easing in
-        public static float cubicInterp(float start, float max, float time,
-            float maxTime)
+        public static float cubicInterp(float start, float max, float time, float maxTime)
         {
             time /= maxTime;
             return (max * (float)Math.Pow(time, 3.0f)) + start;
