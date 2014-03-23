@@ -1,4 +1,9 @@
-﻿// Various useful helpers that aren't specific to one script
+﻿// ==================================================================== \\
+// File   : Helpers.cs                                                  \\
+// Author : Christopher Stamford                                        \\
+//                                                                      \\
+// Helpers.cs provides common functionality that is script-independent. \\
+// ==================================================================== \\
 
 using System;
 using UnityEngine;

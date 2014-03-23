@@ -1,4 +1,20 @@
-﻿using System;
+﻿// ==================================================================== \\
+// File   : FallingController.cs                                        \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// FallingController.cs provides functionality for the FALLING state.   \\
+//                                                                      \\
+// Preserves momentum from the previous state's transition data, and    \\
+// uses quadratic interpolation to increase fall speed and to decrease  \\
+// forward momentum.                                                    \\
+//                                                                      \\
+// This controller can transition to the following states:              \\
+//   - GROUNDED                                                         \\
+//   - GLIDING                                                          \\
+//   - FLYING                                                           \\
+// ==================================================================== \\
+
+using System;
 using cst.Common;
 using UnityEngine;
 using Action = cst.Common.Action;

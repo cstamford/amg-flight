@@ -1,8 +1,19 @@
-﻿// This is ugly code.
+﻿// ==================================================================== \\
+// File   : InputManager.cs                                             \\
+// Author : Christopher Stamford, additions by Sean Vieira              \\
+//                                                                      \\
+// InputManager.cs defines the an InputManager class, which is used     \\
+// throughout the project for device-independent input.                 \\
+//                                                                      \\
+// The InputManager should be attached to a GameObject in the scene.    \\
+//                                                                      \\
+// It provides functionality to query the state of an action (based on  \\
+// user input), and the delta of that action - for example, how far the \\
+// controller stick has been moved, or how hard a controller button has \\
+// been pressed.                                                        \\
+// ==================================================================== \\
 
 //==============================================================
-// Adapted to include object selection
-// 
 // Revision 1.1 by Sean Vieira
 //
 // - Added in new TOGGLE_STATE action        
@@ -36,8 +47,7 @@ namespace cst.Common
         CLEAR_STATE,
 
         INTERACT,
-        EXIT,
-
+        EXIT
     }
 
     public class InputManager : MonoBehaviour

@@ -1,4 +1,11 @@
-﻿// Looks at the map camera
+﻿// ==================================================================== \\
+// File   : LookAtMapCamera.cs                                          \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// LookAtMapCamera.cs forces the parent GameObject to look at the       \\
+// provided GameObject. If one is not provided, it will scan the scene  \\
+// for an object with the Map Camera tag.                               \\
+// ==================================================================== \\
 
 using System;
 using UnityEngine;
@@ -21,7 +28,6 @@ namespace cst.Map
 
         void Update()
         {
-            // Basic billboarding. Not sure if this is needed.
             transform.rotation = Quaternion.LookRotation(transform.position - m_mapCamera.transform.position);
         }
     }

@@ -1,4 +1,13 @@
-﻿using System;
+﻿// ==================================================================== \\
+// File   : FollowPlayer.cs                                             \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// FollowPlayer.cs forces the parent GameObject to share its position   \\
+// with another GameObject. If no GameObject attached, scans the scene  \\
+// for one with the Player tag.                                         \\
+// ==================================================================== \\
+
+using System;
 using UnityEngine;
 
 namespace cst.Map

@@ -1,5 +1,9 @@
-﻿// Disabled for on pre-render, re-enabled on post-render. Used to selectively disable
-// fog on one camera.
+﻿// ==================================================================== \\
+// File   : CameraDisableFog.cs                                         \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// CameraDisableFog.cs disables fog selectively for one camera.         \\
+// ==================================================================== \\
 
 using UnityEngine;
 

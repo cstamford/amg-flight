@@ -1,4 +1,18 @@
-﻿using cst.Common;
+﻿// ==================================================================== \\
+// File   : LandingController.cs                                        \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// LandingController.cs provides functionality for the LANDING state.   \\
+//                                                                      \\
+// It provides a smooth transition between the GLIDING state and the    \\
+// GROUNDED state. This ensures that the transition between high speed  \\
+// gliding and hitting the ground is not jarring for the player.        \\
+//                                                                      \\
+// This controller can transition to the following states:              \\
+//   - GROUNDED                                                         \\
+// ==================================================================== \\
+
+using cst.Common;
 using UnityEngine;
 
 namespace cst.Flight

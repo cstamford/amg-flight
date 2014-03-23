@@ -1,4 +1,21 @@
-﻿using cst.Common;
+﻿// ==================================================================== \\
+// File   : GlideController.cs                                          \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// GlideController.cs provides functionality for the GLIDING state.     \\
+//                                                                      \\
+// It is capable of changing pitch and roll. Yaw is modified based on   \\
+// the Seraph's current roll, using constants defined in the class.     \\
+//                                                                      \\
+// Preserves momentum from the previous state's transition data.        \\
+//                                                                      \\
+// This controller can transition to the following states:              \\
+//   - FALLING                                                          \\
+//   - LANDING                                                          \\
+//   - FLYING                                                           \\
+// ==================================================================== \\
+
+using cst.Common;
 using UnityEngine;
 using Action = cst.Common.Action;
 
@@ -6,6 +23,8 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
+        public float forwardSpeed { get { return m_forwardSpeed; } }
+
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
@@ -22,7 +41,6 @@ namespace cst.Flight
         private Vector3 m_position;
         private Vector3 m_rotation;
         private float   m_forwardSpeed;
-        public float    forwardSpeed { get { return m_forwardSpeed; } }
 
         public GlideController(SeraphController controller)
             : base(controller)

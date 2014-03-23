@@ -1,8 +1,19 @@
-// Controller for the main character - a Seraph.
-// Handles gliding, flight, and ground movement mechanics.
-//
-// Requires a box collider and kinematic rigid body on script object.
-// The rigid body needs constraints on all rotational axes.
+// ==================================================================== \\
+// File   : SeraphController.cs                                         \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// SeraphController.cs acts as a controller for all game states.        \\
+//                                                                      \\
+// It defines all valid states and capabilities for a Seraph.           \\
+//                                                                      \\
+// It forwards messages from Unity to the currently active specialised  \\
+// controller, and it handles transitioning between the controllers in  \\
+// a smooth way. It also provides exposes private properties of the     \\
+// underlying GameObject for the ControllerBase to use.                 \\
+//                                                                      \\
+// Requires a collider, non-kinematic rigidbody, and an InputManager to \\
+// be attached to the underlying GameObject to function correctly.      \\
+// ==================================================================== \\
 
 using System;
 using cst.Common;
@@ -54,6 +65,14 @@ namespace cst.Flight
                 throw new Exception("No input manager added to the Seraph. Please define one in the inspector.");
             }
 
+            m_inputManager = m_inputManagerObject.GetComponent<InputManager>();
+
+            if (m_inputManager == null)
+            {
+                enabled = false;
+                throw new Exception("No InputManager script detected on the provided InputManagerObject.");
+            }
+            
             if (rigidbody == null)
             {
                 enabled = false;
@@ -77,14 +96,6 @@ namespace cst.Flight
             m_landingController = new LandingController(this);
             m_glideController   = new GlideController(this);
             m_flightController  = new FlightController(this);
-
-            m_inputManager = m_inputManagerObject.GetComponent<InputManager>();
-
-            if (m_inputManager == null)
-            {
-                enabled = false;
-                throw new Exception("No InputManager script detected on the provided InputManagerObject.");
-            }
         }
 
         public void Update()

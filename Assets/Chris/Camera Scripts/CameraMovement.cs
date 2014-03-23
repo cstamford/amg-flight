@@ -1,5 +1,12 @@
-// Basic camera movement script for testing.
-// Adapted from Unity's built-in script by Chris Stamford.
+// ==================================================================== \\
+// File   : CameraMovement.cs                                           \\
+// Author : Christopher Stamford                                        \\
+//                                                                      \\
+// CameraMovement.cs provides basic debug movement when attached to an  \\
+// object.                                                              \\
+//                                                                      \\
+// This script should only be used for debug purposes.                  \\
+// ==================================================================== \\
 
 using UnityEngine;
 

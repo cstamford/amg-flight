@@ -1,4 +1,11 @@
-﻿using cst.Common;
+﻿// ==================================================================== \\
+// File   : FlightController.cs                                         \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// Unimplemented.                                                       \\
+// ==================================================================== \\
+
+using cst.Common;
 using UnityEngine;
 
 namespace cst.Flight

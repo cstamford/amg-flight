@@ -1,4 +1,19 @@
-﻿using cst.Common;
+﻿// ==================================================================== \\
+// File   : GroundController.cs                                         \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// GroundController.cs provides functionality for the GROUNDED state.   \\
+//                                                                      \\
+// It allows ground movement and deals with collision detection, and    \\
+// ensuring that the Seraph remains at the correct height above the     \\
+// ground at all times.                                                 \\
+//                                                                      \\
+// This controller can transition to the following states:              \\
+//   - FALLING                                                          \\
+//   - FLYING                                                           \\
+// ==================================================================== \\
+
+using cst.Common;
 using UnityEngine;
 
 namespace cst.Flight

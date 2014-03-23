@@ -1,5 +1,14 @@
-// Basic camera rotation script for testing.
-// Adapted from Unity's built-in script by Chris Stamford.
+// ==================================================================== \\
+// File   : CameraRotation.cs                                           \\
+// Author : Christopher Stamford                                        \\
+//                                                                      \\
+// CameraRotation.cs provides basic debug rotation when attached to an  \\
+// object.                                                              \\
+//                                                                      \\
+// This script should only be used for debug purposes.                  \\
+//                                                                      \\
+// Adapted from a default script provided by Unity.                     \\
+// ==================================================================== \\
 
 using UnityEngine;
 

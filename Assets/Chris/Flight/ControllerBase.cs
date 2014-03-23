@@ -1,4 +1,31 @@
-﻿using System;
+﻿// ==================================================================== \\
+// File   : ControllerBase.cs                                           \\
+// Author : Christopher Stamford									    \\
+//                                                                      \\
+// ControllerBase.cs contains several pure virtual classes.             \\
+//                                                                      \\
+// TransitionData is a struct that each controller is required to       \\
+// provide on-demand. This allows other controllers to retrieve data    \\
+// from the previous controller on a transition change.                 \\
+//                                                                      \\
+// IControllerBase is an interface defining the public interface each   \\
+// controller should implement. This interface provides a way for the   \\
+// SeraphController to forward events on to the specialised controller. \\
+//                                                                      \\
+// ControllerBase should be inherited by all specialised controllers.   \\
+// Because only the SeraphController inherits from MonoBehaviour, there \\
+// must be a way to dispatch important Unity information regarding the  \\
+// Seraph to the specialised controllers. ControllerBase provides this  \\
+// functionality.                                                       \\
+//                                                                      \\
+// SharedGroundControls is an abstract class which inherits from        \\
+// ControllerBase and implements IControllerBase. Because C# does not   \\
+// support multiple inheritance, creating this class is the easiest way \\
+// to share common functionality (ground controls) between any classes  \\
+// which use that functionality.                                        \\
+// ==================================================================== \\
+
+using System;
 using cst.Common;
 using UnityEngine;
 using Action = cst.Common.Action;
@@ -91,7 +118,6 @@ namespace cst.Flight
     {
         public bool moved { get; set; }
 
-        protected const bool  NON_RIFT         = true;
         protected const float FORWARD_SPEED    = 50.0f;
         protected const float STRAFE_SPEED     = 50.0f;
         protected const float LOOK_SENSITIVITY = 100.0f;
@@ -144,24 +170,21 @@ namespace cst.Flight
         {
             Vector3 rotation = m_rotation;
 
-            if (NON_RIFT)
+            if (inputManager.actionFired(Action.LOOK_UP))
             {
-                if (inputManager.actionFired(Action.LOOK_UP))
-                {
-                    float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
-                    float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_UP) * LOOK_SENSITIVITY;
+                float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
+                float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_UP) * LOOK_SENSITIVITY;
 
-                    if (normalisedPitch - change > -85.0f)
-                        rotation.x -= change;
-                }
-                else if (inputManager.actionFired(Action.LOOK_DOWN))
-                {
-                    float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
-                    float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_DOWN) * LOOK_SENSITIVITY;
+                if (normalisedPitch - change > -85.0f)
+                    rotation.x -= change;
+            }
+            else if (inputManager.actionFired(Action.LOOK_DOWN))
+            {
+                float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
+                float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_DOWN) * LOOK_SENSITIVITY;
 
-                    if (normalisedPitch + change < 85.0f)
-                        rotation.x += change;
-                }
+                if (normalisedPitch + change < 85.0f)
+                    rotation.x += change;
             }
 
             if (inputManager.actionFired(Action.LOOK_LEFT))
