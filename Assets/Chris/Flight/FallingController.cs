@@ -46,8 +46,6 @@ namespace cst.Flight
             handleForwardVelocity();
             handleTransition();
 
-            Debug.Log(String.Format("{0} :: {1}", m_forwardSpeed, m_forwardTimer));
-
             transform.position    = m_position;
             transform.eulerAngles = m_rotation;
         }
