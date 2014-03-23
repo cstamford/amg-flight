@@ -12,7 +12,7 @@ namespace cst.Flight
         private const float MAX_FALL_VELOCTY    = 350.0f;
         private const float MAX_FALL_TIME       = 3.0f;
         private const float MAX_FORWARD_TIME    = 3.0f;
-        private const float RETURN_ROLL_SPEED  = 180.0f;
+        private const float RETURN_ROLL_SPEED   = 180.0f;
 
         private float m_fallSpeed;
         private float m_fallTimer;
@@ -45,8 +45,6 @@ namespace cst.Flight
             handleFalling();
             handleForwardVelocity();
             handleTransition();
-
-            Debug.Log(String.Format("{0} :: {1}", m_forwardSpeed, m_fallSpeed));
 
             transform.position    = m_position;
             transform.eulerAngles = m_rotation;
