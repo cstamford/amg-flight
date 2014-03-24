@@ -1,5 +1,18 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿/*
+		File: NarrationTrigger.cs
+		
+		Version: 1.1
+		
+		Author: Johnathon Forster
+		
+		Description:
+				Enables a trigger that:
+					plays an audio clip attached in the Inspector (required)
+					destroys an object once the audio clip has finished playing (optional)
+*/
+
+using UnityEngine;
+using System;
 
 public class NarrationTrigger : MonoBehaviour {
 
@@ -13,9 +26,19 @@ public class NarrationTrigger : MonoBehaviour {
 	void Start () {
 		narrativeTriggered = false;
 		audioSource = GameObject.Find("Seraph").transform.gameObject.AddComponent<AudioSource>();
-		//audioSource = (AudioSource)Camera.main.transform.gameObject.GetComponent(typeof(AudioSource));
 		print(audioSource);
-		audioSource.clip = Resources.Load("Gliding") as AudioClip;
+		
+		if (narration != null)
+		{
+			audioSource.clip = narration;
+		} else {
+			throw new Exception("No audio clip attached");
+		}
+		
+		if (barrier == null)
+		{
+			Debug.LogWarning("No barrier attached");
+		}
 	}
 	
 	void Update () {
