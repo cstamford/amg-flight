@@ -52,11 +52,6 @@ namespace cst.Flight
 
         public void Start()
         {
-            if (collider == null)
-            {
-                enabled = false;
-                throw new Exception("No collider attached.");
-            }
 
             if (m_inputManagerObject == null)
             {
@@ -70,24 +65,6 @@ namespace cst.Flight
             {
                 enabled = false;
                 throw new Exception("No InputManager script detected on the provided InputManagerObject.");
-            }
-            
-            if (rigidbody == null)
-            {
-                enabled = false;
-                throw new Exception("No rigidbody attached.");
-            }
-
-            if (rigidbody.isKinematic)
-            {
-                enabled = false;
-                throw new Exception("Attached rigidbody is kinematic.");
-            }
-
-            if (rigidbody.useGravity)
-            {
-                Debug.LogWarning("Gravity enabled on rigidbody - Seraph" +
-                                 "Controller has its own implementation.");
             }
 
             m_groundController  = new GroundController(this);

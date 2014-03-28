@@ -19,13 +19,13 @@ namespace cst.Flight
 {
     public class LandingController : SharedGroundControls
     {
-        private const float HEIGHT_INTERP_STEP                   = 25.0f;
-        private const float LANDING_TRANSITION_MAX_VELOCITY      = 150.0f;
-        private const float LANDING_TRANSITION_TIME              = 1.0f;
+        private const float LANDING_TRANSITION_MAX_VELOCITY      = 7.5f;
+        private const float LANDING_TRANSITION_MAX_TIME          = 1.0f;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
 
+        private float m_forwardTransitionTimer;
         private float m_forwardTransitionSpeed;
-        private float m_desiredHeight;
+        private float m_forwardInitialSpeed;
 
         public LandingController(SeraphController controller)
             : base(controller)
@@ -34,7 +34,12 @@ namespace cst.Flight
         public override void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
-            m_forwardTransitionSpeed = data.velocity;
+            m_forwardTransitionSpeed = data.velocity > LANDING_TRANSITION_MAX_VELOCITY
+                ? LANDING_TRANSITION_MAX_VELOCITY
+                : data.velocity;
+
+            m_forwardInitialSpeed = m_forwardTransitionSpeed;
+            m_forwardTransitionTimer = LANDING_TRANSITION_MAX_TIME;
         }
 
         public override void update()
@@ -80,16 +85,13 @@ namespace cst.Flight
 
         private void handleLandingTransitionSpeed()
         {
-            if (m_forwardTransitionSpeed > LANDING_TRANSITION_MAX_VELOCITY)
-                m_forwardTransitionSpeed = LANDING_TRANSITION_MAX_VELOCITY;
+            m_forwardTransitionTimer -= Time.deltaTime;
 
-            float speedStep = (LANDING_TRANSITION_MAX_VELOCITY /
-                LANDING_TRANSITION_TIME) * Time.deltaTime;
+            if (m_forwardTransitionTimer < 0.0f)
+                m_forwardTransitionTimer = 0.0f;
 
-            m_forwardTransitionSpeed -= speedStep;
-
-            if (m_forwardTransitionSpeed < speedStep)
-                m_forwardTransitionSpeed = 0.0f;
+            m_forwardTransitionSpeed = Helpers.quadraticInterpOut(0.0f, m_forwardInitialSpeed,
+                m_forwardTransitionTimer, LANDING_TRANSITION_MAX_TIME);
 
             Vector3 delta = transform.forward * m_forwardTransitionSpeed *
                 Time.deltaTime;
@@ -98,11 +100,6 @@ namespace cst.Flight
             delta.y = 0.0f;
 
             m_position += delta;
-
-            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height * 1.5f);
-
-            if (distanceToGround.HasValue)
-                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
         }
 
         private void handleLandingTransitionRoll()
@@ -132,24 +129,6 @@ namespace cst.Flight
         {
             if (m_rotation.z == 0.0f && m_forwardTransitionSpeed == 0.0f)
                 state = SeraphState.GROUNDED;
-        }
-
-        private void interpolateHeight()
-        {
-            if (m_position.y > m_desiredHeight)
-            {
-                m_position.y -= HEIGHT_INTERP_STEP * Time.deltaTime;
-
-                if (m_position.y <= m_desiredHeight)
-                    m_position.y = m_desiredHeight;
-            }
-            else if (m_position.y < m_desiredHeight)
-            {
-                m_position.y += HEIGHT_INTERP_STEP * Time.deltaTime;
-
-                if (m_position.y >= m_desiredHeight)
-                    m_position.y = m_desiredHeight;
-            }
         }
     }
 }

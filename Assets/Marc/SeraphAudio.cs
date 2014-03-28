@@ -70,7 +70,7 @@ public class SeraphAudio : MonoBehaviour
             if (activeController == null)
                 return;
 
-            m_glidingAudioSource.volume = (activeController.forwardSpeed / 250.0f) * 0.5f;
+            m_glidingAudioSource.volume = (activeController.forwardSpeed / GlideController.MAX_VELOCITY) * 0.5f;
 
             if (!m_glidingAudioSource.isPlaying)
             {
