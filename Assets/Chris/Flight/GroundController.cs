@@ -20,6 +20,9 @@ namespace cst.Flight
 {
     public class GroundController : SharedGroundControls
     {
+        private const float HEIGHT_INTERP_STEP = 25.0f;
+        private float m_desiredHeight;
+
         public GroundController(SeraphController controller)
             : base(controller)
         { }
@@ -69,9 +72,32 @@ namespace cst.Flight
             return new TransitionData { direction = Vector3.zero, velocity = 0.0f };
         }
 
+        private void interpolateHeight()
+        {
+            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height * 2.0f);
+
+            if (distanceToGround.HasValue)
+                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
+
+            if (m_position.y > m_desiredHeight)
+            {
+                m_position.y -= HEIGHT_INTERP_STEP * Time.deltaTime;
+
+                if (m_position.y <= m_desiredHeight)
+                    m_position.y = m_desiredHeight;
+            }
+            else if (m_position.y < m_desiredHeight)
+            {
+                m_position.y += HEIGHT_INTERP_STEP * Time.deltaTime;
+
+                if (m_position.y >= m_desiredHeight)
+                    m_position.y = m_desiredHeight;
+            }
+        }
+
         private void handleTransition()
         {
-            if (!Helpers.nearestHit(transform.position, Vector3.down, height + HEIGHT_PADDING).HasValue)
+            if (!Helpers.nearestHit(transform.position, Vector3.down, height + 5.0f).HasValue)
                 state = SeraphState.FALLING;
 
             if ((inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT))
