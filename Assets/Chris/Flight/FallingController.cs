@@ -23,9 +23,9 @@ namespace cst.Flight
 {
     public class FallingController : SharedGroundControls
     {
+        public const float MAX_FALL_VELOCTY     = 50.0f;
         private const float MIN_GLIDE_VELOCITY  = 8.0f;
         private const float START_FALL_VELOCITY = 1.0f;
-        private const float MAX_FALL_VELOCTY    = 50.0f;
         private const float MAX_FALL_TIME       = 5.5f;
         private const float MAX_FORWARD_TIME    = 7.5f;
         private const float RETURN_ROLL_SPEED   = 180.0f;
