@@ -72,14 +72,21 @@ namespace cst.Common
         }
 
         // Quadratic interpolation - easing in
-        public static float quadraticInterp(float start, float max, float time, float maxTime)
+        public static float quadraticInterpIn(float start, float max, float time, float maxTime)
         {
             time /= maxTime;
             return (max * (float)Math.Pow(time, 2.0f)) + start;
         }
 
+        // Quadratic interpolation - easing out
+        public static float quadraticInterpOut(float start, float max, float time, float maxTime)
+        {
+            time /= maxTime;
+            return -max * time * (time - 2) + start;     
+        }
+
         // Cubic interpolation - easing in
-        public static float cubicInterp(float start, float max, float time, float maxTime)
+        public static float cubicInterpIn(float start, float max, float time, float maxTime)
         {
             time /= maxTime;
             return (max * (float)Math.Pow(time, 3.0f)) + start;

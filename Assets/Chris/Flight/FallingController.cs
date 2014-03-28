@@ -23,14 +23,14 @@ namespace cst.Flight
 {
     public class FallingController : SharedGroundControls
     {
-        private const float MIN_GLIDE_VELOCITY  = 100.0f;
-        private const float START_FALL_VELOCITY = 50.0f;
-        private const float MAX_FALL_VELOCTY    = 350.0f;
-        private const float MAX_FALL_TIME       = 3.0f;
+        private const float MIN_GLIDE_VELOCITY  = 8.0f;
+        private const float START_FALL_VELOCITY = 1.0f;
+        private const float MAX_FALL_VELOCTY    = 50.0f;
+        private const float MAX_FALL_TIME       = 5.5f;
         private const float MAX_FORWARD_TIME    = 7.5f;
         private const float RETURN_ROLL_SPEED   = 180.0f;
 
-		public float m_fallSpeed { get; private set; }
+        private float m_fallSpeed;
         private float m_fallTimer;
 
         private float m_initialForwardSpeed;
@@ -56,7 +56,7 @@ namespace cst.Flight
             m_rotation = transform.eulerAngles;
 
             handleFacing();
-            handleMovement();
+            handleMovement(0.75f);
             handleRoll();
             handleFalling();
             handleForwardVelocity();
@@ -99,7 +99,7 @@ namespace cst.Flight
             if (m_fallTimer > MAX_FALL_TIME)
                 m_fallTimer = MAX_FALL_TIME;
 
-            m_fallSpeed = Helpers.quadraticInterp(START_FALL_VELOCITY, MAX_FALL_VELOCTY, m_fallTimer, MAX_FALL_TIME);
+            m_fallSpeed = Helpers.quadraticInterpIn(START_FALL_VELOCITY, MAX_FALL_VELOCTY, m_fallTimer, MAX_FALL_TIME);
 
             m_position.y -= m_fallSpeed * Time.deltaTime;
         }
@@ -111,7 +111,7 @@ namespace cst.Flight
             if (m_forwardTimer < 0.0f)
                 m_forwardTimer = 0.0f;
 
-            m_forwardSpeed = Helpers.quadraticInterp(0.0f, m_initialForwardSpeed, m_forwardTimer, MAX_FORWARD_TIME);
+            m_forwardSpeed = Helpers.quadraticInterpIn(0.0f, m_initialForwardSpeed, m_forwardTimer, MAX_FORWARD_TIME);
 
             m_position += transform.forward * m_forwardSpeed * Time.deltaTime;
         }

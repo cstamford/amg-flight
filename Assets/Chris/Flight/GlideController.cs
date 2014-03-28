@@ -32,11 +32,11 @@ namespace cst.Flight
         private const float MIN_RETURN_TURN_SPEED = 10.0f;
         private const float MAX_RETURN_TURN_SPEED = 30.0f;
         private const float INCREMENT_PITCH_SPEED = 45.0f;
-        private const float INCREMENT_VELOCITY    = 40.0f;
-        private const float DECREMENT_VELOCITY    = 25.0f;
-        private const float RESTING_VELOCITY      = 125.0f;
-        private const float MAX_VELOCITY          = RESTING_VELOCITY * 2.0f;
-        private const float MIN_VELOCITY          = 0.0f;
+        private const float INCREMENT_VELOCITY    = 5.0f;
+        private const float DECREMENT_VELOCITY    = 5.0f;
+        private const float RESTING_VELOCITY      = 10.0f;
+        public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
+        public const float  MIN_VELOCITY          = 0.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
@@ -48,8 +48,7 @@ namespace cst.Flight
         public void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
-
-            forwardSpeed = data.velocity < RESTING_VELOCITY ? RESTING_VELOCITY : data.velocity;
+            forwardSpeed = data.velocity > MAX_VELOCITY * 1.25f ? MAX_VELOCITY : data.velocity;
         }
 
         public void update()
