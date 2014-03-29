@@ -24,7 +24,7 @@ namespace cst.Flight
         private const float LANDING_TRANSITION_TIME              = 1.0f;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
 
-       	public float m_forwardTransitionSpeed;
+        private float m_forwardTransitionSpeed;
         private float m_desiredHeight;
 
         public LandingController(SeraphController controller)

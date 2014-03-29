@@ -30,7 +30,7 @@ namespace cst.Flight
         private const float MAX_FORWARD_TIME    = 7.5f;
         private const float RETURN_ROLL_SPEED   = 180.0f;
 
-		public float m_fallSpeed { get; private set; }
+        private float m_fallSpeed;
         private float m_fallTimer;
 
         private float m_initialForwardSpeed;
