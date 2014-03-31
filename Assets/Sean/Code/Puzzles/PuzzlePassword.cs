@@ -1,8 +1,9 @@
 ﻿//==========================================================
 // Author: Sean Vieira
-// Version: 1.0
+// Version: 2.0
 // Function: Handles puzzles that require a code to
-// be entered in a specific order
+// be entered in a specific order, which then triggers
+// and event
 //==========================================================
 
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace sv
     public class PuzzlePassword : MonoBehaviour
     {
         [SerializeField] private string m_keypadPassword;
+        [SerializeField] private GameObject m_triggerTarget;
         private string m_userPassword;
         private PuzzleGUI m_puzzleGUI;
         private bool m_trigger;
@@ -28,27 +30,22 @@ namespace sv
         // Update is called once per frame
         void Update()
         {
-            if (m_puzzleGUI.PasswordIsEntered())
-            {
-                SetUserPassword();                
-            }
-
-            // Prints a statement in debug
-            // TODO: Set off a trigger
             if (m_userPassword.Length == m_keypadPassword.Length)
             {
+                Debug.Log("Passwords are the same length!");
+
                 if (!m_trigger)
                 {
                     if (ComparePasswords())
                     {
                         m_trigger = true;
-
-                        DisplayCorrectPasswordText(true);
+                        Debug.Log("Trigger has been activated!");
+                        ActivateTrigger();
                     }
-                    else
-                    {
-                        DisplayIncorrectPasswordText(true);
-                    }
+                }
+                else
+                {
+                    Debug.Log("Trigger has already been activated!");
                 }
             }   
         }
@@ -105,6 +102,15 @@ namespace sv
         public void DisplayGUI(bool b)
         {
             m_puzzleGUI.ShowGUI(b);
+        }
+
+        private void ActivateTrigger()
+        {
+            if (m_triggerTarget)
+            {
+                /* Cause an event to fire */
+                m_triggerTarget.SetActive(false); // <- Temp
+            }
         }
     }
 }
