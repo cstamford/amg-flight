@@ -117,15 +117,16 @@ namespace cst.Waypoints
         private void interpToNext()
         {
             m_interpTimer += Time.deltaTime;
+            float normalised = m_interpTimer / m_transitionTime;
 
-            if (m_interpTimer > m_transitionTime)
+            if (normalised > 1.0f)
             {
                 m_nextNode.onArrive(m_controller);
                 resetNode();
             }
             else
             {
-                m_controller.transform.position = Vector3.Lerp(m_initialSeraphPos, m_position, m_interpTimer);
+                m_controller.transform.position = Vector3.Lerp(m_initialSeraphPos, m_position, normalised);
             }
         }
 
