@@ -15,6 +15,8 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
+	public string menuSceneName = "Menu Scene Resized";
+	public Color fadeColour = new Color(1, 1, 1);
 
 	enum PauseState { playing, pausing, paused };
 	PauseState pauseState;
@@ -52,29 +54,46 @@ public class PauseMenu : MonoBehaviour
 	{
 		float time = Time.realtimeSinceStartup - prevTime;
 		prevTime = Time.realtimeSinceStartup;
+
 		//	Reducing timescale based on pause
-		if(pauseState == PauseState.pausing){
+		if(pauseState == PauseState.pausing)
+		{
 			elapsedTime += time;
 			if(elapsedTime >= pauseTime)
 			{
 				saveData();
-				pauseState = PauseState.paused;
+				//pauseState = PauseState.paused;
 
 				//pause ();
-				Application.LoadLevel("Menu Scene");
+				Application.LoadLevel(menuSceneName);
 				//Application.LoadLevelAdditive("Menu Scene");
 
-                Time.timeScale = 1.0f;
+                //Time.timeScale = 1.0f;
 				return;
 			}
 			Time.timeScale = 1.0f - (elapsedTime/pauseTime);
+			fadeColour.a = 1.0f - Time.timeScale;
 		}
+
 		//	Detecting key presses
 		if(Input.GetKeyDown(KeyCode.P))
 		{
 			if(pauseState == PauseState.playing){
 				pauseState = PauseState.pausing;
+				print ("Pausing");
 			}
+		}
+	}
+
+	void OnGUI()
+	{
+		if (pauseState == PauseState.pausing) {
+			GUI.color = fadeColour;
+			Texture2D texture = new Texture2D (1, 1);
+			texture.SetPixel (0, 0, fadeColour);
+			texture.Apply ();
+			GUI.skin.box.normal.background = texture;
+			GUI.Box (new Rect (0, 0, Screen.width, Screen.height), GUIContent.none);
 		}
 	}
 
