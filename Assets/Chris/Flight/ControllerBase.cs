@@ -118,8 +118,8 @@ namespace cst.Flight
     {
         public bool moved { get; set; }
 
-        protected const float FORWARD_SPEED    = 4.0f;
-        protected const float STRAFE_SPEED     = 4.0f;
+        protected const float FORWARD_SPEED    = 5.0f;
+        protected const float STRAFE_SPEED     = 5.0f;
         protected const float LOOK_SENSITIVITY = 100.0f;
         protected const float HEIGHT_PADDING   = 2.0f;
         protected const float INTERP_VALUE     = 10.0f;

@@ -41,11 +41,15 @@ namespace cst.Common
         LOOK_LEFT,
         LOOK_RIGHT,
 
+        ASCEND,
+        DESCEND,
+
         FLIGHT_STATE,
         GLIDE_STATE,
         CLEAR_STATE,
 
         INTERACT,
+        SHOW_MAP,
         EXIT
     }
 
@@ -95,7 +99,11 @@ namespace cst.Common
             m_actions[Action.LOOK_LEFT]  = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
             m_actions[Action.LOOK_RIGHT] = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
 
+            m_actions[Action.ASCEND]  = Input.GetKey(KeyCode.Q);
+            m_actions[Action.DESCEND] = Input.GetKey(KeyCode.Z);
+
             m_actions[Action.INTERACT]     = Input.GetKey(KeyCode.E)         || Input.GetKey(KeyCode.JoystickButton0); // A
+            m_actions[Action.SHOW_MAP]     = Input.GetKeyDown(KeyCode.M)     || Input.GetKeyDown(KeyCode.JoystickButton1); // X
             m_actions[Action.CLEAR_STATE]  = Input.GetKey(KeyCode.Return)    || Input.GetKey(KeyCode.JoystickButton3); // Y
             m_actions[Action.GLIDE_STATE]  = Input.GetKey(KeyCode.Space)     || Input.GetKey(KeyCode.JoystickButton4); // Left bumper
             m_actions[Action.FLIGHT_STATE] = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton5); // Right bumper
@@ -112,8 +120,10 @@ namespace cst.Common
             m_actionDeltas[Action.LOOK_LEFT]  = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
 
-            // TODO Get controller pressure.
+            m_actionDeltas[Action.ASCEND]       = m_actions[Action.ASCEND]       ? 1.0f : 0.0f;
+            m_actionDeltas[Action.DESCEND]      = m_actions[Action.DESCEND]      ? 1.0f : 0.0f;
             m_actionDeltas[Action.INTERACT]     = m_actions[Action.INTERACT]     ? 1.0f : 0.0f;
+            m_actionDeltas[Action.SHOW_MAP]     = m_actions[Action.SHOW_MAP]     ? 1.0f : 0.0f;
             m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
             m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
             m_actionDeltas[Action.FLIGHT_STATE] = m_actions[Action.FLIGHT_STATE] ? 1.0f : 0.0f;

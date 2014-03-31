@@ -56,7 +56,7 @@ namespace cst.Flight
             m_rotation = transform.eulerAngles;
 
             handleFacing();
-            handleMovement(0.75f);
+            handleMovement(0.5f);
             handleRoll();
             handleFalling();
             handleForwardVelocity();
