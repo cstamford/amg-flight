@@ -102,7 +102,7 @@ namespace cst.Common
             m_actions[Action.ASCEND]  = Input.GetKey(KeyCode.Q);
             m_actions[Action.DESCEND] = Input.GetKey(KeyCode.Z);
 
-            m_actions[Action.INTERACT]     = Input.GetKey(KeyCode.E)         || Input.GetKey(KeyCode.JoystickButton0); // A
+            m_actions[Action.INTERACT]     = Input.GetKeyDown(KeyCode.E)     || Input.GetKeyDown(KeyCode.JoystickButton0); // A
             m_actions[Action.SHOW_MAP]     = Input.GetKeyDown(KeyCode.M)     || Input.GetKeyDown(KeyCode.JoystickButton1); // X
             m_actions[Action.CLEAR_STATE]  = Input.GetKey(KeyCode.Return)    || Input.GetKey(KeyCode.JoystickButton3); // Y
             m_actions[Action.GLIDE_STATE]  = Input.GetKey(KeyCode.Space)     || Input.GetKey(KeyCode.JoystickButton4); // Left bumper

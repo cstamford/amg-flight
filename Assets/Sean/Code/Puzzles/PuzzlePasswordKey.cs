@@ -8,7 +8,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace sv
+namespace sv.Puzzles
 {
     public class PuzzlePasswordKey : MonoBehaviour
     {

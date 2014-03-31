@@ -17,6 +17,17 @@ ModelImporter:
     100022: wingsBody
     100024: wingsMesh
     100026: WingsSkeleton
+    100028: ctrlMain
+    100030: wingC
+    100032: wingL 1
+    100034: wingR 1
+    100036: wings_mk2
+    100038: wings_mk_sepd
+    100040: wingsMesh 1
+    100042: wingmesh_sepd1:wingC
+    100044: wingmesh_sepd1:wingL
+    100046: wingmesh_sepd1:wingR
+    100048: wingmesh_sepd1:wings_mk_sepd
     400000: ctrl_Rig
     400002: ctrlMaster
     400004: jCentre
@@ -31,15 +42,51 @@ ModelImporter:
     400022: wingsBody
     400024: wingsMesh
     400026: WingsSkeleton
+    400028: ctrlMain
+    400030: wingC
+    400032: wingL 1
+    400034: wingR 1
+    400036: wings_mk2
+    400038: wings_mk_sepd
+    400040: wingsMesh 1
+    400042: wingmesh_sepd1:wingC
+    400044: wingmesh_sepd1:wingL
+    400046: wingmesh_sepd1:wingR
+    400048: wingmesh_sepd1:wings_mk_sepd
     2300000: wingsBody
+    2300002: wingC
+    2300004: wingL
+    2300006: wingR
+    2300008: wingsMesh 1
+    2300010: wingL 1
+    2300012: wingmesh_sepd1:wingC
+    2300014: wingR 1
     3300000: wingsBody
+    3300002: wingC
+    3300004: wingL
+    3300006: wingR
+    3300008: wingsMesh 1
+    3300010: wingL 1
+    3300012: wingmesh_sepd1:wingC
+    3300014: wingR 1
     4300000: wingR
     4300002: wingL
     4300004: wingsBody
+    4300006: wingsMesh
+    4300008: wingR
+    4300010: wingL
+    4300012: wingC
+    4300014: wingmesh_sepd1:wingR
+    4300016: wingmesh_sepd1:wingL
+    4300018: wingmesh_sepd1:wingC
     7400000: Take 001
     9500000: //RootNode
     13700000: wingL
     13700002: wingR
+    13700004: wingL 1
+    13700006: wingR 1
+    13700008: wingmesh_sepd1:wingL
+    13700010: wingmesh_sepd1:wingR
   materials:
     importMaterials: 1
     materialName: 0

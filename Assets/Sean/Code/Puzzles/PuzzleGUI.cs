@@ -12,7 +12,7 @@ using UnityEngine;
 using System.Collections;
 using System.Text.RegularExpressions;
 
-namespace sv
+namespace sv.Puzzles
 {
     public class PuzzleGUI : MonoBehaviour
     {

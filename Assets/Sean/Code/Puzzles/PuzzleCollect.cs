@@ -8,7 +8,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace sv
+namespace sv.Puzzles
 {
     public class PuzzleCollect : MonoBehaviour
     {
@@ -97,7 +97,7 @@ namespace sv
         {
             if (m_triggerTarget)
             {
-                m_triggerTarget.SetActive(false);
+                m_triggerTarget
             }
         }
     }

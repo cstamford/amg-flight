@@ -8,10 +8,11 @@
 
 using UnityEngine;
 using System;
+using sv.Puzzles;
+using sv.Triggers;
 using cst.Common;
 using cst.Flight;
 using Action = cst.Common.Action;
-
 
 namespace sv
 {
