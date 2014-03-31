@@ -8,6 +8,7 @@
 
 using UnityEngine;
 using System.Collections;
+using sv.Triggers;
 
 namespace sv.Puzzles
 {
@@ -15,15 +16,14 @@ namespace sv.Puzzles
     {
         [SerializeField] private string m_keypadPassword;
         [SerializeField] private GameObject m_triggerTarget;
+        [SerializeField] private TriggerType m_triggerType;
         private string m_userPassword;
-        private PuzzleGUI m_puzzleGUI;
         private bool m_trigger;
         
         // Use this for initialization
         void Start()
         {
             m_trigger = false;
-            m_puzzleGUI = GetComponent<PuzzleGUI>();
             m_userPassword = "";            
         }
 
@@ -77,31 +77,6 @@ namespace sv.Puzzles
         public string GetUserPassword()
         {
             return m_userPassword;
-        }
-
-        public void SetUserPassword()
-        {
-            m_userPassword = m_puzzleGUI.GetInput();
-        }
-
-        public void DisplayTextTip(bool b)
-        {
-            m_puzzleGUI.ShowTextTip(b);
-        }
-
-        public void DisplayIncorrectPasswordText(bool b)
-        {
-            m_puzzleGUI.ShowIncompletedText(b);
-        }
-
-        public void DisplayCorrectPasswordText(bool b)
-        {
-            m_puzzleGUI.ShowCompletedText(b);
-        }
-
-        public void DisplayGUI(bool b)
-        {
-            m_puzzleGUI.ShowGUI(b);
         }
 
         private void ActivateTrigger()

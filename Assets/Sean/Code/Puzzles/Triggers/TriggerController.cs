@@ -1,5 +1,6 @@
 ﻿//=================================================================
 // Author: Sean Vieira
+// Version: 1.0
 // Function: Handles different types of triggers through a generic
 // method that can be called from any puzzle type
 //=================================================================
@@ -15,20 +16,9 @@ namespace sv.Triggers
         WATERFALL_STOP
     }
     
-    public class TriggerController <T>
+    public class TriggerController : MonoBehaviour
     {
-        private T m_activeTrigger;
         private TriggerType m_triggerType;
-
-        public T ActiveTrigger
-        {
-            get { return m_activeTrigger; }
-            set
-            {
-                Debug.Log("Active trigger set to type: " + value);
-                m_activeTrigger = value;
-            }
-        }
 
         public TriggerType Type
         {
@@ -41,17 +31,26 @@ namespace sv.Triggers
 
         }
 
-        public void SetActiveTrigger(TriggerType type, T trigger)
-        {
-            m_triggerType = type;
-            m_activeTrigger = trigger;
-        }
-
         public bool ActivateTrigger()
         {
-            
+            switch (m_triggerType)
+            {
+                case TriggerType.OPEN_DOOR:
+                    {
+                        DoorOpen trigger = GetComponent<DoorOpen>();
+                        trigger.ActivateTrigger = true;
 
-            return true;
+                        return true;
+                    };
+                case TriggerType.WATERFALL_STOP:
+                    {
+                        DoorOpen trigger = GetComponent<DoorOpen>();
+                        trigger.ActivateTrigger = true;
+                        return true;
+                    };
+            }
+
+            return false ;
         }
     }
 }

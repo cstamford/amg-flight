@@ -1,5 +1,6 @@
 ﻿//=================================================================
 // Author: Sean Vieira
+// Version: 1.0
 // Function: Cause a door gameobject to slide from one position
 // to another
 //=================================================================
@@ -41,9 +42,19 @@ namespace sv.Triggers
                 }
                 else
                 {
-                    m_isTriggered = false;
+                    m_isTriggered = false;                    
                 }
             }
         }
+
+        public bool ActivateTrigger
+        {
+            get { return m_isTriggered; }
+            set
+            {
+                m_isTriggered = value;
+            }
+        }
+        
     }
 }

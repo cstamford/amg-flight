@@ -22,17 +22,21 @@ namespace sv
         [SerializeField] private GameObject m_inputManagerObject;
         [SerializeField] private GameObject m_cursor;
 
+        // Raycasting
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
 
-        private InputManager m_inputManager;
-        private GameObject m_selected;
-        private SeraphController m_seraph;
+        // Puzzle types
         private PuzzleCollect m_puzzleTypeCollect;
         private PuzzlePassword m_puzzleTypePassword;
         private PuzzleCollectObject m_puzzleCollectable;
         private PuzzlePasswordKey m_puzzlePasswordKey;
         private WingsController m_wingsController;
+
+        // Misc.
+        private InputManager m_inputManager;
+        private GameObject m_selected;
+        private SeraphController m_seraph;
 
         // Use this for initialization
         void Start()
