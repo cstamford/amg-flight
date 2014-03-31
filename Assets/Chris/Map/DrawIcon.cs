@@ -49,8 +49,9 @@ namespace cst.Map
         }
 
         public void Update()
-	    {
-	        m_iconQuad.transform.position    = transform.position;
+        {
+            m_iconQuad.transform.position = new Vector3(transform.position.x, transform.position.y + 100.0f,
+                transform.position.z);
             m_iconQuad.transform.eulerAngles = m_rotation;
 	    }
     }
