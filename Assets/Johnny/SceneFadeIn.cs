@@ -44,7 +44,7 @@ public class SceneFadeIn : MonoBehaviour {
 		if(finished == false)
 		{
 			elapsedTime += time;
-			print (elapsedTime);
+			//print (elapsedTime);
 			if(elapsedTime >= fadeTime)
 			{
 				Time.timeScale = 1.0f;
@@ -53,9 +53,12 @@ public class SceneFadeIn : MonoBehaviour {
 			}
 			if(useTimeFade == true)
 			{
-				Time.timeScale = 1.0f - (elapsedTime/fadeTime);
+				Time.timeScale = elapsedTime/fadeTime;
 			}
-			fadeColour.a = 1.0f - elapsedTime/fadeTime;
+			if(useColourFade == true)
+			{
+				fadeColour.a = 1.0f - elapsedTime/fadeTime;
+			}
 		}
 	}
 	

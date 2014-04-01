@@ -61,6 +61,7 @@ public class PauseMenu : MonoBehaviour
 			elapsedTime += time;
 			if(elapsedTime >= pauseTime)
 			{
+				PlayerPrefs.SetInt("PAUSING", 1);
 				saveData();
 				//pauseState = PauseState.paused;
 
@@ -115,6 +116,7 @@ public class PauseMenu : MonoBehaviour
 		
 		//	Setting a flag to signify that there's data saved
 		PlayerPrefs.SetInt("DATA_SAVED", 1);
+		print ("Data saved");
 
 		//	Getting player position from controller
 		Vector3 positon = seraphController.transform.position;
@@ -152,30 +154,28 @@ public class PauseMenu : MonoBehaviour
 	void loadData()
 	{
 		//	Check if data has been saved
-		if(PlayerPrefs.GetInt("DATA_SAVED") == 1)
-		{
-			cst.Flight.SeraphController seraphController = GameObject.Find("Seraph").GetComponent<cst.Flight.SeraphController>();
-			if(seraphController != null)
-			{
+		GameObject seraph = GameObject.Find("Seraph");
+		if (seraph != null) {
+			print ("Load called");
+			if (PlayerPrefs.GetInt ("DATA_SAVED") == 1) {
 				//	Loading player position
-				Vector3 position = new Vector3(PlayerPrefs.GetFloat("PLAYER_POSITION_X"),
-				                               PlayerPrefs.GetFloat("PLAYER_POSITION_Y"),
-				                               PlayerPrefs.GetFloat("PLAYER_POSITION_Z"));
-				seraphController.transform.position = position;
-
-				//	Loading player rotation
-				Quaternion rotation = new Quaternion(PlayerPrefs.GetFloat("PLAYER_ROTATION_X"),
-				                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_Y"),
-				                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_Z"),
-				                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_W"));
-				seraphController.transform.rotation = rotation;
-
-				//	Loading player prefs
-				seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
-				seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
+				Vector3 position = new Vector3 (PlayerPrefs.GetFloat ("PLAYER_POSITION_X"),
+                       PlayerPrefs.GetFloat ("PLAYER_POSITION_Y"),
+                       PlayerPrefs.GetFloat ("PLAYER_POSITION_Z"));
+				seraph.transform.position = position;
 			}
+			//	Loading player rotation
+			Quaternion rotation = new Quaternion (PlayerPrefs.GetFloat ("PLAYER_ROTATION_X"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_Y"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_Z"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_W"));
+			seraph.transform.rotation = rotation;
 
-			PlayerPrefs.SetInt("DATA_SAVED", 0);
+			//	Loading player prefs
+			//seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
+			//seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
+
+			PlayerPrefs.SetInt ("DATA_SAVED", 0);
 		}
 	}
 
@@ -186,3 +186,9 @@ public class PauseMenu : MonoBehaviour
 		PlayerPrefs.Save();
 	}
 }
+
+/*
+ *		Version History:
+ *			1.0: File was created
+ *			1.1: 
+ */

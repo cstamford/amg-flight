@@ -1,4 +1,17 @@
-﻿using UnityEngine;
+﻿/*
+ * 		File: DoorTrigger.cs
+ * 
+ * 		Version: 1.2
+ * 
+ * 		Author: Johnathon Forster
+ * 
+ * 		Description:
+ * 			Loads a specified scene after a set amount of time
+ * 			Slowing timescale and fading in a colour is an option
+ * 			Saving player's orientation is also an option
+ */
+
+using UnityEngine;
 using System.Collections;
 
 public class DoorTrigger : MonoBehaviour {
@@ -59,7 +72,7 @@ public class DoorTrigger : MonoBehaviour {
 		if(finished == false)
 		{
 			elapsedTime += time;
-			print (elapsedTime);
+			//print (elapsedTime);
 			if(elapsedTime >= fadeTime)
 			{
 				if (savePlayerOrientation == true)
@@ -113,3 +126,10 @@ public class DoorTrigger : MonoBehaviour {
 		}
 	}
 }
+
+/*
+ *		Version History:
+ *			1.0: File was created
+ *			1.1: Added colour fading and timescale slowing
+ *			1.2: Added saving player orientation
+ */
