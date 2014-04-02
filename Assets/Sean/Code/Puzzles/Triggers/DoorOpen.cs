@@ -1,8 +1,8 @@
 ﻿//=================================================================
 // Author: Sean Vieira
 // Version: 1.0
-// Function: Cause a door gameobject to slide from one position
-// to another
+// Function: Cause a door gameobject to slide from a closed 
+// position to an open one
 //=================================================================
 
 using UnityEngine;
@@ -12,10 +12,10 @@ namespace sv.Triggers
 {
     public class DoorOpen : MonoBehaviour
     {
-        private float m_startHeight;
-        private float m_endHeight;
-        private float m_moveTimer;
-        private float m_moveSpeed;
+        [SerializeField] private float m_openedHeight;
+        [SerializeField] private float m_moveSpeed;
+        private float m_closedHeight; 
+        private float m_currentHeight;
         private bool m_isTriggered;
 
 
@@ -23,26 +23,25 @@ namespace sv.Triggers
         void Start()
         {
             m_isTriggered = false;
-            m_moveTimer = 0.0f;
-            m_moveSpeed = 1.0f;
-            m_startHeight = this.transform.position.y;
-            m_endHeight = this.transform.position.y + 5.0f;
+            m_closedHeight = this.transform.position.y;
+            m_currentHeight = m_closedHeight;
         }
 
         // Update is called once per frame
         void Update()
         {
-            m_moveTimer += Time.deltaTime * m_moveSpeed;
-
             if (m_isTriggered)
             {
-                if (m_startHeight != m_endHeight)
+                if (OpenDoor())
                 {
-                    Mathf.Lerp(m_startHeight, m_endHeight, m_moveTimer);
+                    m_isTriggered = false;
                 }
                 else
                 {
-                    m_isTriggered = false;                    
+                    Transform newPos = transform;
+                    newPos.position = new Vector3(transform.position.x, m_currentHeight, transform.position.z);
+
+                    transform.position = newPos.position;
                 }
             }
         }
@@ -54,6 +53,30 @@ namespace sv.Triggers
             {
                 m_isTriggered = value;
             }
+        }
+
+        // Opens the door until reached max height, then returns true
+        private bool OpenDoor()
+        {
+            if (m_currentHeight != m_openedHeight)
+            {
+                m_currentHeight += m_moveSpeed * Time.deltaTime;
+                return false;
+            }              
+        
+            return true;
+        }
+
+        // Opens the door until reached max height, then returns true
+        private bool CloseDoor()
+        {
+            if (m_currentHeight != m_closedHeight)
+            {
+                m_currentHeight -= m_moveSpeed * Time.deltaTime;
+                return false;
+            }
+
+            return true;
         }
         
     }

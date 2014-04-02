@@ -6,7 +6,7 @@
 //==========================================================
 
 using UnityEngine;
-using System.Collections;
+using System;
 using sv.Triggers;
 
 namespace sv.Puzzles
@@ -15,17 +15,21 @@ namespace sv.Puzzles
     {
         [SerializeField] private GameObject[] m_puzzleObjects;
         [SerializeField] private GameObject m_triggerTarget;
-        [SerializeField] private TriggerType m_triggerType;
+        private TriggerController m_triggerController;
         private PuzzleCollectObject m_selectedObject;
         private int m_numOfObjects; 
         private bool m_trigger;
-        private PuzzleGUI m_puzzleGUI;
         
         // Use this for initialization
         void Start()
         {
             m_trigger = false;
-            m_puzzleGUI = GetComponent<PuzzleGUI>();
+            m_triggerController = GetComponent<TriggerController>();
+            if (!m_triggerController)
+            {
+                enabled = false;
+                throw new Exception("No trigger object script attached to GameObject");
+            }
 
             m_numOfObjects = m_puzzleObjects.GetLength(0);
             for (int i = 0; i < m_numOfObjects; i++)
@@ -43,35 +47,10 @@ namespace sv.Puzzles
             {
                 if (IsCompleted())
                 {
-                    m_trigger = true;
-
-                    Debug.Log("Trigger has been activated!");
                     ActivateTrigger();
                 }
             }
-        }        
-
-        public void DisplayTextTip(bool b)
-        {
-            m_puzzleGUI.ShowTextTip(b);
-        }
-
-        // Display text if puzzle is incomplete
-        public void DisplayIncompletedText(bool b)
-        {
-            m_puzzleGUI.ShowIncompletedText(b);
-        }
-
-        // Display text if puzzle is complete
-        public void DisplayCompletedText(bool b)
-        {
-            m_puzzleGUI.ShowCompletedText(b);
-        }
-
-        public void DisplayGUI(bool b)
-        {
-            m_puzzleGUI.ShowGUI(b);
-        }
+        }    
 
         public void SetPuzzleObjectCollectedState(int i, bool b)
         {
@@ -95,11 +74,17 @@ namespace sv.Puzzles
             return true;
         }
 
-        private void ActivateTrigger()
+        public void ActivateTrigger()
         {
+            m_trigger = true;
+
             if (m_triggerTarget)
             {
-                //m_triggerTarget
+                Debug.Log("Activating trigger...");
+                if (!m_triggerController.ActivateTrigger(m_triggerTarget))
+                {
+                    Debug.Log("Error activating trigger");
+                }
             }
         }
     }

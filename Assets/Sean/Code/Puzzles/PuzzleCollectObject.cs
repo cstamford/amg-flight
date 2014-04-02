@@ -25,7 +25,10 @@ namespace sv.Puzzles
             }
             else
             {
-
+                if (m_isCollected)
+                {
+                    this.gameObject.SetActive(false);
+                }
             }
         }
 

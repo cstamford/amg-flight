@@ -93,8 +93,7 @@ namespace sv
                 }
                 else
                 {
-                    CheckForObjectAcquirement();
-                    
+                    CheckForObjectAcquirement();                    
                     CheckForObjectInteraction();
                 }
             }
@@ -196,22 +195,24 @@ namespace sv
                         m_cursor.SetActive(true);
                         m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
                     } break;
+
                 case "PuzzleCollectObject":
                     {
                         m_cursor.SetActive(true);
                         m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
-
-                        // This is necessary to do here since puzzle contreller may not necessarily have a mesh
-                        if (!m_puzzleTypeCollect)
+                        
+                        if (m_puzzleTypeCollect != AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect))
                         {
                             m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                         }
                     } break;
+
                 case "PuzzlePassword":
                     {
                         m_cursor.SetActive(true);
                         m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_selected, m_puzzleTypePassword);
                     } break;
+
                 case "PuzzlePasswordObject":
                     {
                         m_cursor.SetActive(true);
@@ -222,10 +223,20 @@ namespace sv
                             m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_puzzlePasswordKey.GetParent(), m_puzzleTypePassword);
                         }
                     } break;
+
                 case "Wings":
                     {
                         m_cursor.SetActive(true);
                         m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
+                        
+                        // As wings are aprt of 'puzzle' to open door
+                        m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
+
+                        if (!m_puzzleTypeCollect)
+                        {
+                            m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
+                        }
+
                     } break;
             }
         }
@@ -257,6 +268,7 @@ namespace sv
                                 m_wingsController.IsAttachedToPlayer = true;
                                 m_wingsController.ParentObject = this.gameObject;
                                 m_seraph.capability = SeraphCapability.FLIGHT;
+                                m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
                             }
                             else
                             {

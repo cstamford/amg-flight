@@ -7,7 +7,7 @@
 //==========================================================
 
 using UnityEngine;
-using System.Collections;
+using System;
 using sv.Triggers;
 
 namespace sv.Puzzles
@@ -16,7 +16,7 @@ namespace sv.Puzzles
     {
         [SerializeField] private string m_keypadPassword;
         [SerializeField] private GameObject m_triggerTarget;
-        [SerializeField] private TriggerType m_triggerType;
+        private TriggerController m_triggerController;
         private string m_userPassword;
         private bool m_trigger;
         
@@ -24,28 +24,26 @@ namespace sv.Puzzles
         void Start()
         {
             m_trigger = false;
-            m_userPassword = "";            
+            m_userPassword = ""; 
+            
+            m_triggerController = GetComponent<TriggerController>();
+            if (!m_triggerController)
+            {
+                enabled = false;
+                throw new Exception("No trigger object script attached to GameObject");
+            }          
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (m_userPassword.Length == m_keypadPassword.Length)
             {
-                Debug.Log("Passwords are the same length!");
-
                 if (!m_trigger)
                 {
                     if (ComparePasswords())
                     {
-                        m_trigger = true;
-                        Debug.Log("Trigger has been activated!");
-                        ActivateTrigger();
+                       ActivateTrigger();
                     }
-                }
-                else
-                {
-                    Debug.Log("Trigger has already been activated!");
                 }
             }   
         }
@@ -81,10 +79,15 @@ namespace sv.Puzzles
 
         private void ActivateTrigger()
         {
+            m_trigger = true;
+
             if (m_triggerTarget)
             {
-                /* Cause an event to fire */
-                m_triggerTarget.SetActive(false); // <- Temp
+                Debug.Log("Activating trigger...");
+                if (!m_triggerController.ActivateTrigger(m_triggerTarget))
+                {
+                    Debug.Log("Error activating trigger");
+                }
             }
         }
     }

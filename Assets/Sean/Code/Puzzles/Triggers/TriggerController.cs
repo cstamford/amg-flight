@@ -1,8 +1,8 @@
 ﻿//=================================================================
 // Author: Sean Vieira
 // Version: 1.0
-// Function: Handles different types of triggers through a generic
-// method that can be called from any puzzle type
+// Function: Determines which type of trigger is set off based on 
+// the trigger type of the puzzle
 //=================================================================
 
 using UnityEngine;
@@ -13,12 +13,13 @@ namespace sv.Triggers
     public enum TriggerType
     {
         OPEN_DOOR,
+        CLOSE_DOOR,
         WATERFALL_STOP
     }
     
     public class TriggerController : MonoBehaviour
     {
-        private TriggerType m_triggerType;
+        [SerializeField] TriggerType m_triggerType;
 
         public TriggerType Type
         {
@@ -31,26 +32,35 @@ namespace sv.Triggers
 
         }
 
-        public bool ActivateTrigger()
+        public bool ActivateTrigger(GameObject targetTrigger)
         {
             switch (m_triggerType)
             {
                 case TriggerType.OPEN_DOOR:
                     {
-                        DoorOpen trigger = GetComponent<DoorOpen>();
+                        DoorOpen trigger = targetTrigger.GetComponent<DoorOpen>();
                         trigger.ActivateTrigger = true;
+                    } break;
 
-                        return true;
-                    };
+                case TriggerType.CLOSE_DOOR:
+                    {
+                        DoorClose trigger = targetTrigger.GetComponent<DoorClose>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
                 case TriggerType.WATERFALL_STOP:
                     {
-                        DoorOpen trigger = GetComponent<DoorOpen>();
+                        WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
                         trigger.ActivateTrigger = true;
-                        return true;
-                    };
+                    } break;
+
+                default :
+                    {
+                        return false;
+                    }
             }
 
-            return false ;
+            return true ;
         }
     }
 }

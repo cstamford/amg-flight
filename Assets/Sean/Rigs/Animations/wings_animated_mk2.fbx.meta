@@ -1,0 +1,290 @@
+fileFormatVersion: 2
+guid: 09495d55cd1666f438fde9652b36c9ae
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: jCentre
+    100002: jShoulder_L
+    100004: jShoulder_R
+    100006: jTip_L
+    100008: jTip_R
+    100010: wingC
+    100012: wingL
+    100014: wingR
+    100016: //RootNode
+    100018: wings_mk_sepd
+    100020: WingsSkeleton
+    100022: ctrlMain
+    100024: Wings
+    400000: jCentre
+    400002: jShoulder_L
+    400004: jShoulder_R
+    400006: jTip_L
+    400008: jTip_R
+    400010: wingC
+    400012: wingL
+    400014: wingR
+    400016: //RootNode
+    400018: wings_mk_sepd
+    400020: WingsSkeleton
+    400022: ctrlMain
+    400024: Wings
+    2300000: wingC
+    3300000: wingC
+    4300000: wingR
+    4300002: wingL
+    4300004: wingC
+    6400000: wingC
+    7400000: Idle Closed
+    7400002: Open
+    7400004: Idle Open
+    7400006: Close
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: wingL
+    13700002: wingR
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 0
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle Closed
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 2
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: wings_mk_sepd
+        weight: 1
+      - path: wings_mk_sepd/wingC
+        weight: 1
+      - path: wings_mk_sepd/wingL
+        weight: 1
+      - path: wings_mk_sepd/wingR
+        weight: 1
+      - path: WingsSkeleton
+        weight: 1
+      - path: WingsSkeleton/jCentre
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L/jTip_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R/jTip_R
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Open
+      takeName: Take 001
+      firstFrame: 2
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: wings_mk_sepd
+        weight: 1
+      - path: wings_mk_sepd/wingC
+        weight: 1
+      - path: wings_mk_sepd/wingL
+        weight: 1
+      - path: wings_mk_sepd/wingR
+        weight: 1
+      - path: WingsSkeleton
+        weight: 1
+      - path: WingsSkeleton/jCentre
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L/jTip_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R/jTip_R
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle Open
+      takeName: Take 001
+      firstFrame: 60
+      lastFrame: 61
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: wings_mk_sepd
+        weight: 1
+      - path: wings_mk_sepd/wingC
+        weight: 1
+      - path: wings_mk_sepd/wingL
+        weight: 1
+      - path: wings_mk_sepd/wingR
+        weight: 1
+      - path: WingsSkeleton
+        weight: 1
+      - path: WingsSkeleton/jCentre
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L/jTip_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R/jTip_R
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Close
+      takeName: Take 001
+      firstFrame: 61
+      lastFrame: 122
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: wings_mk_sepd
+        weight: 1
+      - path: wings_mk_sepd/wingC
+        weight: 1
+      - path: wings_mk_sepd/wingL
+        weight: 1
+      - path: wings_mk_sepd/wingR
+        weight: 1
+      - path: WingsSkeleton
+        weight: 1
+      - path: WingsSkeleton/jCentre
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_L/jTip_L
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R
+        weight: 1
+      - path: WingsSkeleton/jCentre/jShoulder_R/jTip_R
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 15
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  additionalBone: 0
+  userData: 
