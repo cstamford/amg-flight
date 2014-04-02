@@ -16,30 +16,37 @@
 
 using System;
 using cst.Flight;
+using sv;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class SeraphAudio : MonoBehaviour
 {
     private const int WALK_VARIANTS = 15;
+	private const int COLLECT_VARIANTS = 8;
 
     private AudioSource m_ambientAudioSource;
-    private AudioSource m_glidingAudioSource;
-    private AudioSource m_walkingAudioSource;
 	private AudioSource m_fallingAudioSource;
+	private AudioSource m_glidingAudioSource;
+    private AudioSource m_walkingAudioSource;
 	private AudioSource m_landingAudioSource;
+	private AudioSource m_collectAudioSource;
 
 	private AudioClip m_ambientAudioClip;
 	private AudioClip m_fallingAudioClip;
     private AudioClip m_glidingAudioClip;
     private readonly AudioClip[] m_walkGrassAudioClips = new AudioClip[WALK_VARIANTS];
 	private AudioClip m_walkStoneAudioClip;
+	private readonly AudioClip[] m_collectAudioClips = new AudioClip[COLLECT_VARIANTS];
 
     private SeraphController m_controller;
+	private ObjectSelection m_objectSelection;
 
 	public void Start()
 	{
 	    m_controller = FindObjectOfType<SeraphController>();
+
+		m_objectSelection = FindObjectOfType<ObjectSelection> ();
 
         if (m_controller == null)
             throw new Exception("No Seraph Controller found on this GameObject.");
@@ -47,13 +54,21 @@ public class SeraphAudio : MonoBehaviour
 		m_ambientAudioClip = (AudioClip)Resources.Load("windy ambience");
 		m_fallingAudioClip = (AudioClip)Resources.Load("falling");
         m_glidingAudioClip = (AudioClip)Resources.Load("temporary flying noise");
+		
+		for (int i = 0; i != WALK_VARIANTS; ++i)
+		{
+			m_walkGrassAudioClips[i] = (AudioClip)Resources.Load(String.Format("grass walk ({0})", i + 1));
+		}
 
-        for (int i = 0; i != WALK_VARIANTS; ++i)
-        {
-            m_walkGrassAudioClips[i] = (AudioClip)Resources.Load(String.Format("grass walk ({0})", i + 1));
-        }
+		m_walkStoneAudioClip = (AudioClip)Resources.Load ("stone footstep 1");
 
-		m_walkStoneAudioClip = (AudioClip)Resources.Load ("StoneFootsteps");
+		for (int i = 0; i < COLLECT_VARIANTS - 1; ++i)
+		{
+			m_collectAudioClips[i] = (AudioClip)Resources.Load(String.Format("relic ({0})", i + 1));
+		}
+		
+		m_collectAudioClips[7] = (AudioClip)Resources.Load ("relic collection noise two");
+
 
         m_ambientAudioSource = (AudioSource)gameObject.AddComponent("AudioSource");
 	    m_ambientAudioSource.clip = m_ambientAudioClip;
@@ -69,6 +84,9 @@ public class SeraphAudio : MonoBehaviour
 
 		m_landingAudioSource = (AudioSource)gameObject.AddComponent ("AudioSource");
 		m_landingAudioSource.clip = m_walkGrassAudioClips[0];
+
+		m_collectAudioSource = (AudioSource)gameObject.AddComponent ("AudioSource");
+		
 	}
 	
 	public void Update()
@@ -78,8 +96,47 @@ public class SeraphAudio : MonoBehaviour
         handleGlidingAudio();
         handleWalkingAudio();
 		handleLandingAudio();
+		handleCollectAudio();
 	}
 
+	//Plays when collecting the Relics
+	private void handleCollectAudio()
+	{
+		if(m_objectSelection.GetCollection())
+		{
+			Debug.Log( m_objectSelection.GetCollectionName() );
+			switch( m_objectSelection.GetCollectionName() )
+			{
+			case "Binah_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[0];
+				break;
+			case "Chesed_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[1];
+				break;
+			case "Geburtah_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[2];
+				break;
+			case "Hod_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[3];
+				break;
+			case "Netzach_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[4];
+				break;
+			case "Tipharath_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[5];
+				break;
+			case "Yesod_Relic":
+				m_collectAudioSource.clip = m_collectAudioClips[6];
+				break;
+			case "Wings":
+				m_collectAudioSource.clip = m_collectAudioClips[7];
+				break;
+			}
+			m_collectAudioSource.loop = false;
+			m_collectAudioSource.playOnAwake = false;
+			m_collectAudioSource.Play ();
+		}
+	}
 	// Plays while falling
 	private void handleFallingAudio()
 	{

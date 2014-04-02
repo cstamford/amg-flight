@@ -38,6 +38,10 @@ namespace sv
         private GameObject m_selected;
         private SeraphController m_seraph;
 
+		//Relic collection (audio)
+		private bool m_collected;
+		private String m_collectedName;
+
         // Use this for initialization
         void Start()
         {
@@ -93,7 +97,8 @@ namespace sv
                 }
                 else
                 {
-                    CheckForObjectAcquirement();                    
+                    CheckForObjectAcquirement();
+                    
                     CheckForObjectInteraction();
                 }
             }
@@ -195,7 +200,6 @@ namespace sv
                         m_cursor.SetActive(true);
                         m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
                     } break;
-
                 case "PuzzleCollectObject":
                     {
                         m_cursor.SetActive(true);
@@ -206,13 +210,11 @@ namespace sv
                             m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                         }
                     } break;
-
                 case "PuzzlePassword":
                     {
                         m_cursor.SetActive(true);
                         m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_selected, m_puzzleTypePassword);
                     } break;
-
                 case "PuzzlePasswordObject":
                     {
                         m_cursor.SetActive(true);
@@ -223,10 +225,8 @@ namespace sv
                             m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_puzzlePasswordKey.GetParent(), m_puzzleTypePassword);
                         }
                     } break;
-
                 case "Wings":
                     {
-                        m_cursor.SetActive(true);
                         m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
                         
                         // As wings are aprt of 'puzzle' to open door
@@ -236,7 +236,6 @@ namespace sv
                         {
                             m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                         }
-
                     } break;
             }
         }
@@ -247,14 +246,15 @@ namespace sv
             if (m_inputManager.actionFired(Action.INTERACT))
             {
                 Debug.Log("Ray intersects with " + m_selected.name);
+				m_collectedName = m_selected.name;
 
                 switch (m_selected.tag)
                 {
                     case "PuzzleCollectObject":
-                    {
-                        // Set the object state as collected, and de-activate it (so it no longer affects the scene)
-                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                    {                        
+						m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
                         m_selected.SetActive(false);
+						m_collected = true;
                     } break;
                     case "PuzzlePasswordObject":
                     {
@@ -265,21 +265,27 @@ namespace sv
                         {
                             if (!m_wingsController.IsAttachedToPlayer)
                             {                                
-                                m_wingsController.IsAttachedToPlayer = true;
+                                //m_wingsController.IsAttachedToPlayer = true;
                                 m_wingsController.ParentObject = this.gameObject;
-                                m_seraph.capability = SeraphCapability.FLIGHT;
-                                m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                            }
-                            else
-                            {
-                                m_wingsController.IsAttachedToPlayer = false;
-                                m_wingsController.ParentObject = null;
-                                m_seraph.capability = SeraphCapability.NONE;
-                                m_seraph.state = SeraphState.FALLING;
+								m_seraph.capability = SeraphCapability.FLIGHT;
+								m_collected = true;
+								m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
                             }
                         } break;
                 }
             }
         }
+
+		public bool GetCollection()
+		{
+			bool temp = m_collected;
+			m_collected = false;
+			return temp;
+		}
+
+		public String GetCollectionName()
+		{
+			return m_collectedName;
+		}
     }
 }

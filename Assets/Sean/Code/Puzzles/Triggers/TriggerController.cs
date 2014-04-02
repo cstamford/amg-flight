@@ -31,10 +31,11 @@ namespace sv.Triggers
             }
 
         }
-
         public bool ActivateTrigger(GameObject targetTrigger)
         {
-            switch (m_triggerType)
+            Debug.Log("ACTIVATING TRIGGER MOFO");
+			
+			switch (m_triggerType)
             {
                 case TriggerType.OPEN_DOOR:
                     {
