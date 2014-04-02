@@ -225,7 +225,7 @@ namespace sv
 
                     case "Wings":
                         {
-                            if (m_narrationIsDone)
+                            //if (m_narrationIsDone)
                             {
                                 if (!m_wingsController.IsAttachedToPlayer)
                                 {

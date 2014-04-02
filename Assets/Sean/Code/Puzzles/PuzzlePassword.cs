@@ -14,9 +14,9 @@ namespace sv.Puzzles
 {
     public class PuzzlePassword : MonoBehaviour
     {
-        [SerializeField] private string m_keypadPassword;
         [SerializeField] private GameObject m_triggerTarget;
         private TriggerController m_triggerController;
+        private string m_keypadPassword;
         private string m_userPassword;
         private bool m_trigger;
         
@@ -24,7 +24,8 @@ namespace sv.Puzzles
         void Start()
         {
             m_trigger = false;
-            m_userPassword = ""; 
+            m_userPassword = "";
+            m_keypadPassword = "";
             
             m_triggerController = GetComponent<TriggerController>();
             if (!m_triggerController)
