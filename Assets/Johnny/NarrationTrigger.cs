@@ -26,6 +26,7 @@ public class NarrationTrigger : MonoBehaviour {
 	void Start () {
 		narrativeTriggered = false;
 		audioSource = GameObject.Find("Seraph").transform.gameObject.AddComponent<AudioSource>();
+		audioSource.volume = 1.0f;
 		print(audioSource);
 		
 		if (narration != null)

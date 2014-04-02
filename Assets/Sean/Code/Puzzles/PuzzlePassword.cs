@@ -1,54 +1,51 @@
 ﻿//==========================================================
 // Author: Sean Vieira
-// Version: 1.0
+// Version: 2.0
 // Function: Handles puzzles that require a code to
-// be entered in a specific order
+// be entered in a specific order, which then triggers
+// and event
 //==========================================================
 
 using UnityEngine;
 using System.Collections;
+using sv.Triggers;
 
-namespace sv
+namespace sv.Puzzles
 {
     public class PuzzlePassword : MonoBehaviour
     {
         [SerializeField] private string m_keypadPassword;
+        [SerializeField] private GameObject m_triggerTarget;
+        [SerializeField] private TriggerType m_triggerType;
         private string m_userPassword;
-        private PuzzleGUI m_puzzleGUI;
         private bool m_trigger;
         
         // Use this for initialization
         void Start()
         {
             m_trigger = false;
-            m_puzzleGUI = GetComponent<PuzzleGUI>();
             m_userPassword = "";            
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (m_puzzleGUI.PasswordIsEntered())
-            {
-                SetUserPassword();                
-            }
-
-            // Prints a statement in debug
-            // TODO: Set off a trigger
             if (m_userPassword.Length == m_keypadPassword.Length)
             {
+                Debug.Log("Passwords are the same length!");
+
                 if (!m_trigger)
                 {
                     if (ComparePasswords())
                     {
                         m_trigger = true;
-
-                        DisplayCorrectPasswordText(true);
+                        Debug.Log("Trigger has been activated!");
+                        ActivateTrigger();
                     }
-                    else
-                    {
-                        DisplayIncorrectPasswordText(true);
-                    }
+                }
+                else
+                {
+                    Debug.Log("Trigger has already been activated!");
                 }
             }   
         }
@@ -82,29 +79,13 @@ namespace sv
             return m_userPassword;
         }
 
-        public void SetUserPassword()
+        private void ActivateTrigger()
         {
-            m_userPassword = m_puzzleGUI.GetInput();
-        }
-
-        public void DisplayTextTip(bool b)
-        {
-            m_puzzleGUI.ShowTextTip(b);
-        }
-
-        public void DisplayIncorrectPasswordText(bool b)
-        {
-            m_puzzleGUI.ShowIncompletedText(b);
-        }
-
-        public void DisplayCorrectPasswordText(bool b)
-        {
-            m_puzzleGUI.ShowCompletedText(b);
-        }
-
-        public void DisplayGUI(bool b)
-        {
-            m_puzzleGUI.ShowGUI(b);
+            if (m_triggerTarget)
+            {
+                /* Cause an event to fire */
+                m_triggerTarget.SetActive(false); // <- Temp
+            }
         }
     }
 }

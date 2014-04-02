@@ -56,7 +56,7 @@ namespace cst.Flight
 
     public abstract class ControllerBase
     {
-        protected const float DEFAULT_HEIGHT = 32.0f;
+        protected const float DEFAULT_HEIGHT = 2.0f;
         private readonly SeraphController m_controller;
 
         protected ControllerBase(SeraphController controller)
@@ -118,18 +118,21 @@ namespace cst.Flight
     {
         public bool moved { get; set; }
 
-        protected const float FORWARD_SPEED    = 50.0f;
-        protected const float STRAFE_SPEED     = 50.0f;
+        protected const float FORWARD_SPEED    = 5.0f;
+        protected const float STRAFE_SPEED     = 5.0f;
         protected const float LOOK_SENSITIVITY = 100.0f;
+        protected const float HEIGHT_PADDING   = 2.0f;
+        protected const float INTERP_VALUE     = 10.0f;
 
         protected Vector3 m_rotation;
         protected Vector3 m_position;
+        protected float   m_desiredHeight;
 
         protected SharedGroundControls(SeraphController controller)
             : base(controller)
         {}
 
-        protected void handleMovement()
+        protected void handleMovement(float delta = 1.0f)
         {
             // Strip the height component from our vectors
             Vector3 forwardVector = transform.forward;
@@ -141,25 +144,32 @@ namespace cst.Flight
 
             if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
-                m_position += forwardVector * FORWARD_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_FORWARD);
+                m_position += forwardVector * FORWARD_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_FORWARD) * delta;
                 movedThisFrame = true;
             }
 
             if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
-                m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_BACKWARD);
+                m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_BACKWARD) * delta;
+                
                 movedThisFrame = true;
             }
 
             if (inputManager.actionFired(Action.MOVE_LEFT))
             {
-                m_position -= rightVector * STRAFE_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_LEFT);
+                m_position -= rightVector * STRAFE_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_LEFT) *
+                              delta;
                 movedThisFrame = true;
             }
 
             if (inputManager.actionFired(Action.MOVE_RIGHT))
             {
-                m_position += rightVector * STRAFE_SPEED * Time.deltaTime * inputManager.actionDelta(Action.MOVE_RIGHT);
+                m_position += rightVector * STRAFE_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_RIGHT) *
+                              delta;
                 movedThisFrame = true;
             }
 
@@ -199,6 +209,17 @@ namespace cst.Flight
             }
 
             m_rotation = rotation;
+        }
+
+        protected void interpolateHeight()
+        {
+            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height * 5.0f);
+
+            if (distanceToGround.HasValue)
+                m_desiredHeight = m_position.y - (distanceToGround.Value - height);
+
+            m_position = Vector3.Lerp(m_position, new Vector3(m_position.x, m_desiredHeight, m_position.z),
+                Time.deltaTime * INTERP_VALUE);
         }
 
         public abstract void start(TransitionData data);

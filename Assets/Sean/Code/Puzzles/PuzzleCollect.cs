@@ -1,22 +1,24 @@
 ﻿//==========================================================
 // Author: Sean Vieira
-// Version: 1.0
+// Version: 1.2
 // Function: Handles puzzles that require certain objects
 // to be collected, and in no specific order
 //==========================================================
 
 using UnityEngine;
 using System.Collections;
+using sv.Triggers;
 
-namespace sv
+namespace sv.Puzzles
 {
     public class PuzzleCollect : MonoBehaviour
     {
         [SerializeField] private GameObject[] m_puzzleObjects;
         [SerializeField] private GameObject m_triggerTarget;
+        [SerializeField] private TriggerType m_triggerType;
         private PuzzleCollectObject m_selectedObject;
         private int m_numOfObjects; 
-        private bool m_trigger; 
+        private bool m_trigger;
         private PuzzleGUI m_puzzleGUI;
         
         // Use this for initialization
@@ -97,7 +99,7 @@ namespace sv
         {
             if (m_triggerTarget)
             {
-                m_triggerTarget.SetActive(false);
+                //m_triggerTarget
             }
         }
     }

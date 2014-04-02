@@ -1,19 +1,22 @@
 ﻿/*
  * File: PauseMenu.cs
  * 
- * Version: 1.0
+ * Version: 1.1
  * 
  * Author: Johnathon Forster
  * 
  * Description: 
  * 		When the user presses the 'p' key the game will slow down over the course of several seconds
  * 		When the game has slowed to nothing the scene "Menu Scene" will be loaded.
+ * 		Seraph position, orientation and state will be stored using playerPrefs and restored when un-pausing.
  */
 
 using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
+	public string menuSceneName = "Menu Scene Resized";
+	public Color fadeColour = new Color(1, 1, 1);
 
 	enum PauseState { playing, pausing, paused };
 	PauseState pauseState;
@@ -51,29 +54,47 @@ public class PauseMenu : MonoBehaviour
 	{
 		float time = Time.realtimeSinceStartup - prevTime;
 		prevTime = Time.realtimeSinceStartup;
+
 		//	Reducing timescale based on pause
-		if(pauseState == PauseState.pausing){
+		if(pauseState == PauseState.pausing)
+		{
 			elapsedTime += time;
 			if(elapsedTime >= pauseTime)
 			{
+				PlayerPrefs.SetInt("PAUSING", 1);
 				saveData();
-				pauseState = PauseState.paused;
+				//pauseState = PauseState.paused;
 
 				//pause ();
-				Application.LoadLevel("Menu Scene");
+				Application.LoadLevel(menuSceneName);
 				//Application.LoadLevelAdditive("Menu Scene");
 
-                Time.timeScale = 1.0f;
+                //Time.timeScale = 1.0f;
 				return;
 			}
 			Time.timeScale = 1.0f - (elapsedTime/pauseTime);
+			fadeColour.a = 1.0f - Time.timeScale;
 		}
+
 		//	Detecting key presses
 		if(Input.GetKeyDown(KeyCode.P))
 		{
 			if(pauseState == PauseState.playing){
 				pauseState = PauseState.pausing;
+				print ("Pausing");
 			}
+		}
+	}
+
+	void OnGUI()
+	{
+		if (pauseState == PauseState.pausing) {
+			GUI.color = fadeColour;
+			Texture2D texture = new Texture2D (1, 1);
+			texture.SetPixel (0, 0, fadeColour);
+			texture.Apply ();
+			GUI.skin.box.normal.background = texture;
+			GUI.Box (new Rect (0, 0, Screen.width, Screen.height), GUIContent.none);
 		}
 	}
 
@@ -90,108 +111,84 @@ public class PauseMenu : MonoBehaviour
 
 	void saveData()
 	{
-		//	Search for an object with the "SeraphController" script attached
-		//	Will need to add appropriate getters to SeraphController script
-		Camera camera = (Camera)FindObjectOfType(typeof(Camera));
-		if(camera != null)
-		{
-			//	If found, copy the SeraphController properties to userprefs
-			cst.Flight.SeraphController seraphController = camera.GetComponent<cst.Flight.SeraphController>();
-			if(seraphController != null)
-			{
-				//	Setting a flag to signify that there's data saved
-				PlayerPrefs.SetInt("DATA_SAVED", 1);
+		//	Search for an object named "Seraph"
+		cst.Flight.SeraphController seraphController = (cst.Flight.SeraphController)GameObject.Find("Seraph").GetComponentsInChildren(typeof(cst.Flight.SeraphController))[0];
+		
+		//	Setting a flag to signify that there's data saved
+		PlayerPrefs.SetInt("DATA_SAVED", 1);
+		print ("Data saved");
 
-				//	Getting player position from controller
-				Vector3 positon = seraphController.transform.position;
-				print ("position x: " + positon.x);
-				PlayerPrefs.SetFloat("PLAYER_POSITION_X", positon.x);
-				print ("position y: " + positon.y);
-				PlayerPrefs.SetFloat("PLAYER_POSITION_Y", positon.y);
-				print ("position z: " + positon.z);
-				PlayerPrefs.SetFloat("PLAYER_POSITION_Z", positon.z);
+		//	Getting player position from controller
+		Vector3 positon = seraphController.transform.position;
+		print ("position x: " + positon.x);
+		PlayerPrefs.SetFloat("PLAYER_POSITION_X", positon.x);
+		print ("position y: " + positon.y);
+		PlayerPrefs.SetFloat("PLAYER_POSITION_Y", positon.y);
+		print ("position z: " + positon.z);
+		PlayerPrefs.SetFloat("PLAYER_POSITION_Z", positon.z);
 
-				//	Getting player rotation from controller
-				Quaternion rotation = seraphController.transform.rotation;
-				print ("rotation w: " + rotation.w);
-				PlayerPrefs.SetFloat("PLAYER_ROTATION_W", rotation.w);
-				print ("rotation x: " + rotation.z);
-				PlayerPrefs.SetFloat("PLAYER_ROTATION_X", rotation.x);
-				print ("rotation y: " + rotation.y);
-				PlayerPrefs.SetFloat("PLAYER_ROTATION_Y", rotation.y);
-				print ("rotation z: " + rotation.z);
-				PlayerPrefs.SetFloat("PLAYER_ROTATION_Z", rotation.z);
-				
-				//	Getting state from controller
-				string playerCapability = seraphController.capability.ToString();
-				print ("Capability: " + playerCapability);
-				PlayerPrefs.SetString("PLAYER_CAPABILITY", playerCapability);
+		//	Getting player rotation from controller
+		Quaternion rotation = seraphController.transform.rotation;
+		print ("rotation w: " + rotation.w);
+		PlayerPrefs.SetFloat("PLAYER_ROTATION_W", rotation.w);
+		print ("rotation x: " + rotation.z);
+		PlayerPrefs.SetFloat("PLAYER_ROTATION_X", rotation.x);
+		print ("rotation y: " + rotation.y);
+		PlayerPrefs.SetFloat("PLAYER_ROTATION_Y", rotation.y);
+		print ("rotation z: " + rotation.z);
+		PlayerPrefs.SetFloat("PLAYER_ROTATION_Z", rotation.z);
+		
+		//	Getting state from controller
+		string playerCapability = seraphController.capability.ToString();
+		print ("Capability: " + playerCapability);
+		PlayerPrefs.SetString("PLAYER_CAPABILITY", playerCapability);
 
-				string playerState = seraphController.state.ToString();
-				print ("State: " + playerState);
-				PlayerPrefs.SetString("PLAYER_STATE", playerState);
+		string playerState = seraphController.state.ToString();
+		print ("State: " + playerState);
+		PlayerPrefs.SetString("PLAYER_STATE", playerState);
 
-				//	Not sure if I need this right now
-				//	Depending on the state, get various properties from player
-				switch(seraphController.state)
-				{
-				case cst.Flight.SeraphState.FLYING:
-					
-					break;
-				case cst.Flight.SeraphState.GLIDING:
-					
-					break;
-				case cst.Flight.SeraphState.GROUNDED:
-					
-					break;
-				case cst.Flight.SeraphState.LANDING:
-					
-					break;
-				}
-
-				//	Need to commit changes
-				PlayerPrefs.Save();
-			}
-		}
+		//	Need to commit changes
+		PlayerPrefs.Save();
 	}
 
 	void loadData()
 	{
 		//	Check if data has been saved
-		if(PlayerPrefs.GetInt("DATA_SAVED") == 1)
-		{
-            //	If data has been saved, load data and reset flag
-			Camera camera = (Camera)FindObjectOfType(typeof(Camera));
-			if(camera != null)
-			{
-				cst.Flight.SeraphController seraphController = camera.GetComponent<cst.Flight.SeraphController>();
-				if(seraphController != null)
-				{
-					//	Loading player position
-					Vector3 position = new Vector3(PlayerPrefs.GetFloat("PLAYER_POSITION_X"),
-					                               PlayerPrefs.GetFloat("PLAYER_POSITION_Y"),
-					                               PlayerPrefs.GetFloat("PLAYER_POSITION_Z"));
-					seraphController.transform.position = position;
-
-					//	Loading player rotation
-					Quaternion rotation = new Quaternion(PlayerPrefs.GetFloat("PLAYER_ROTATION_X"),
-					                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_Y"),
-					                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_Z"),
-					                                     PlayerPrefs.GetFloat("PLAYER_ROTATION_W"));
-					seraphController.transform.rotation = rotation;
-
-					//	Loading player prefs
-					seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
-					seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
-				}
+		GameObject seraph = GameObject.Find("Seraph");
+		if (seraph != null) {
+			print ("Load called");
+			if (PlayerPrefs.GetInt ("DATA_SAVED") == 1) {
+				//	Loading player position
+				Vector3 position = new Vector3 (PlayerPrefs.GetFloat ("PLAYER_POSITION_X"),
+                       PlayerPrefs.GetFloat ("PLAYER_POSITION_Y"),
+                       PlayerPrefs.GetFloat ("PLAYER_POSITION_Z"));
+				seraph.transform.position = position;
 			}
+			//	Loading player rotation
+			Quaternion rotation = new Quaternion (PlayerPrefs.GetFloat ("PLAYER_ROTATION_X"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_Y"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_Z"),
+                     PlayerPrefs.GetFloat ("PLAYER_ROTATION_W"));
+			seraph.transform.rotation = rotation;
 
-			PlayerPrefs.SetInt("DATA_SAVED", 0);
+			//	Loading player prefs
+			//seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
+			//seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
+
+			PlayerPrefs.SetInt ("DATA_SAVED", 0);
 		}
 	}
 
 	void OnApplicationQuit()
 	{
-		//	Clear position based UserPrefs  
+		//	Clear position based UserPrefs
+		PlayerPrefs.DeleteAll();
+		PlayerPrefs.Save();
 	}
 }
+
+/*
+ *		Version History:
+ *			1.0: File was created
+ *			1.1: 
+ */

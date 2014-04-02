@@ -7,7 +7,7 @@ public class ShaderTexture
 	// Variable to store the texture
 	public Texture2D m_Texture = null;
 	// Variable to store how fast to offset
-	public float m_Speed = 0.0f;
+	public float m_Speed = 0.01f;
 	// Variable to store how many times to tile the texture
 	public Vector2 m_Tile = new Vector2(1.0f, 1.0f);
 }
@@ -15,7 +15,7 @@ public class ShaderTexture
 public class AnimatedWater : MonoBehaviour
 {
 	// The color to tint the water (default to clear black)
-	public Color m_Tint = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+	public Color m_Tint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 	
 	// The color to tint the water (default white)
 	public Color m_specularColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -27,14 +27,13 @@ public class AnimatedWater : MonoBehaviour
 	public float m_waterAngle = 0.0f;
 
 	// Objects to store data about each texture
-	public ShaderTexture m_waterTexture = new ShaderTexture();
-	public ShaderTexture m_normalTextureA = new ShaderTexture();
-	public ShaderTexture m_normalTextureB = new ShaderTexture();
+	public ShaderTexture m_baseNormal = new ShaderTexture();
+	public ShaderTexture m_secondaryNormal = new ShaderTexture();
 	
 	// Vectors to store the texture offsets
 	private Vector2 m_waterMovement = new Vector2(0.0f, 0.0f);
-	private Vector2 m_normalMovementA = new Vector2(0.0f, 0.0f);
-	private Vector2 m_normalMovementB = new Vector2(0.0f, 0.0f);
+	private Vector2 m_baseMovement = new Vector2(0.0f, 0.0f);
+	private Vector2 m_secondaryMovement = new Vector2(0.0f, 0.0f);
 	
 	void Start ()
 	{
@@ -43,23 +42,16 @@ public class AnimatedWater : MonoBehaviour
 		// So lets convert to radians
 		m_waterAngle *= Mathf.Deg2Rad;
 
-		// Providing the texture has been set in the inspector
-		if(m_waterTexture.m_Texture != null)
-		{
-			// Set the texture and the tiling
-			SetTexture("_MainTex", m_waterTexture);
-		}
-
 		// Normal maps
-		if(m_normalTextureA.m_Texture != null)
+		if(m_baseNormal.m_Texture != null)
 		{
 			// Set the texture and the tiling
-			SetTexture("_BumpMapA", m_waterTexture);
+			SetTexture("_BumpMapA", m_baseNormal);
 		}
-		if(m_normalTextureB.m_Texture != null)
+		if(m_secondaryNormal.m_Texture != null)
 		{
 			// Set the texture and the tiling
-			SetTexture("_BumpMapB", m_waterTexture);
+			SetTexture("_BumpMapB", m_secondaryNormal);
 		}
 
 		// The color to tint the water
@@ -76,14 +68,12 @@ public class AnimatedWater : MonoBehaviour
 	void Update ()
 	{
 		// Translate the texture offset based on speed
-		UpdateOffset(ref m_waterMovement, m_waterTexture.m_Speed);
-		UpdateOffset(ref m_normalMovementA, m_normalTextureA.m_Speed);
-		UpdateOffset(ref m_normalMovementB, m_normalTextureB.m_Speed);
+		UpdateOffset(ref m_baseMovement, m_baseNormal.m_Speed);
+		UpdateOffset(ref m_secondaryMovement, m_secondaryNormal.m_Speed);
 
 		// Apply the offsets to the texture
-		SetOffset("_MainTex", m_waterMovement);
-		SetOffset("_BumpMapA", m_normalMovementA);
-		SetOffset("_BumpMapB", m_normalMovementB);
+		SetOffset("_BumpMapA", m_baseMovement);
+		SetOffset("_BumpMapB", m_secondaryMovement);
 	}
 
 	private void UpdateOffset(ref Vector2 Offset, float Speed)

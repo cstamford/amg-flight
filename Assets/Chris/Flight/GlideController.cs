@@ -23,8 +23,6 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
-        public float forwardSpeed { get; private set; }
-
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
@@ -32,14 +30,15 @@ namespace cst.Flight
         private const float MIN_RETURN_TURN_SPEED = 10.0f;
         private const float MAX_RETURN_TURN_SPEED = 30.0f;
         private const float INCREMENT_PITCH_SPEED = 45.0f;
-        private const float INCREMENT_VELOCITY    = 40.0f;
-        private const float DECREMENT_VELOCITY    = 25.0f;
-        private const float RESTING_VELOCITY      = 125.0f;
-        private const float MAX_VELOCITY          = RESTING_VELOCITY * 2.0f;
-        private const float MIN_VELOCITY          = 0.0f;
+        private const float INCREMENT_VELOCITY    = 5.0f;
+        private const float DECREMENT_VELOCITY    = 5.0f;
+        private const float RESTING_VELOCITY      = 10.0f;
+        public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
+        public const float  MIN_VELOCITY          = 0.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
+        private float m_forwardSpeed;
 
         public GlideController(SeraphController controller)
             : base(controller)
@@ -48,8 +47,7 @@ namespace cst.Flight
         public void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
-
-            forwardSpeed = data.velocity < RESTING_VELOCITY ? RESTING_VELOCITY : data.velocity;
+            m_forwardSpeed = data.velocity > MAX_VELOCITY * 1.25f ? MAX_VELOCITY : data.velocity;
         }
 
         public void update()
@@ -88,7 +86,7 @@ namespace cst.Flight
 
         public TransitionData transitionData()
         {
-            return new TransitionData { direction = transform.forward, velocity = forwardSpeed };
+            return new TransitionData { direction = transform.forward, velocity = m_forwardSpeed };
         }
 
         private void handleOrientationChange()
@@ -243,7 +241,7 @@ namespace cst.Flight
             float step = pitch * Time.deltaTime;
 
             // Don't go above the calculated rest speed
-            if (forwardSpeed > restSpeed && pitch > 0.0f)
+            if (m_forwardSpeed > restSpeed && pitch > 0.0f)
                 step = -step;
 
             if (step > 0.0f)
@@ -251,13 +249,13 @@ namespace cst.Flight
             else
                 step *= DECREMENT_VELOCITY;
 
-            forwardSpeed += step;
+            m_forwardSpeed += step;
 
             // Drop out of flight if we stall
-            if (forwardSpeed < MIN_VELOCITY)
+            if (m_forwardSpeed < MIN_VELOCITY)
                 state = SeraphState.GROUNDED;
 
-            m_position += transform.forward * forwardSpeed * Time.deltaTime;
+            m_position += transform.forward * m_forwardSpeed * Time.deltaTime;
         }
 
         private void handleTransition()

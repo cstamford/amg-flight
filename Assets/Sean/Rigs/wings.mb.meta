@@ -1,0 +1,142 @@
+fileFormatVersion: 2
+guid: 1e4a5252da44e8345bb10a8780f49bdf
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: ctrl_Rig
+    100002: ctrlMaster
+    100004: jCentre
+    100006: jShoulder_L
+    100008: jShoulder_R
+    100010: jTip_L
+    100012: jTip_R
+    100014: wingL
+    100016: wingR
+    100018: Wings
+    100020: //RootNode
+    100022: wingsBody
+    100024: wingsMesh
+    100026: WingsSkeleton
+    100028: ctrlMain
+    100030: wingC
+    100032: wingL 1
+    100034: wingR 1
+    100036: wings_mk2
+    100038: wings_mk_sepd
+    100040: wingsMesh 1
+    100042: wingmesh_sepd1:wingC
+    100044: wingmesh_sepd1:wingL
+    100046: wingmesh_sepd1:wingR
+    100048: wingmesh_sepd1:wings_mk_sepd
+    400000: ctrl_Rig
+    400002: ctrlMaster
+    400004: jCentre
+    400006: jShoulder_L
+    400008: jShoulder_R
+    400010: jTip_L
+    400012: jTip_R
+    400014: wingL
+    400016: wingR
+    400018: Wings
+    400020: //RootNode
+    400022: wingsBody
+    400024: wingsMesh
+    400026: WingsSkeleton
+    400028: ctrlMain
+    400030: wingC
+    400032: wingL 1
+    400034: wingR 1
+    400036: wings_mk2
+    400038: wings_mk_sepd
+    400040: wingsMesh 1
+    400042: wingmesh_sepd1:wingC
+    400044: wingmesh_sepd1:wingL
+    400046: wingmesh_sepd1:wingR
+    400048: wingmesh_sepd1:wings_mk_sepd
+    2300000: wingsBody
+    2300002: wingC
+    2300004: wingL
+    2300006: wingR
+    2300008: wingsMesh 1
+    2300010: wingL 1
+    2300012: wingmesh_sepd1:wingC
+    2300014: wingR 1
+    3300000: wingsBody
+    3300002: wingC
+    3300004: wingL
+    3300006: wingR
+    3300008: wingsMesh 1
+    3300010: wingL 1
+    3300012: wingmesh_sepd1:wingC
+    3300014: wingR 1
+    4300000: wingR
+    4300002: wingL
+    4300004: wingsBody
+    4300006: wingsMesh
+    4300008: wingR
+    4300010: wingL
+    4300012: wingC
+    4300014: wingmesh_sepd1:wingR
+    4300016: wingmesh_sepd1:wingL
+    4300018: wingmesh_sepd1:wingC
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: wingL
+    13700002: wingR
+    13700004: wingL 1
+    13700006: wingR 1
+    13700008: wingmesh_sepd1:wingL
+    13700010: wingmesh_sepd1:wingR
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 

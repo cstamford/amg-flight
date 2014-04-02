@@ -8,9 +8,11 @@
 
 using UnityEngine;
 using System;
+using sv.Puzzles;
+using sv.Triggers;
 using cst.Common;
+using cst.Flight;
 using Action = cst.Common.Action;
-
 
 namespace sv
 {
@@ -20,15 +22,21 @@ namespace sv
         [SerializeField] private GameObject m_inputManagerObject;
         [SerializeField] private GameObject m_cursor;
 
+        // Raycasting
         private RaycastHit m_hit;
         private Ray m_crosshairRay;
 
-        private InputManager m_inputManager;
-        private GameObject m_selected;
+        // Puzzle types
         private PuzzleCollect m_puzzleTypeCollect;
         private PuzzlePassword m_puzzleTypePassword;
         private PuzzleCollectObject m_puzzleCollectable;
         private PuzzlePasswordKey m_puzzlePasswordKey;
+        private WingsController m_wingsController;
+
+        // Misc.
+        private InputManager m_inputManager;
+        private GameObject m_selected;
+        private SeraphController m_seraph;
 
         // Use this for initialization
         void Start()
@@ -57,6 +65,13 @@ namespace sv
                     throw new Exception("No InputManager script detected on the provided InputManagerObject.");
                 }
             }
+
+            m_seraph = GetComponent<SeraphController>();
+            if (!m_seraph)
+            {
+                enabled = false;
+                throw new Exception("No Seraph Controller script detected on game object.");
+            }
         }
 
         // Update is called once per frame
@@ -77,37 +92,10 @@ namespace sv
                     }
                 }
                 else
-                {                   
-                    // Check to see if selectable objects have been acquired
-                    if (m_selected.tag == "PuzzleCollectObject")
-                    {
-                        m_cursor.SetActive(true);
-                        m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
-
-                        // Acquire the puzzle controller if it isn't already acquired. 
-                        // ie it's necessary to do here since it may not necessarily have a mesh
-                        if (!m_puzzleTypeCollect)
-                        {
-                            m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
-                        }
-                    }
-                    else if (m_selected.tag == "PuzzleCollect")
-                    {
-                        m_cursor.SetActive(true);
-                        m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
-                    }
-
-                    if (m_inputManager.actionFired(Action.INTERACT))
-                    {
-                        Debug.Log("Ray intersects with " + m_selected.name);
-
-                        if (m_selected.tag == "PuzzleCollectObject")
-                        {
-                            // Set the object state as collected, and de-activate it (so it no longer affects the scene)
-                            m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                            m_selected.SetActive(false);
-                        }
-                    }
+                {
+                    CheckForObjectAcquirement();
+                    
+                    CheckForObjectInteraction();
                 }
             }
             else
@@ -196,6 +184,90 @@ namespace sv
             }
 
             return component;
+        }
+       
+        // Check to see if selectable objects have been acquired
+        void CheckForObjectAcquirement()
+        {
+            switch (m_selected.tag)
+            {
+                case "PuzzleCollect":
+                    {
+                        m_cursor.SetActive(true);
+                        m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
+                    } break;
+                case "PuzzleCollectObject":
+                    {
+                        m_cursor.SetActive(true);
+                        m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
+
+                        // This is necessary to do here since puzzle contreller may not necessarily have a mesh
+                        if (!m_puzzleTypeCollect)
+                        {
+                            m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
+                        }
+                    } break;
+                case "PuzzlePassword":
+                    {
+                        m_cursor.SetActive(true);
+                        m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_selected, m_puzzleTypePassword);
+                    } break;
+                case "PuzzlePasswordObject":
+                    {
+                        m_cursor.SetActive(true);
+                        m_puzzlePasswordKey = AcquireObjectComponent<PuzzlePasswordKey>(m_selected, m_puzzlePasswordKey);
+
+                        if (!m_puzzleTypePassword)
+                        {
+                            m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_puzzlePasswordKey.GetParent(), m_puzzleTypePassword);
+                        }
+                    } break;
+                case "Wings":
+                    {
+                        m_cursor.SetActive(true);
+                        m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
+                    } break;
+            }
+        }
+
+        void CheckForObjectInteraction()
+        {
+            // Check to see if objects are interacted with
+            if (m_inputManager.actionFired(Action.INTERACT))
+            {
+                Debug.Log("Ray intersects with " + m_selected.name);
+
+                switch (m_selected.tag)
+                {
+                    case "PuzzleCollectObject":
+                    {
+                        // Set the object state as collected, and de-activate it (so it no longer affects the scene)
+                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                        m_selected.SetActive(false);
+                    } break;
+                    case "PuzzlePasswordObject":
+                    {
+                        // Set the object state as entered into the password
+                        m_puzzleTypePassword.AddKeyToPassword(m_puzzlePasswordKey.GetValue());
+                    } break;
+                    case "Wings":
+                        {
+                            if (!m_wingsController.IsAttachedToPlayer)
+                            {                                
+                                m_wingsController.IsAttachedToPlayer = true;
+                                m_wingsController.ParentObject = this.gameObject;
+                                m_seraph.capability = SeraphCapability.FLIGHT;
+                            }
+                            else
+                            {
+                                m_wingsController.IsAttachedToPlayer = false;
+                                m_wingsController.ParentObject = null;
+                                m_seraph.capability = SeraphCapability.NONE;
+                                m_seraph.state = SeraphState.FALLING;
+                            }
+                        } break;
+                }
+            }
         }
     }
 }

@@ -27,7 +27,8 @@ namespace cst.Flight
         LANDING,
         FALLING,
         GLIDING,
-        FLYING
+        FLYING,
+        WARPING
     }
 
     public enum SeraphCapability
@@ -42,22 +43,17 @@ namespace cst.Flight
         [SerializeField] private SeraphCapability m_capability = SeraphCapability.GLIDE;
         [SerializeField] private SeraphState      m_state      = SeraphState.FALLING;
         [SerializeField] private GameObject       m_inputManagerObject;
-        
+       
         private InputManager      m_inputManager;
         private GroundController  m_groundController;
         private FallingController m_fallingController;
         private LandingController m_landingController;
         private GlideController   m_glideController;		
         private FlightController  m_flightController;
+        private WarpingController m_warpingController;
 
         public void Start()
         {
-            if (collider == null)
-            {
-                enabled = false;
-                throw new Exception("No collider attached.");
-            }
-
             if (m_inputManagerObject == null)
             {
                 enabled = false;
@@ -71,30 +67,13 @@ namespace cst.Flight
                 enabled = false;
                 throw new Exception("No InputManager script detected on the provided InputManagerObject.");
             }
-            
-            if (rigidbody == null)
-            {
-                enabled = false;
-                throw new Exception("No rigidbody attached.");
-            }
-
-            if (rigidbody.isKinematic)
-            {
-                enabled = false;
-                throw new Exception("Attached rigidbody is kinematic.");
-            }
-
-            if (rigidbody.useGravity)
-            {
-                Debug.LogWarning("Gravity enabled on rigidbody - Seraph" +
-                                 "Controller has its own implementation.");
-            }
 
             m_groundController  = new GroundController(this);
             m_fallingController = new FallingController(this);
             m_landingController = new LandingController(this);
             m_glideController   = new GlideController(this);
             m_flightController  = new FlightController(this);
+            m_warpingController = new WarpingController(this);
         }
 
         public void Update()
@@ -121,6 +100,10 @@ namespace cst.Flight
 
                 case SeraphState.FLYING:
                     activeController = m_flightController;
+                    break;
+
+                case SeraphState.WARPING:
+                    activeController = m_warpingController;
                     break;
             }
 
