@@ -36,7 +36,7 @@ namespace sv
             if (m_wCtrl.IsAttachedToPlayer)
             {
                 m_glow.enabled = false;
-                RotatingRelic rotation = GetComponent<RotatingRelic>();
+				RelicController rotation = GetComponent<RelicController>();
                 rotation.enabled = false;
             }
 	    }
