@@ -38,9 +38,13 @@ namespace sv
         private GameObject m_selected;
         private SeraphController m_seraph;
 
-		//Relic collection (audio)
+		// Relic collection (audio)
 		private bool m_collected;
 		private String m_collectedName;
+
+        // Wing collection (audio + animation)
+        private bool m_narrationIsDone;
+        private bool m_animationIsDone;
 
         // Use this for initialization
         void Start()
@@ -125,50 +129,6 @@ namespace sv
 
             return false;
         }
-
-
-        // Legacy code -----------------------------------------
-        // Acquire the keypad component from target GameObject            
-        /*void AcquireKeypadObject(GameObject target)
-        {
-            PuzzlePassword temp = target.GetComponent<PuzzlePassword>();
-
-            if (!m_keypad)
-            {
-                m_keypad = temp;
-            }
-            else
-            {
-                if (m_keypad != temp)
-                {
-                    m_keypad = temp;
-                }
-            }
-        }
-
-        // Acquire the keypad key component from target GameObject  
-        void AcquireKeypadButtonObject(GameObject target)
-        {
-            PuzzlePasswordKey temp = target.GetComponent<PuzzlePasswordKey>();
-
-            if (!m_keyPressed)
-            {
-                m_keyPressed = temp;
-            }
-            else
-            {
-                if (m_keyPressed != temp)
-                {
-                    m_keyPressed = temp;
-                }
-            }
-            
-            if (!m_keypad)
-            {
-                AcquireKeypadObject(m_keyPressed.GetParent());
-            }
-        }*/
-        //--------------------------------------------------------
 
         // Generic function for acquiring/storing a specific type of component
         T AcquireObjectComponent<T>(GameObject target, T component) where T : Component
@@ -256,26 +216,49 @@ namespace sv
                         m_selected.SetActive(false);
 						m_collected = true;
                     } break;
+
                     case "PuzzlePasswordObject":
                     {
                         // Set the object state as entered into the password
                         m_puzzleTypePassword.AddKeyToPassword(m_puzzlePasswordKey.GetValue());
                     } break;
+
                     case "Wings":
                         {
-                            if (!m_wingsController.IsAttachedToPlayer)
-                            {                                
-                                //m_wingsController.IsAttachedToPlayer = true;
-                                m_wingsController.ParentObject = this.gameObject;
-								m_seraph.capability = SeraphCapability.FLIGHT;
-								m_collected = true;
-								m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                            if (m_narrationIsDone)
+                            {
+                                if (!m_wingsController.IsAttachedToPlayer)
+                                {
+                                    m_wingsController.ParentObject = this.gameObject;
+                                    m_seraph.capability = SeraphCapability.FLIGHT;
+                                    m_collected = true;
+                                    m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                                }
                             }
                         } break;
                 }
             }
         }
 
+        public bool IsWingNarrationDone
+        {
+            get { return m_narrationIsDone; }
+            set
+            {
+                m_narrationIsDone = value;
+            }
+        }
+
+        public bool IsWingAnimatonDone
+        {
+            get { return m_animationIsDone; }
+            set
+            {
+                m_animationIsDone = value;
+            }
+        }
+
+        // Marc Stuff =====================
 		public bool GetCollection()
 		{
 			bool temp = m_collected;
@@ -287,5 +270,7 @@ namespace sv
 		{
 			return m_collectedName;
 		}
+
+        // End Marc Stuff =================
     }
 }
