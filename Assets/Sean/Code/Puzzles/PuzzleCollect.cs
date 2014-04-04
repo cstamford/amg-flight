@@ -80,7 +80,7 @@ namespace sv.Puzzles
 
             if (m_triggerTarget)
             {
-                Debug.Log("Activating trigger...");
+                //Debug.Log("Activating trigger...");
                 if (!m_triggerController.ActivateTrigger(m_triggerTarget))
                 {
                     Debug.Log("Error activating trigger");

@@ -13,11 +13,13 @@
 
 using UnityEngine;
 using System;
+using sv.Triggers;
 
 public class NarrationTrigger : MonoBehaviour {
 
 	public AudioClip narration;
 	public GameObject barrier;
+    public bool destroyBarrier;
 
 	private AudioSource audioSource;
 	private bool narrativeTriggered;
@@ -50,8 +52,14 @@ public class NarrationTrigger : MonoBehaviour {
 			{
 				if(barrier != null)
 				{
-					Destroy(barrier);
-					print("Destroyed barrier");
+                    if (destroyBarrier)
+                    {
+                        Destroy(barrier);
+                    }
+                    else
+                    {
+                        ActivateTrigger();
+                    }
 				}
 			}
 		}
@@ -73,4 +81,16 @@ public class NarrationTrigger : MonoBehaviour {
 			}
 		}
 	}
+
+    // Sean Code ----------------------------------
+    void ActivateTrigger()
+    {
+        TriggerController triggerController = GetComponent<TriggerController>();
+
+        if (triggerController != null)
+        {
+            triggerController.ActivateTrigger(barrier);
+        }
+    }
+    // End Sean -----------------------------------
 }

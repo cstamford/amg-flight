@@ -26,16 +26,14 @@ namespace sv.Triggers
             get { return m_triggerType; }
             set
             {
-                Debug.Log("Active Trigger type has been set to " + value);
+                //Debug.Log("Active Trigger type has been set to " + value);
                 m_triggerType = value;
             }
 
         }
         public bool ActivateTrigger(GameObject targetTrigger)
         {
-            Debug.Log("ACTIVATING TRIGGER MOFO");
-			
-			switch (m_triggerType)
+            switch (m_triggerType)
             {
                 case TriggerType.OPEN_DOOR:
                     {

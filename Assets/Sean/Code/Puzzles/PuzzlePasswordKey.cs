@@ -14,6 +14,8 @@ namespace sv.Puzzles
     {
         [SerializeField] public GameObject m_parentObject;
         [SerializeField] private int m_value;
+        private bool m_isEntered;
+        private int m_indexOrder;
         
         // Use this for initialization
         void Start()
@@ -22,6 +24,8 @@ namespace sv.Puzzles
             {
                 Debug.Log(this.name + " does not have a parent object");
             }
+
+            m_isEntered = false;
         }
         
         // Update is called once per frame
@@ -30,14 +34,31 @@ namespace sv.Puzzles
             /* Empty */
         }
 
-        public void SetValue(int k)
+        public int Value
         {
-            m_value = k;
+            get { return m_value; }
+            set
+            {
+                m_value = value;
+            }
         }
 
-        public int GetValue()
+        public bool IsEntered
         {
-            return m_value;
+            get { return m_isEntered; }
+            set
+            {
+                m_isEntered = value;
+            }
+        }
+
+        public int OrderPressed
+        {
+            get { return m_indexOrder; }
+            set
+            {
+                m_indexOrder = value;
+            }
         }
 
         public GameObject GetParent()

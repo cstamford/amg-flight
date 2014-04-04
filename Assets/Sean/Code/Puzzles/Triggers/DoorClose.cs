@@ -12,8 +12,9 @@ namespace sv.Triggers
 {
     public class DoorClose : MonoBehaviour
     {
-        [SerializeField] private float m_closedHeight;
+        [SerializeField] private float m_targetHeight;
         [SerializeField] private float m_moveSpeed;
+        private float m_closedHeight;
         private float m_openedHeight;
         private float m_currentHeight;
         private bool m_isTriggered;
@@ -23,6 +24,7 @@ namespace sv.Triggers
         void Start()
         {
             m_isTriggered = false;
+            m_closedHeight = this.transform.position.y + (m_targetHeight * this.transform.parent.localScale.y) - (this.transform.localPosition.y * this.transform.parent.localScale.y);
             m_openedHeight = this.transform.position.y;
             m_currentHeight = m_openedHeight;
         }
@@ -60,8 +62,12 @@ namespace sv.Triggers
         {
             if (m_currentHeight != m_closedHeight)
             {
-                m_currentHeight -= m_moveSpeed * Time.deltaTime;
-                return false;
+                if (m_currentHeight > m_closedHeight)
+                {
+                    //Debug.Log("The current height (" + m_currentHeight + ") is more than than closed height (" + m_closedHeight + ")");
+                    m_currentHeight -= m_moveSpeed * Time.deltaTime;
+                    return false;
+                }
             }
 
             return true;
