@@ -14,7 +14,8 @@ namespace sv.Triggers
     {
         OPEN_DOOR,
         CLOSE_DOOR,
-        WATERFALL_STOP
+        WATERFALL_STOP,
+        TRANSPORT_RELIC
     }
     
     public class TriggerController : MonoBehaviour

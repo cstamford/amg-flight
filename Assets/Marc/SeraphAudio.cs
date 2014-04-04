@@ -17,6 +17,7 @@
 using System;
 using cst.Flight;
 using sv;
+using sv.Triggers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,14 +31,18 @@ public class SeraphAudio : MonoBehaviour
 	private AudioSource m_glidingAudioSource;
     private AudioSource m_walkingAudioSource;
 	private AudioSource m_landingAudioSource;
+	private AudioSource m_warpingAudioSource;
 	private AudioSource m_collectAudioSource;
 
 	private AudioClip m_ambientAudioClip;
 	private AudioClip m_fallingAudioClip;
     private AudioClip m_glidingAudioClip;
-    private readonly AudioClip[] m_walkGrassAudioClips = new AudioClip[WALK_VARIANTS];
-	private AudioClip m_walkStoneAudioClip;
-	private readonly AudioClip[] m_collectAudioClips = new AudioClip[COLLECT_VARIANTS];
+	private AudioClip m_warpingAudioClip;
+	private AudioClip m_walkWaterAudioClip;
+    private AudioClip[] m_walkGrassAudioClips = new AudioClip[WALK_VARIANTS];
+	private AudioClip[] m_walkStoneAudioClips = new AudioClip[WALK_VARIANTS];
+
+	private AudioClip[] m_collectAudioClips = new AudioClip[COLLECT_VARIANTS];
 
     private SeraphController m_controller;
 	private ObjectSelection m_objectSelection;
@@ -45,7 +50,6 @@ public class SeraphAudio : MonoBehaviour
 	public void Start()
 	{
 	    m_controller = FindObjectOfType<SeraphController>();
-
 		m_objectSelection = FindObjectOfType<ObjectSelection> ();
 
         if (m_controller == null)
@@ -53,14 +57,15 @@ public class SeraphAudio : MonoBehaviour
 
 		m_ambientAudioClip = (AudioClip)Resources.Load("windy ambience");
 		m_fallingAudioClip = (AudioClip)Resources.Load("falling");
-        m_glidingAudioClip = (AudioClip)Resources.Load("temporary flying noise");
+        m_glidingAudioClip = (AudioClip)Resources.Load("flight");
+		m_warpingAudioClip = (AudioClip)Resources.Load ("warping");
+		m_walkWaterAudioClip = (AudioClip)Resources.Load("water footstep");
 		
 		for (int i = 0; i != WALK_VARIANTS; ++i)
 		{
 			m_walkGrassAudioClips[i] = (AudioClip)Resources.Load(String.Format("grass walk ({0})", i + 1));
+			m_walkStoneAudioClips[i] = (AudioClip)Resources.Load(String.Format("stone footstep {0}", i + 1));
 		}
-
-		m_walkStoneAudioClip = (AudioClip)Resources.Load ("stone footstep 1");
 
 		for (int i = 0; i < COLLECT_VARIANTS - 1; ++i)
 		{
@@ -86,6 +91,9 @@ public class SeraphAudio : MonoBehaviour
 		m_landingAudioSource.clip = m_walkGrassAudioClips[0];
 
 		m_collectAudioSource = (AudioSource)gameObject.AddComponent ("AudioSource");
+
+		m_warpingAudioSource = (AudioSource)gameObject.AddComponent("AudioSource");
+		m_warpingAudioSource.clip = m_warpingAudioClip;
 		
 	}
 	
@@ -95,6 +103,7 @@ public class SeraphAudio : MonoBehaviour
 		handleFallingAudio();
         handleGlidingAudio();
         handleWalkingAudio();
+		handleWarpingAudio();
 		handleLandingAudio();
 		handleCollectAudio();
 	}
@@ -105,38 +114,25 @@ public class SeraphAudio : MonoBehaviour
 		if(m_objectSelection.GetCollection())
 		{
 			Debug.Log( m_objectSelection.GetCollectionName() );
+			int relicCount = m_objectSelection.GetCollectionCount();
+
 			switch( m_objectSelection.GetCollectionName() )
 			{
-			case "Binah_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[0];
-				break;
-			case "Chesed_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[1];
-				break;
-			case "Geburtah_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[2];
-				break;
-			case "Hod_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[3];
-				break;
-			case "Netzach_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[4];
-				break;
-			case "Tipharath_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[5];
-				break;
-			case "Yesod_Relic":
-				m_collectAudioSource.clip = m_collectAudioClips[6];
-				break;
-			case "Wings":
-				m_collectAudioSource.clip = m_collectAudioClips[7];
-				break;
+				case "Wings":
+					m_collectAudioSource.clip = m_collectAudioClips[7];
+					break;
+
+				default:
+					m_collectAudioSource.clip = m_collectAudioClips[relicCount-1];
+					break;
 			}
+
 			m_collectAudioSource.loop = false;
 			m_collectAudioSource.playOnAwake = false;
 			m_collectAudioSource.Play ();
 		}
 	}
+
 	// Plays while falling
 	private void handleFallingAudio()
 	{
@@ -171,12 +167,24 @@ public class SeraphAudio : MonoBehaviour
         }
     }
 
+	//Only plays when warping
+	private void handleWarpingAudio()
+	{
+		if (m_controller.state == SeraphState.WARPING)
+		{
+			if (!m_warpingAudioSource.isPlaying)
+			{
+				m_warpingAudioSource.loop = true;
+				m_warpingAudioSource.Play();
+			}
+		}
+	}
 	// Only plays when landing
 	private void handleLandingAudio()
 	{
 		if (m_controller.state == SeraphState.LANDING)
 		{
-		    m_landingAudioSource.pitch = m_controller.activeController.transitionData().velocity / 20.0f;
+		    m_landingAudioSource.pitch = m_controller.activeController.transitionData().velocity * 1.5f;
 			
 			if (!m_landingAudioSource.isPlaying)
 			{
@@ -223,7 +231,7 @@ public class SeraphAudio : MonoBehaviour
         if (m_controller.state == SeraphState.GROUNDED)
         {
             GroundController activeController = m_controller.activeController as GroundController;
-
+			m_warpingAudioSource.Stop();
             if (activeController == null)
                 return;
 
@@ -239,16 +247,27 @@ public class SeraphAudio : MonoBehaviour
 					if(hit.collider.gameObject.tag == "RockObject")
 					{
 						// Set audio to rock steps
-						m_walkingAudioSource.clip = m_walkStoneAudioClip;
+						m_walkingAudioSource.clip = m_walkStoneAudioClips[Random.Range(1, WALK_VARIANTS)];
+						m_walkingAudioSource.pitch = 1.6f;
+						m_walkingAudioSource.volume = 0.3f;
+					}
+					else if(hit.collider.gameObject.tag == "WaterObject")
+					{
+						// Set audio to water steps
+						m_walkingAudioSource.clip = m_walkWaterAudioClip;
+						m_walkingAudioSource.pitch = 0.5f;
+						m_walkingAudioSource.volume = 0.3f;
 					}
 					else
 					{
-						// Set audio to rock steps
+						// Set audio to grass steps
 						m_walkingAudioSource.clip = m_walkGrassAudioClips[Random.Range(1, WALK_VARIANTS)];
+						m_walkingAudioSource.pitch = 2.3f;
+						m_walkingAudioSource.volume = 0.3f;
 					}
 				}
                 
-				m_walkingAudioSource.pitch = 1.6f;
+
                 m_walkingAudioSource.Play();
             }
         }

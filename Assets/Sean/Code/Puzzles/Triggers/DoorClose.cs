@@ -73,5 +73,9 @@ namespace sv.Triggers
             return true;
         }
 
+		public bool getDoorClose()
+		{
+			return m_isTriggered && !CloseDoor ();
+		}
     }
 }

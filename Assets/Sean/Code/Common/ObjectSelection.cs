@@ -85,7 +85,6 @@ namespace sv
             }
 
             m_puzzleTypePassword = GameObject.Find("Level End Puzzle").GetComponent<PuzzlePassword>();
-            m_relicOrder = new int[m_puzzleTypePassword.TargetPasswordLength];
 
             m_totalNumOfRelicsCollected = 0;
             m_numOfObelisksPressed = 0;
@@ -223,7 +222,6 @@ namespace sv
                     case "PuzzleCollectObject":
                     {
                         int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
-                        m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
                         m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);
 
                         m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
@@ -300,6 +298,11 @@ namespace sv
 		{
 			return m_collectedName;
 		}
+
+        public int GetCollectionCount()
+        {
+            return m_totalNumOfRelicsCollected;
+        }
 
         // End Marc Stuff =================
     }
