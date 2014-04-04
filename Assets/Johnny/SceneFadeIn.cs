@@ -1,13 +1,15 @@
 ﻿/*
 		File: SceneFadeIn.cs
 
-		Version: 1.0
+		Version: 1.1
 
 		Author: Johnathon Forster
 
 		Description:
 			Allows a scene to fade in from a certain colour over a specified time period
 			Allows for a time scale manipulation to also have the game slowly fade in
+			Ignores first frame which can take a long time to compute when loading
+			-Long first frames can result in transitions not appearing.
  */
 
 using UnityEngine;
@@ -26,6 +28,8 @@ public class SceneFadeIn : MonoBehaviour {
 	private float elapsedTime;
 	private float prevTime;
 
+	private bool firstFrame;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -33,6 +37,8 @@ public class SceneFadeIn : MonoBehaviour {
 
 		elapsedTime = 0.0f;
 		prevTime = Time.realtimeSinceStartup;
+
+		firstFrame = true;
 	}
 	
 	// Update is called once per frame
@@ -40,6 +46,12 @@ public class SceneFadeIn : MonoBehaviour {
 	{
 		float time = Time.realtimeSinceStartup - prevTime;
 		prevTime = Time.realtimeSinceStartup;
+
+		if (firstFrame == true)
+		{
+			firstFrame = false;
+			return;
+		}
 		
 		if(finished == false)
 		{
@@ -74,3 +86,9 @@ public class SceneFadeIn : MonoBehaviour {
 		}
 	}
 }
+
+/*
+ *		Version History:
+ *			1.0: File was created
+ *			1.1: Added ignoring of first frame for smoother transitions.
+ */
