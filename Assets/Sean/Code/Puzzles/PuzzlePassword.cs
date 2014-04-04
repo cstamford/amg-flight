@@ -33,13 +33,11 @@ namespace sv.Puzzles
 
         // Misc
         private int m_lastKeyValue;
-        private bool m_isPasswordReset;
         
         // Use this for initialization
         void Start()
         {
             m_trigger = false;
-            m_isPasswordReset = false;
             m_userPassword = "";
             m_targetPassword = "";
             
@@ -68,7 +66,14 @@ namespace sv.Puzzles
             if (m_userPassword.Length > 0)
             {
                 m_userPassword = m_userPassword.Remove(m_userPassword.Length - 1);
-                //Debug.Log("Removed last key from the password. New password is " + m_userPassword);
+                
+                // If the new password is greater than 0, edit the last key value
+                if (m_userPassword.Length > 0)
+                {
+                    m_lastKeyValue = m_userPassword[m_userPassword.Length - 1] - '0';
+                }
+
+
                 return true;
             }
 
@@ -99,11 +104,6 @@ namespace sv.Puzzles
                 {
                     return true;
                 }
-                else
-                {
-                    m_userPassword = "";
-                    m_isPasswordReset = true;
-                }
             }
             return false;
         }
@@ -126,15 +126,6 @@ namespace sv.Puzzles
         public int TargetPasswordLength
         {
             get { return m_passwordLength; }
-        }
-
-        public bool IsPasswordReset
-        {
-            get { return m_isPasswordReset; }
-            set
-            {
-                m_isPasswordReset = value;
-            }
         }
 
         private void ActivateTrigger()

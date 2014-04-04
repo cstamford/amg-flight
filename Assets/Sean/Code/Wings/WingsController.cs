@@ -71,7 +71,6 @@ namespace sv
             get { return m_isAttachedToPlayer;}
             set 
             {
-                Debug.Log("Wing attachment to player has been set to " + value);                
                 m_isAttachedToPlayer = value;
             }
         }
@@ -90,7 +89,6 @@ namespace sv
                 }
                 else
                 {
-                    Debug.Log("Wing attachment to player has been set to null");
                     this.transform.parent = null;
                 }               
             }

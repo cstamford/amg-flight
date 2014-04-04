@@ -112,6 +112,8 @@ namespace sv
                 {
                     CheckForObjectAcquirement(); // acquire objects based on ray hits                    
                     CheckForObjectInteraction(); // test for user button presses
+
+                    
                 }
             }
             else
@@ -120,7 +122,7 @@ namespace sv
                 {
                     Debug.Log("Ray has no intersections");
                 }
-            }           
+            }   
         }
 
         // Casts a ray forward from the camera, returns true if intersection
@@ -242,7 +244,7 @@ namespace sv
                         }
                         else
                         {
-                            //if (m_relicOrder[m_puzzlePasswordKey.OrderPressed] == m_puzzlePasswordKey.Value)
+                            if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
                             {
                                 m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
                                 m_numOfObelisksPressed--;
