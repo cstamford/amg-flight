@@ -1,17 +1,18 @@
 ﻿//
-// Filename : AnimatedLightBeam.cs
+// Filename : LightbeamController.cs
 // Author : Louis Dimmock
 // Date : 27th March 2014
 //
 // Version : 1.0
 // Version Info : 
-// 		Simple script that translates a texture by a specified amount
+// 		Controls the relic lights
+//		Applys a texture offset using a specified amount
 //
 
 using UnityEngine;
 using System.Collections;
 
-public class AnimatedLightBeam : MonoBehaviour
+public class LightbeamControllerV1 : MonoBehaviour
 {
 	// Set up the speed that the texture will move at
 	public float m_movementSpeed = 0.0f;

@@ -18,7 +18,6 @@ Shader "Flight/Glow/1.1"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_Transparency ("Transparency", Range(0.0, 1.0)) = 1.0
 		_GlowColor ("Glow Color", Color) = (1, 1, 1, 1)
 		_GlowAmount ("Glow Power", Range(0.0, 10.0)) = 5.0
 	}
@@ -40,9 +39,6 @@ Shader "Flight/Glow/1.1"
 		// Texture samplers
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
-		
-        // Color tint
-		float _Transparency;
 		
 		// Glow
 		float4 _GlowColor;
@@ -76,7 +72,7 @@ Shader "Flight/Glow/1.1"
 			output.Emission = _GlowColor * pow (Glow, _GlowAmount) * _GlowColor.a;
 			
             // Set the transparency using the texture alpha channel and the color tint
-            output.Alpha = textureColor.a * _Transparency;
+            output.Alpha = textureColor.a;
 		}
 		
 		ENDCG
