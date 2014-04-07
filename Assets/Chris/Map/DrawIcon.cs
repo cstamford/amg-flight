@@ -54,5 +54,17 @@ namespace cst.Map
             m_iconQuad.transform.position = new Vector3(transform.position.x, m_gameHeight, transform.position.z);
             m_iconQuad.transform.eulerAngles = m_rotation;
 	    }
+
+        public void OnDisable()
+        {
+            if (m_iconQuad != null)
+                m_iconQuad.renderer.enabled = false;
+        }
+
+        public void OnEnable()
+        {
+            if (m_iconQuad != null)
+                m_iconQuad.renderer.enabled = true; 
+        }
     }
 }
