@@ -8,15 +8,15 @@ namespace cst.Flight
 {
     public class WarpingController : SharedGroundControls
     {
-        private const int CURVE_SMOOTH_FACTOR = 10;
+        private const int   CURVE_SMOOTH_FACTOR = 6;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
 
         private readonly List<WaypointNode> m_nodes = new List<WaypointNode>(); 
         private readonly List<Vector3>      m_interpNodesList = new List<Vector3>();
 
-        private float m_interpTime;
-        private int   m_currentNodeIndex;
-        private int   m_currentNodeInterpStep;
+        private float   m_interpTime;
+        private int     m_currentNodeIndex;
+        private int     m_currentNodeInterpStep;
 
         public WarpingController(SeraphController controller)
             : base(controller)
@@ -85,7 +85,9 @@ namespace cst.Flight
 
         private void generateInterpolatedNodeList()
         {
-            m_interpNodesList.AddRange(Helpers.smoothCurve(m_nodes.Select(node => node.transform.position).ToList(), CURVE_SMOOTH_FACTOR));
+            List<Vector3> nodesList = m_nodes.Select(node => node.transform.position).ToList();
+            nodesList.Insert(0, transform.position);
+            m_interpNodesList.AddRange(Helpers.smoothCurve(nodesList, CURVE_SMOOTH_FACTOR));
         }
 
         private void resetWarping()
@@ -148,8 +150,10 @@ namespace cst.Flight
                 }
                 else
                 {
-                    int index = m_currentNodeInterpStep + (m_currentNodeIndex * CURVE_SMOOTH_FACTOR);
-                    m_position = Vector3.Lerp(m_interpNodesList[index], m_interpNodesList[index + 1], normalised);
+                    int index       = m_currentNodeInterpStep + (m_currentNodeIndex * CURVE_SMOOTH_FACTOR);
+                    Vector3 current = m_interpNodesList[index];
+                    Vector3 next    = m_interpNodesList[index + 1];
+                    m_position      = Vector3.Lerp(current, next, normalised);
                 }
             }
         }
