@@ -38,7 +38,9 @@ namespace sv
             {
                 m_glow.enabled = false;
                 RotatingObject rotation = GetComponent<RotatingObject>();
-                rotation.enabled = false;
+
+                if (rotation != null)
+                    rotation.enabled = false;
             }
 	    }
     }
