@@ -38,7 +38,7 @@ namespace cst.Flight
         private float m_forwardTimer;
 
         public FallingController(SeraphController controller)
-            : base(controller)
+            : base(controller, 0.5f)
         {}
 
         public override void start(TransitionData data)
@@ -56,7 +56,7 @@ namespace cst.Flight
             m_rotation = transform.eulerAngles;
 
             handleFacing();
-            handleMovement(0.5f);
+            handleMovement();
             handleRoll();
             handleFalling();
             handleForwardVelocity();

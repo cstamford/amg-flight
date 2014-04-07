@@ -118,21 +118,25 @@ namespace cst.Flight
     {
         public bool moved { get; set; }
 
-        protected const float FORWARD_SPEED    = 5.0f;
-        protected const float STRAFE_SPEED     = 5.0f;
-        protected const float LOOK_SENSITIVITY = 100.0f;
-        protected const float HEIGHT_PADDING   = 2.0f;
-        protected const float INTERP_VALUE     = 10.0f;
-
         protected Vector3 m_rotation;
         protected Vector3 m_position;
         protected float   m_desiredHeight;
 
-        protected SharedGroundControls(SeraphController controller)
-            : base(controller)
-        {}
+        protected const float HEIGHT_PADDING = 2.0f;
 
-        protected void handleMovement(float delta = 1.0f)
+        private const float    FORWARD_SPEED = 5.0f;
+        private const float    STRAFE_SPEED = 5.0f;
+        private const float    LOOK_SENSITIVITY = 100.0f;
+        private const float    INTERP_VALUE = 10.0f;
+        private readonly float MOVEMENT_DELTA;
+
+        protected SharedGroundControls(SeraphController controller, float movementDelta = 1.0f)
+            : base(controller)
+        {
+            MOVEMENT_DELTA = movementDelta;
+        }
+
+        protected void handleMovement()
         {
             // Strip the height component from our vectors
             Vector3 forwardVector = transform.forward;
@@ -145,14 +149,14 @@ namespace cst.Flight
             if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
                 m_position += forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_FORWARD) * delta;
+                              inputManager.actionDelta(Action.MOVE_FORWARD) * MOVEMENT_DELTA;
                 movedThisFrame = true;
             }
 
             if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
                 m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_BACKWARD) * delta;
+                              inputManager.actionDelta(Action.MOVE_BACKWARD) * MOVEMENT_DELTA;
                 
                 movedThisFrame = true;
             }
@@ -161,7 +165,8 @@ namespace cst.Flight
             {
                 m_position -= rightVector * STRAFE_SPEED * Time.deltaTime *
                               inputManager.actionDelta(Action.MOVE_LEFT) *
-                              delta;
+                              MOVEMENT_DELTA;
+
                 movedThisFrame = true;
             }
 
@@ -169,7 +174,8 @@ namespace cst.Flight
             {
                 m_position += rightVector * STRAFE_SPEED * Time.deltaTime *
                               inputManager.actionDelta(Action.MOVE_RIGHT) *
-                              delta;
+                              MOVEMENT_DELTA;
+
                 movedThisFrame = true;
             }
 
