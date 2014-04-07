@@ -1,12 +1,8 @@
 ﻿// ==================================================================== \\
 // File   : WaypointNode.cs                                             \\
-// Author : Christopher Stamford, additions by Sean Vieira              \\
+// Author : Christopher Stamford                                        \\
 //                                                                      \\
-// This class encapsulates a set of node in a path.                     \\
-//                                                                      \\
-// Operating in a similar fashion to a link list, the user can iterate  \\
-// through the list (in the game's case, go from one node to the other  \\
-// after using a base obelisk).                                         \\
+// This class encapsulates a node in a path.                            \\
 // ==================================================================== \\
 
 using System;
@@ -17,7 +13,7 @@ namespace cst.Waypoints
 {
     public class WaypointNode : MonoBehaviour
     {
-        private enum NodeMode
+        public enum NodeMode
         {
             START,
             INTERMEDIARY,
@@ -25,28 +21,33 @@ namespace cst.Waypoints
             INFER
         }
 
-        private enum MovementState
+        [SerializeField] private NodeMode   m_nodeMode           = NodeMode.INFER;
+        [SerializeField] private GameObject m_previousNodeObject = null;
+        [SerializeField] private GameObject m_nextNodeObject     = null;
+        [SerializeField] private float      m_transitionTime     = 1.0f;
+
+        private WaypointNode m_previousNode;
+        private WaypointNode m_nextNode;
+
+        public NodeMode mode
         {
-            INACTIVE,
-            ACTIVE
+            get { return m_nodeMode; }
         }
 
-        // If no previous node, respond to input
-        // If no next node, wrong point
+        public WaypointNode lastNode
+        {
+            get { return m_previousNode; }
+        }
 
-        [SerializeField] private NodeMode     m_nodeMode            = NodeMode.INFER;
-        [SerializeField] private GameObject   m_previousNodeObject  = null;
-        [SerializeField] private GameObject   m_nextNodeObject      = null;
-        [SerializeField] private float        m_transitionTime      = 1.0f;
+        public WaypointNode nextNode
+        {
+            get { return m_nextNode; }
+        }
 
-        private WaypointNode     m_previousNode;
-        private WaypointNode     m_nextNode;
-        private MovementState    m_movementState;
-        private SeraphController m_controller;
-
-        private float            m_interpTimer;
-        private Vector3          m_position;
-        private Vector3          m_initialSeraphPos;
+        public float transitionTime
+        {
+            get { return m_transitionTime; }
+        }
 
         public void Start()
         {
@@ -71,71 +72,22 @@ namespace cst.Waypoints
             {
                 invalidNode();
             }
-
-            m_interpTimer = 0.0f;
-            m_movementState = MovementState.INACTIVE;
-        }
-
-        public void Update()
-        {
-            m_position = transform.position;
-
-            if (m_movementState == MovementState.ACTIVE && m_nodeMode != NodeMode.END)
-                interpToNext();
         }
 
         // Use for now
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name.Contains("Seraph"))
-                onInteract(other.gameObject.GetComponent<SeraphController>());
-        }
+            if (!other.gameObject.name.Contains("Seraph")) 
+                return;
 
-        public void onArrive(SeraphController controller)
-        {            
-            m_controller       = controller;
-            m_initialSeraphPos = controller.transform.position;
+            SeraphController controller = other.gameObject.GetComponent<SeraphController>();
 
-            if (m_nodeMode == NodeMode.END)
-                m_controller.state = SeraphState.FALLING;
-            else
-                m_movementState = MovementState.ACTIVE;
-        }
-
-        public void onInteract(SeraphController controller)
-        {
-            m_controller = controller;
-
-            if (m_nodeMode == NodeMode.START)
+            if (controller != null && m_nodeMode == NodeMode.START)
             {
-                m_controller.state = SeraphState.WARPING;
-                m_nextNode.onArrive(m_controller);
-                resetNode();
+                controller.state = SeraphState.WARPING;
+                WarpingController warpController = controller.activeController as WarpingController;
+                warpController.setFirstNode(this);
             }
-        }
-
-        private void interpToNext()
-        {
-            m_interpTimer += Time.deltaTime;
-            float normalised = m_interpTimer / m_transitionTime;
-
-            if (normalised > 1.0f)
-            {
-                m_nextNode.onArrive(m_controller);
-                resetNode();
-            }
-            else
-            {
-                m_controller.transform.position = Vector3.Lerp(m_initialSeraphPos, m_position, normalised);
-            }
-        }
-
-        private void resetNode()
-        {
-            m_movementState    = MovementState.INACTIVE;
-            m_controller       = null;
-            m_interpTimer      = 0.0f;
-            m_initialSeraphPos = Vector3.zero;
         }
 
         private void invalidNode()

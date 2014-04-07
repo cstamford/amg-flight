@@ -123,6 +123,7 @@ namespace cst.Flight
             {
                 Debug.Log("Seraph state set to " + value);
                 m_state = value;
+                assignActiveController();
             }
         }
 
