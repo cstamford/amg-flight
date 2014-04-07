@@ -17,8 +17,9 @@ namespace cst.Map
     {
         [SerializeField] private Texture     m_texture;
         [SerializeField] private Shader      m_shader;
-        [SerializeField] private float       m_width  = 5.0f;
-        [SerializeField] private float       m_height = 5.0f;
+        [SerializeField] private float       m_width      = 5.0f;
+        [SerializeField] private float       m_height     = 5.0f;
+        [SerializeField] private float       m_gameHeight = 200.0f;
         private                  GameObject  m_iconQuad;
         private                  Vector3     m_rotation;
 
@@ -39,7 +40,7 @@ namespace cst.Map
             m_iconQuad = new GameObject("Map Icon", typeof(MeshRenderer), typeof(MeshFilter));
             m_iconQuad.layer = LayerMask.NameToLayer("Map Only");
             m_iconQuad.GetComponent<MeshFilter>().mesh = MeshFactory.buildQuad();
-	        m_iconQuad.transform.localScale = new Vector3(m_width, m_height, m_iconQuad.transform.localScale.z);   
+	        m_iconQuad.transform.localScale          = new Vector3(m_width, m_height, m_iconQuad.transform.localScale.z);   
             m_iconQuad.renderer.material.mainTexture = m_texture;
 	        m_iconQuad.renderer.material.shader      = m_shader;
 
@@ -50,8 +51,7 @@ namespace cst.Map
 
         public void Update()
         {
-            m_iconQuad.transform.position = new Vector3(transform.position.x, transform.position.y + 100.0f,
-                transform.position.z);
+            m_iconQuad.transform.position = new Vector3(transform.position.x, m_gameHeight, transform.position.z);
             m_iconQuad.transform.eulerAngles = m_rotation;
 	    }
     }

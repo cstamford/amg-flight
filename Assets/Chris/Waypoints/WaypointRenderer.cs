@@ -1,4 +1,11 @@
-﻿using System;
+﻿// ==================================================================== \\
+// File   : WaypointRenderer.cs                                         \\
+// Author : Christopher Stamford                                        \\
+//                                                                      \\
+// Draws the waypoint path using Unity's line renderer.                 \\
+// ==================================================================== \\
+
+using System;
 using System.Collections.Generic;
 using cst.Flight;
 using UnityEngine;

@@ -20,25 +20,19 @@ public class MapController : MonoBehaviour
         HIDDEN
     }
 
-    [SerializeField] private RenderTexture m_mapTexture;
-    [SerializeField] private Vector3       m_mapScale  = new Vector3(1.0f, 1.0f, 1.0f);
-    [SerializeField] private Vector3       m_mapOffset = Vector3.zero;
-    [SerializeField] private GameObject    m_inputManagerObject;
+    [SerializeField] private Vector3    m_mapOffset = Vector3.zero;
+    [SerializeField] private GameObject m_inputManagerObject;
+    [SerializeField] private Mesh       m_scrollMesh;
+    [SerializeField] private Material   m_scrollMaterial;
 
     private InputManager m_inputManager;
-    private GameObject   m_mapQuad;
     private MeshRenderer m_mapRenderer;
     private MapState     m_mapState = MapState.HIDDEN;
+    private GameObject   m_mapObject;
 
 	// Use this for initialization
 	public void Start () 
     {
-	    if (m_mapTexture == null)
-	    {
-            enabled = false;
-            throw new Exception("Provided render texture was null.");
-	    }
-
         if (m_inputManagerObject == null)
         {
             enabled = false;
@@ -53,12 +47,11 @@ public class MapController : MonoBehaviour
             throw new Exception("No InputManager script detected on the provided InputManagerObject.");
         }
 
-        m_mapQuad = new GameObject("Map", typeof(MeshRenderer), typeof(MeshFilter));
-        m_mapQuad.layer = LayerMask.NameToLayer("Seraph Only");
-        m_mapQuad.GetComponent<MeshFilter>().mesh = MeshFactory.buildQuad();
-	    m_mapQuad.transform.localScale = m_mapScale;
-	    m_mapQuad.renderer.material.mainTexture = m_mapTexture;
-	    m_mapQuad.renderer.material.shader = Shader.Find("Unlit/Transparent");
+        m_mapObject = new GameObject("Map", typeof(MeshRenderer), typeof(MeshFilter));
+        m_mapObject.layer = LayerMask.NameToLayer("Seraph Only");
+	    m_mapObject.GetComponent<MeshFilter>().mesh = m_scrollMesh;
+	    m_mapObject.renderer.material = m_scrollMaterial;
+        m_mapObject.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
     }
 	
 	// Update is called once per frame
@@ -92,15 +85,12 @@ public class MapController : MonoBehaviour
             return;
         }
 
-        if (!m_mapQuad.renderer.enabled)
-            m_mapQuad.renderer.enabled = true;
+        if (!m_mapObject.renderer.enabled)
+            m_mapObject.renderer.enabled = true;
 
-        Vector3 offset = m_mapOffset == Vector3.zero ? transform.forward * 2.5f : m_mapOffset;
-        m_mapQuad.transform.position = transform.position + offset;
-        m_mapQuad.transform.LookAt(transform);
-
-        // Flip the quad so it can be rendered correctly
-        m_mapQuad.transform.Rotate(Vector3.up, 180.0f);
+        Vector3 offset = m_mapOffset == Vector3.zero ? transform.forward * 0.5f : m_mapOffset;
+        m_mapObject.transform.position = transform.position + offset - (Vector3.up / 5.0f);
+        m_mapObject.transform.LookAt(transform);
     }
 
     private void handleTransitionToVisible()
@@ -121,7 +111,7 @@ public class MapController : MonoBehaviour
             return;
         }
 
-        if (m_mapQuad.renderer.enabled)
-            m_mapQuad.renderer.enabled = false;
+        if (m_mapObject.renderer.enabled)
+            m_mapObject.renderer.enabled = false;
     }
 }
