@@ -6,6 +6,7 @@
 // ==================================================================== \\
 
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace cst.Common
@@ -93,19 +94,24 @@ namespace cst.Common
         }
 
         // Returns the nearest ray hit projected with the provided unit vector
-        public static float? nearestHit(Vector3 position, Vector3 direction, float distance)
+        public static RaycastHit? nearestHit(Vector3 position, Vector3 direction, float distance, string tag = null)
         {
             RaycastHit[] hits = Physics.RaycastAll(position, direction, distance);
 
-            float? dist = null;
+            const float EPSILON = 0.000001f;
+            RaycastHit? nearest = hits
+                .Where(hit => tag == null || String.Equals(hit.collider.tag, tag))
+                .Cast<RaycastHit?>().
+                FirstOrDefault(hit => Math.Abs(hit.Value.distance - hits.Min(dist => dist.distance)) < EPSILON);
 
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.distance < distance && (!dist.HasValue || hit.distance < dist.Value))
-                    dist = hit.distance;
-            }
+            return nearest;
+        }
 
-            return dist;
+        // Returns the distance to the nearest ray hit projected with the provided unit vector
+        public static float? nearestHitDistance(Vector3 position, Vector3 direction, float distance, string tag = null)
+        {
+            RaycastHit? hit = nearestHit(position, direction, distance, tag);
+            return hit.HasValue ? hit.Value.distance : (float?)null;
         }
     }
 

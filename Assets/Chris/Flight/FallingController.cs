@@ -138,7 +138,7 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            if (Helpers.nearestHit(transform.position, Vector3.down, height).HasValue)
+            if (Helpers.nearestHitDistance(transform.position, Vector3.down, height).HasValue)
                 state = SeraphState.GROUNDED;
 
             if (inputManager.actionFired(Action.GLIDE_STATE) && capability >= SeraphCapability.GLIDE)

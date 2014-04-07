@@ -219,7 +219,7 @@ namespace cst.Flight
 
         protected void interpolateHeight()
         {
-            float? distanceToGround = Helpers.nearestHit(transform.position, Vector3.down, height * 5.0f);
+            float? distanceToGround = Helpers.nearestHitDistance(transform.position, Vector3.down, height * 5.0f);
 
             if (distanceToGround.HasValue)
                 m_desiredHeight = m_position.y - (distanceToGround.Value - height);

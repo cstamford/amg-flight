@@ -81,7 +81,7 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            if (!Helpers.nearestHit(transform.position, Vector3.down, height + HEIGHT_PADDING).HasValue)
+            if (!Helpers.nearestHitDistance(transform.position, Vector3.down, height + HEIGHT_PADDING).HasValue)
                 state = SeraphState.FALLING;
 
             if ((inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT))

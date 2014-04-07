@@ -261,7 +261,7 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            if (Helpers.nearestHit(transform.position, Vector3.down, height).HasValue)
+            if (Helpers.nearestHitDistance(transform.position, Vector3.down, height).HasValue)
                 state = SeraphState.LANDING;
 
             if (inputManager.actionFired(Action.CLEAR_STATE))
