@@ -42,7 +42,7 @@ namespace cst.Flight
     {
         [SerializeField] private SeraphCapability m_capability = SeraphCapability.GLIDE;
         [SerializeField] private SeraphState      m_state      = SeraphState.FALLING;
-        [SerializeField] private GameObject       m_inputManagerObject;
+        [SerializeField] private GameObject       m_inputManagerObject = null;
        
         private InputManager      m_inputManager;
         private GroundController  m_groundController;
@@ -74,48 +74,12 @@ namespace cst.Flight
             m_glideController   = new GlideController(this);
             m_flightController  = new FlightController(this);
             m_warpingController = new WarpingController(this);
+            assignActiveController();
         }
 
         public void Update()
         {
-            IControllerBase lastController = activeController;
-
-            switch (m_state)
-            {
-                case SeraphState.GROUNDED:
-                    activeController = m_groundController;
-                    break;
-
-                case SeraphState.FALLING:
-                    activeController = m_fallingController;
-                    break;
-
-                case SeraphState.LANDING:
-                    activeController = m_landingController;
-                    break;
-
-                case SeraphState.GLIDING:
-                    activeController = m_glideController;
-                    break;
-
-                case SeraphState.FLYING:
-                    activeController = m_flightController;
-                    break;
-
-                case SeraphState.WARPING:
-                    activeController = m_warpingController;
-                    break;
-            }
-
-            if (lastController != activeController)
-            {
-                TransitionData data = lastController == null 
-                    ? new TransitionData { direction = Vector3.zero, velocity = 0.0f } 
-                    : lastController.transitionData();
-
-                activeController.start(data);
-            }
-
+            assignActiveController();
             activeController.update();
         }
 
@@ -180,6 +144,47 @@ namespace cst.Flight
         public new GameObject gameObject
         {
             get { return base.gameObject; }
+        }
+
+        private void assignActiveController()
+        {
+            IControllerBase lastController = activeController;
+
+            switch (m_state)
+            {
+                case SeraphState.GROUNDED:
+                    activeController = m_groundController;
+                    break;
+
+                case SeraphState.FALLING:
+                    activeController = m_fallingController;
+                    break;
+
+                case SeraphState.LANDING:
+                    activeController = m_landingController;
+                    break;
+
+                case SeraphState.GLIDING:
+                    activeController = m_glideController;
+                    break;
+
+                case SeraphState.FLYING:
+                    activeController = m_flightController;
+                    break;
+
+                case SeraphState.WARPING:
+                    activeController = m_warpingController;
+                    break;
+            }
+
+            if (lastController != activeController)
+            {
+                TransitionData data = lastController == null
+                    ? new TransitionData { direction = Vector3.zero, velocity = 0.0f }
+                    : lastController.transitionData();
+
+                activeController.start(data);
+            }
         }
     }
 }
