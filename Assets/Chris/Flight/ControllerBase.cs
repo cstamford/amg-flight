@@ -27,7 +27,6 @@
 
 using System;
 using cst.Common;
-using Louis.Common;
 using UnityEngine;
 using Action = cst.Common.Action;
 
@@ -139,9 +138,8 @@ namespace cst.Flight
 
         protected void handleMovement()
         {
-            const string WATER_TAG = "WaterObject";
-
             float movementDelta = MOVEMENT_DELTA;
+            const string WATER_TAG = "WaterObject";
 
             if (Helpers.nearestHitDistance(transform.position, Vector3.down, height + 0.1f, WATER_TAG).HasValue)
                 movementDelta /= 1.5f;

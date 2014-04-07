@@ -33,10 +33,7 @@ namespace cst.Flight
             const float EPSILON = 0.000001f;
 
             if (Math.Abs(m_rotation.z) > EPSILON)
-            {
-                m_rotation.z = 0.0f;
-                transform.eulerAngles = m_rotation;
-            }
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0.0f);
         }
 
         public override void update()
