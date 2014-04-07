@@ -12,6 +12,7 @@
 //   - GROUNDED                                                         \\
 // ==================================================================== \\
 
+using System;
 using cst.Common;
 using UnityEngine;
 
@@ -127,7 +128,9 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            if (m_rotation.z == 0.0f && m_forwardTransitionSpeed == 0.0f)
+            const float EPSILON = 0.000001f;
+
+            if (Math.Abs(m_rotation.z) < EPSILON && Math.Abs(m_forwardTransitionSpeed) < EPSILON)
                 state = SeraphState.GROUNDED;
         }
     }

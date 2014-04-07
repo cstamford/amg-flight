@@ -13,8 +13,10 @@
 //   - FLYING                                                           \\
 // ==================================================================== \\
 
+using System;
 using cst.Common;
 using UnityEngine;
+using Action = cst.Common.Action;
 
 namespace cst.Flight
 {
@@ -27,6 +29,14 @@ namespace cst.Flight
         public override void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
+
+            const float EPSILON = 0.000001f;
+
+            if (Math.Abs(m_rotation.z) > EPSILON)
+            {
+                m_rotation.z = 0.0f;
+                transform.eulerAngles = m_rotation;
+            }
         }
 
         public override void update()
