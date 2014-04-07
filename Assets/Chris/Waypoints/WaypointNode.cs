@@ -74,7 +74,6 @@ namespace cst.Waypoints
             }
         }
 
-        // Use for now
         public void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.name.Contains("Seraph")) 

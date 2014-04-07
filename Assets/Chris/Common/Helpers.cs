@@ -6,6 +6,7 @@
 // ==================================================================== \\
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -113,6 +114,34 @@ namespace cst.Common
             RaycastHit? hit = nearestHit(position, direction, distance, tag);
             return hit.HasValue ? hit.Value.distance : (float?)null;
         }
-    }
 
+        // Returns a list of points representating the provided path, curved by the provided smoothFactor
+        // Uses a bezier spline, algorithm from http://ibiblio.org/e-notes/Splines/Bezier.htm
+        public static List<Vector3> smoothCurve(List<Vector3> uncurved, int smoothFactor)
+        {
+            if (smoothFactor < 1)
+                smoothFactor = 1;
+
+            int newLength = uncurved.Count * smoothFactor;
+            List<Vector3> curved = new List<Vector3>(newLength);
+
+            for (int i = 0; i < newLength + 1; ++i)
+            {
+                float time = Mathf.InverseLerp(0, newLength, i);
+                List<Vector3> uncurvedTemp = new List<Vector3>(uncurved);
+
+                for (int j = uncurved.Count - 1; j > 0; --j)
+                {
+                    for (int k = 0; k < j; ++k)
+                    {
+                        uncurvedTemp[k] = (1 - time) * uncurvedTemp[k] + time * uncurvedTemp[k + 1];
+                    }
+                }
+
+                curved.Add(uncurvedTemp[0]);
+            }
+
+            return curved;
+        }
+    }
 }

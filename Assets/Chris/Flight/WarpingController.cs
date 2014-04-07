@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using cst.Waypoints;
 using cst.Common;
 using UnityEngine;
@@ -7,13 +8,11 @@ namespace cst.Flight
 {
     public class WarpingController : SharedGroundControls
     {
+        private const int CURVE_SMOOTH_FACTOR = 10;
         private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
-        private const float CURVE_SMOOTH_FACTOR = 1.0f;
 
         private readonly List<WaypointNode> m_nodes = new List<WaypointNode>(); 
         private readonly List<Vector3>      m_interpNodesList = new List<Vector3>();
-
-        private WaypointRenderer m_renderer;
 
         private float m_interpTime;
         private int   m_currentNodeIndex;
@@ -26,7 +25,6 @@ namespace cst.Flight
         public override void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
-            m_renderer = gameObject.GetComponent<WaypointRenderer>();
         }
 
         public override void update()
@@ -67,6 +65,11 @@ namespace cst.Flight
             return new TransitionData { direction = Vector3.zero, velocity = 0.0f };
         }
 
+        public List<Vector3> pathList
+        {
+            get { return m_interpNodesList; }
+        }
+
         public void setFirstNode(WaypointNode node)
         {
             resetWarping();
@@ -78,17 +81,11 @@ namespace cst.Flight
             }
 
             generateInterpolatedNodeList();
-
-            if (m_renderer != null)
-                m_renderer.render(m_interpNodesList);
         }
 
         private void generateInterpolatedNodeList()
         {
-            foreach (WaypointNode node in m_nodes)
-            {
-                m_interpNodesList.Add(node.transform.position);
-            }
+            m_interpNodesList.AddRange(Helpers.smoothCurve(m_nodes.Select(node => node.transform.position).ToList(), CURVE_SMOOTH_FACTOR));
         }
 
         private void resetWarping()
@@ -126,11 +123,8 @@ namespace cst.Flight
 
         private void handleWarpingMovement()
         {
-            if (m_currentNodeIndex >= m_nodes.Count - 1)
+            if (m_currentNodeIndex >= m_nodes.Count)
             {
-                if (m_renderer != null)
-                    m_renderer.stopRendering();
-
                 state = SeraphState.FALLING;
             }
             else
@@ -154,7 +148,7 @@ namespace cst.Flight
                 }
                 else
                 {
-                    int index = m_currentNodeIndex + m_currentNodeInterpStep;
+                    int index = m_currentNodeInterpStep + (m_currentNodeIndex * CURVE_SMOOTH_FACTOR);
                     m_position = Vector3.Lerp(m_interpNodesList[index], m_interpNodesList[index + 1], normalised);
                 }
             }
