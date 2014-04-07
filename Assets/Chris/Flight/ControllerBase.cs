@@ -27,6 +27,7 @@
 
 using System;
 using cst.Common;
+using Louis.Common;
 using UnityEngine;
 using Action = cst.Common.Action;
 
@@ -138,6 +139,13 @@ namespace cst.Flight
 
         protected void handleMovement()
         {
+            const string WATER_TAG = "WaterObject";
+
+            float movementDelta = MOVEMENT_DELTA;
+
+            if (Helpers.nearestHitDistance(transform.position, Vector3.down, height + 0.1f, WATER_TAG).HasValue)
+                movementDelta /= 1.5f;
+
             // Strip the height component from our vectors
             Vector3 forwardVector = transform.forward;
             Vector3 rightVector = transform.right;
@@ -149,14 +157,17 @@ namespace cst.Flight
             if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
                 m_position += forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_FORWARD) * MOVEMENT_DELTA;
+                              inputManager.actionDelta(Action.MOVE_FORWARD) * 
+                              movementDelta;
+
                 movedThisFrame = true;
             }
 
             if (inputManager.actionFired(Action.MOVE_BACKWARD))
             {
                 m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_BACKWARD) * MOVEMENT_DELTA;
+                              inputManager.actionDelta(Action.MOVE_BACKWARD) * 
+                              movementDelta;
                 
                 movedThisFrame = true;
             }
@@ -165,7 +176,7 @@ namespace cst.Flight
             {
                 m_position -= rightVector * STRAFE_SPEED * Time.deltaTime *
                               inputManager.actionDelta(Action.MOVE_LEFT) *
-                              MOVEMENT_DELTA;
+                              movementDelta;
 
                 movedThisFrame = true;
             }
@@ -174,7 +185,7 @@ namespace cst.Flight
             {
                 m_position += rightVector * STRAFE_SPEED * Time.deltaTime *
                               inputManager.actionDelta(Action.MOVE_RIGHT) *
-                              MOVEMENT_DELTA;
+                              movementDelta;
 
                 movedThisFrame = true;
             }
@@ -219,7 +230,7 @@ namespace cst.Flight
 
         protected void interpolateHeight()
         {
-            float? distanceToGround = Helpers.nearestHitDistance(transform.position, Vector3.down, height * 5.0f);
+            float? distanceToGround = Helpers.nearestHitDistance(transform.position, Vector3.down, height + HEIGHT_PADDING);
 
             if (distanceToGround.HasValue)
                 m_desiredHeight = m_position.y - (distanceToGround.Value - height);
