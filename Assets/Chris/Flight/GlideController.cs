@@ -23,6 +23,8 @@ namespace cst.Flight
 {
     public class GlideController : ControllerBase, IControllerBase
     {
+        public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
+
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
@@ -33,8 +35,7 @@ namespace cst.Flight
         private const float INCREMENT_VELOCITY    = 5.0f;
         private const float DECREMENT_VELOCITY    = 5.0f;
         private const float RESTING_VELOCITY      = 10.0f;
-        public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
-        public const float  MIN_VELOCITY          = 0.0f;
+        private const float MIN_VELOCITY          = 0.0f;
 
         private Vector3 m_position;
         private Vector3 m_rotation;
