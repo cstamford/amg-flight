@@ -57,7 +57,7 @@ namespace sv.Triggers
             }
         }
 
-        // Opens the door until reached max height, then returns true
+        // Opens the door until reached target height, then returns true
         private bool CloseDoor()
         {
             if (m_currentHeight != m_closedHeight)

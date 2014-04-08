@@ -72,6 +72,7 @@ namespace sv.Triggers
         
             return true;
         }
+
         public bool getDoorOpen()
 		{
 			return m_isTriggered && !OpenDoor ();

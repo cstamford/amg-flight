@@ -85,6 +85,7 @@ namespace sv
             }
 
             m_puzzleTypePassword = GameObject.Find("Level End Puzzle").GetComponent<PuzzlePassword>();
+            m_relicOrder = new int[m_puzzleTypePassword.TargetPasswordLength];
 
             m_totalNumOfRelicsCollected = 0;
             m_numOfObelisksPressed = 0;
@@ -110,9 +111,7 @@ namespace sv
                 else
                 {
                     CheckForObjectAcquirement(); // acquire objects based on ray hits                    
-                    CheckForObjectInteraction(); // test for user button presses
-
-                    
+                    CheckForObjectInteraction(); // test for user button presses                   
                 }
             }
             else
@@ -172,8 +171,8 @@ namespace sv
                 case "PuzzleCollectObject":
                 {
                     m_cursor.SetActive(true);
-                    m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);
-                        
+                    m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);                    
+   
                     if (m_puzzleTypeCollect != AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect))
                     {
                         m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
@@ -196,6 +195,7 @@ namespace sv
                 } break;
                 case "Wings":
                 {
+                    m_cursor.SetActive(true);
                     m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
                         
                     // As wings are part of 'puzzle' to open door
@@ -222,30 +222,32 @@ namespace sv
                     case "PuzzleCollectObject":
                     {
                         int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
-                        m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);
+                        m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);                        
 
                         m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
                         m_selected.SetActive(false);
                         m_collected = true;
 
+                        m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
                         m_totalNumOfRelicsCollected++;
                     } break;
 
                     case "PuzzlePasswordObject":
                     {
-                        if (!m_puzzlePasswordKey.IsEntered)
+                        if (m_puzzlePasswordKey.GetParent().name == "Level End Puzzle")
                         {
-                            m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
-                            m_puzzlePasswordKey.OrderPressed = m_numOfObelisksPressed;
-                            m_numOfObelisksPressed++;
-                            m_puzzlePasswordKey.IsEntered = true;
+                            HandleEndPuzzle();
                         }
                         else
                         {
-                            if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
+                            if (m_puzzlePasswordKey.IsEntered)
+                            {
+                                m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
+                                m_puzzlePasswordKey.IsEntered = true;
+                            }
+                            else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
                             {
                                 m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
-                                m_numOfObelisksPressed--;
                                 m_puzzlePasswordKey.IsEntered = false;
                             }
                         }
@@ -284,6 +286,86 @@ namespace sv
             {
                 m_animationIsDone = value;
             }
+        }
+
+        private void HandleEndPuzzle()
+        {
+            // variables to store material and trigger object
+            TriggerController trigger = m_puzzlePasswordKey.GetComponent<TriggerController>();
+
+            if (!m_puzzlePasswordKey.IsEntered)
+            {
+                m_puzzlePasswordKey.OrderPressed = m_numOfObelisksPressed;
+                if (m_relicOrder[m_puzzlePasswordKey.OrderPressed] != 0)
+                {
+                    m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
+                    m_puzzlePasswordKey.IsEntered = true;
+                    m_numOfObelisksPressed++;
+
+                    // Trigger the relic in the obelisk
+                    if (trigger)
+                    {
+                        Material newMat = ChooseNewMaterial();
+                        trigger.ActivateTrigger<Material>(m_puzzlePasswordKey.gameObject, newMat);
+                    }
+                }
+            }
+            else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
+            {
+                m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
+                m_numOfObelisksPressed--;
+                m_puzzlePasswordKey.IsEntered = false;
+
+                if (trigger)
+                {
+                    trigger.DeactivateTrigger(m_puzzlePasswordKey.gameObject);
+                }
+            }
+        }
+
+        private Material ChooseNewMaterial()
+        {
+            Material newMat;
+
+            Debug.Log("The order this obelisk was pressed was : " + m_numOfObelisksPressed + ". The value of this obelisk is : " + m_relicOrder[m_puzzlePasswordKey.OrderPressed]);
+
+            switch (m_relicOrder[m_puzzlePasswordKey.OrderPressed])
+            {
+                case 1:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Red");
+                    } break;
+                case 2:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Orange");
+                    } break;
+                case 3:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Yellow");
+                    } break;
+                case 4:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Green");
+                    } break;
+                case 5:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Blue");
+                    } break;
+                case 6:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic Purple");
+                    } break;
+                case 7:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/End Relic White");
+                    } break;
+                default:
+                    {
+                        newMat = Resources.Load<Material>("Sean Materials/lambert1");
+                    } break;
+            }
+
+            return newMat;
         }
 
         // Marc Stuff =====================

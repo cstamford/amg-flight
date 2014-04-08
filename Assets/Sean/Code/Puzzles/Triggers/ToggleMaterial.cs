@@ -1,8 +1,8 @@
 ﻿//=================================================================
 // Author: Sean Vieira
 // Version: 1.0
-// Function: Cause a door gameobject to slide from a closed 
-// position to an open one
+// Function: Toggles the material of a relic to a new
+// one when triggered
 //=================================================================
 
 using UnityEngine;
@@ -10,8 +10,9 @@ using System.Collections;
 
 namespace sv.Triggers
 {
-    public class ToggleMaterial : MonoBehaviour
+   public class ToggleMaterial : MonoBehaviour
     {
+        [SerializeField] private GameObject m_relic;
         private Material m_newMaterial;
         private bool m_isTriggered;
 
@@ -20,7 +21,7 @@ namespace sv.Triggers
         void Start()
         {
             m_isTriggered = false;
-           
+            m_relic.SetActive(false);
         }
 
         // Update is called once per frame
@@ -31,10 +32,6 @@ namespace sv.Triggers
                 if (ChangeMaterial())
                 {
                     m_isTriggered = false;
-                }
-                else
-                {
-                    
                 }
             }
         }
@@ -54,17 +51,29 @@ namespace sv.Triggers
             set
             {
                 m_isTriggered = value;
+                if (m_isTriggered)
+                {
+                    m_relic.SetActive(true);
+                }
+                else
+                {
+                    m_relic.SetActive(false);
+                }
             }
         }
 
         // Opens the door until reached max height, then returns true
         private bool ChangeMaterial()
         {
-            MeshRenderer renderer = GetComponent<MeshRenderer>();
+            MeshRenderer renderer = m_relic.GetComponent<MeshRenderer>();
 
             if (renderer != null)
             {
-                renderer.material = m_newMaterial;
+                if (renderer.material != m_newMaterial)
+                {
+                    renderer.material = m_newMaterial;
+                }
+
                 return true;
             }
 

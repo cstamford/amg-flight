@@ -14,10 +14,12 @@ namespace sv
     public class WingsController : MonoBehaviour
     {
         [SerializeField] private GameObject m_wingPosition;
+        [SerializeField] private GameObject m_characterObject;        
         private bool m_isAttachedToPlayer;
         private bool m_playerIsFlying;
         private GameObject m_parentObject;
         private Animation m_animation;
+        private Vector3 m_characterDefaultPosition;
 
         // Use this for initialization
         void Start()
@@ -31,6 +33,16 @@ namespace sv
             {
                 enabled = false;
                 throw new Exception("No Wing Position GameObject attached to script.");
+            }
+
+            if (!m_characterObject)
+            {
+                enabled = false;
+                throw new Exception("No Wing Position GameObject attached to script.");
+            }
+            else
+            {
+                m_characterDefaultPosition = new Vector3(m_characterObject.transform.localPosition.x, m_characterObject.transform.localPosition.y - 0.1f, m_characterObject.transform.localPosition.z - 0.15f);
             }
         }
 
@@ -86,6 +98,7 @@ namespace sv
                     Debug.Log("The parent object of the wings has been set to " + value);
 
                     this.transform.parent = value.transform;
+                    m_characterObject.transform.parent = this.transform.parent;
                 }
                 else
                 {
@@ -104,6 +117,10 @@ namespace sv
             newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y - 1.0f, wingPos.localPosition.z);
             newPos.localRotation = Quaternion.Euler(90, 0, 0);
 
+            // Set to default
+            m_characterObject.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            m_characterObject.transform.localPosition = m_characterDefaultPosition;
+
             m_animation.Play("Idle Closed");
         }
 
@@ -111,11 +128,18 @@ namespace sv
         {
             m_playerIsFlying = true;
 
+
+
             Transform wingPos = m_wingPosition.transform;
             Transform newPos = this.transform;
 
             newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y + 0.25f, wingPos.localPosition.z - 1.25f);
             newPos.localRotation = Quaternion.Euler(180, 0, 0);
+
+            // Rotate with wings
+            m_characterObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            m_characterObject.transform.localPosition = new Vector3(0, -0.60f, -0.5f);
+            
 
             m_animation.Play("Idle Open");
         }

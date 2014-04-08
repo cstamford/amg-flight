@@ -15,7 +15,10 @@ namespace sv.Triggers
         OPEN_DOOR,
         CLOSE_DOOR,
         WATERFALL_STOP,
-        TRANSPORT_RELIC
+        TOGGLE_MATERIAL,
+        WINGS_CLOSE,
+        WINGS_OPEN,
+        ARM_REACH
     }
     
     public class TriggerController : MonoBehaviour
@@ -32,6 +35,7 @@ namespace sv.Triggers
             }
 
         }
+
         public bool ActivateTrigger(GameObject targetTrigger)
         {
             switch (m_triggerType)
@@ -54,6 +58,30 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = true;
                     } break;
 
+                case TriggerType.TOGGLE_MATERIAL:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.WINGS_CLOSE:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.WINGS_OPEN:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.ARM_REACH:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
                 default :
                     {
                         return false;
@@ -61,6 +89,118 @@ namespace sv.Triggers
             }
 
             return true ;
+        }
+
+        public bool ActivateTrigger<T>(GameObject targetTrigger, T param) where T : Material  
+        {
+            switch (m_triggerType)
+            {
+                case TriggerType.OPEN_DOOR:
+                    {
+                        DoorOpen trigger = targetTrigger.GetComponent<DoorOpen>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.CLOSE_DOOR:
+                    {
+                        DoorClose trigger = targetTrigger.GetComponent<DoorClose>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.WATERFALL_STOP:
+                    {
+                        WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.TOGGLE_MATERIAL:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.TargetMaterial = param;
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.WINGS_CLOSE:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.WINGS_OPEN:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                case TriggerType.ARM_REACH:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = true;
+                    } break;
+
+                default:
+                    {
+                        return false;
+                    }
+            }
+
+            return true;
+        }
+
+        public bool DeactivateTrigger(GameObject targetTrigger)
+        {
+            switch (m_triggerType)
+            {
+                case TriggerType.OPEN_DOOR:
+                    {
+                        DoorOpen trigger = targetTrigger.GetComponent<DoorOpen>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.CLOSE_DOOR:
+                    {
+                        DoorClose trigger = targetTrigger.GetComponent<DoorClose>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.WATERFALL_STOP:
+                    {
+                        WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.TOGGLE_MATERIAL:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.WINGS_CLOSE:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.WINGS_OPEN:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                case TriggerType.ARM_REACH:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        trigger.ActivateTrigger = false;
+                    } break;
+
+                default:
+                    {
+                        return false;
+                    }
+            }
+           
+
+            return true;
         }
     }
 }
