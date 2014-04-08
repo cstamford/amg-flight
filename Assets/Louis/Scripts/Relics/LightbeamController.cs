@@ -3,13 +3,14 @@
 // Author : Louis Dimmock
 // Date : 4th April 2014
 //
-// Version : 1.1
+// Version : 1.2
 // Version Info : 
-//		Added more functionality
-//		Opacity reduces as the player gets closer
+//		Further improved visuals based on feedback.
 //
 // Previous Versions:
-// 		1.0 : Simple script that controls the relic lights and applys a texture offset
+//		1.1 : Added more functionality. Opacity reduces as the player gets closer.
+// 		1.0 : Simple script that controls the relic lightbeam. 
+//			  Applys a texture offset every frame to provide visuals.
 //
 
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Louis.Relics
 		public Color m_colorTint = new Color(1.0f, 1.0f , 1.0f, 1);
 
 		// Set up the speed that the texture will move at
-		public float m_movementSpeed = 0.0f;
+		public float m_offsetSpeed = 0.0f;
 
 		// Total texture offset
 		private Vector2 m_textureOffset = new Vector2(0.0f, 0.0f);
@@ -69,13 +70,13 @@ namespace Louis.Relics
 			CalculateDistance( ref m_currentDistance );
 
 			// Apply color changes based on distance
-			ApplyDistanceChanges ();
+			CalculateAlpha();
 		}
 
 		private void ApplyOffset()
 		{
 			// Translate the texture by the specified amount
-			m_textureOffset.x += m_movementSpeed;
+			m_textureOffset.x += m_offsetSpeed;
 			
 			// Keep the texture offset between 0 and 1
 			if (m_textureOffset.y > 1.0f)
@@ -84,20 +85,20 @@ namespace Louis.Relics
 			renderer.material.SetTextureOffset ("_MainTex", m_textureOffset);
 		}
 
-		private void ApplyDistanceChanges()
+		private void CalculateAlpha()
 		{
-			// Calculate how much to decrease alpha by
-			float initialAlphaIncrement = 0.5f / m_initialDistance;
+			// Calculate how much to increase the alpha per unit
+			float initialAlphaIncrement = 0.75f / m_initialDistance;
 
-			// Calculate the current alpha
-			float alpha = (initialAlphaIncrement * m_currentDistance);
+			// Calculate the alpha based on the current distance between player and relic
+			float Alpha = (initialAlphaIncrement * m_currentDistance);
 
 			// Cap the alpha so it remains between 0 and 1
-			if (alpha > 1.0f)
-				alpha = 1.0f;
+			if (Alpha > 1.0f)
+				Alpha = 1.0f;
 
 			// Set the color tints alpha
-			m_colorTint.a = alpha;
+			m_colorTint.a = Alpha;
 
 			// Apply it to the alpha
 			renderer.material.SetColor ("_Color", m_colorTint);
@@ -123,4 +124,3 @@ namespace Louis.Relics
 		}
 	}
 }
-

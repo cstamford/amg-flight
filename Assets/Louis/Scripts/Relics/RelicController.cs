@@ -36,6 +36,7 @@ namespace Louis.Relics
 		// Use this for initialization
 		void Start ()
 		{
+			// Retrieve the objects positions
 			m_startPosition = transform.position;
 			m_rotation = transform.eulerAngles;
 		}

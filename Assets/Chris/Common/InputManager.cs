@@ -1,6 +1,7 @@
 ﻿// ==================================================================== \\
 // File   : InputManager.cs                                             \\
-// Author : Christopher Stamford, additions by Sean Vieira              \\
+// Author : Christopher Stamford										\\
+// Revisions made by : Louis Dimmock & Sean Vieira			            \\
 //                                                                      \\
 // InputManager.cs defines the an InputManager class, which is used     \\
 // throughout the project for device-independent input.                 \\
@@ -21,6 +22,14 @@
 // - INTERACT now casts a ray for object selection
 // - INTERACT buttons are Keyboard-E/360 Pad-A
 //==============================================================
+
+//=================================================================
+// Revision 1.2 by Louis Dimmock
+//
+// - Added states for PAUSE, RESTART
+// - Created an Xbox struct for easy access to controller keycodes
+// - Applied Xbox struct to action states
+//=================================================================
 
 using System;
 using System.Collections.Generic;
@@ -49,6 +58,8 @@ namespace cst.Common
         CLEAR_STATE,
 
         INTERACT,
+		RESTART,
+		PAUSE,
         SHOW_MAP,
         EXIT
     }
@@ -64,6 +75,36 @@ namespace cst.Common
             public const string MOUSE_X_AXIS                  = "Mouse X";
             public const string MOUSE_Y_AXIS                  = "Mouse Y";
         }
+
+		public struct Xbox
+		{
+			// MAC OSX (REMOVE OR LEAVE IN?)
+			//public const KeyCode DPAD_UP 		= KeyCode.JoystickButton5;
+			//public const KeyCode DPAD_DOWN 	= KeyCode.JoystickButton6
+			//public const KeyCode DPAD_LEFT 	= KeyCode.JoystickButton7;
+			//public const KeyCode DPAD_RIGHT 	= KeyCode.JoystickButton8;
+			//public const KeyCode BUTTON_START	= KeyCode.JoystickButton9;
+			//public const KeyCode BUTTON_BACK 	= KeyCode.JoystickButton10;
+			//public const KeyCode LEFT_STICK 	= KeyCode.JoystickButton11;
+			//public const KeyCode RIGHT_STICK 	= KeyCode.JoystickButton12;
+			//public const KeyCode BUTTON_LB 	= KeyCode.JoystickButton13;
+			//public const KeyCode BUTTON_RB 	= KeyCode.JoystickButton14;
+			//public const KeyCode GUIDE_BUTTON	= KeyCode.JoystickButton15;
+			//public const KeyCode BUTTON_B 	= KeyCode.JoystickButton17;
+			//public const KeyCode BUTTON_X 	= KeyCode.JoystickButton18;
+			//public const KeyCode BUTTON_Y 	= KeyCode.JoystickButton19;
+			
+			public const KeyCode BUTTON_A 		= KeyCode.JoystickButton0;
+			public const KeyCode BUTTON_B 		= KeyCode.JoystickButton1;
+			public const KeyCode BUTTON_X 		= KeyCode.JoystickButton2;
+			public const KeyCode BUTTON_Y 		= KeyCode.JoystickButton3;
+			public const KeyCode BUTTON_LB 		= KeyCode.JoystickButton4;
+			public const KeyCode BUTTON_RB 		= KeyCode.JoystickButton5;
+			public const KeyCode BUTTON_BACK 	= KeyCode.JoystickButton6;
+			public const KeyCode BUTTON_START 	= KeyCode.JoystickButton7;
+			public const KeyCode LEFT_STICK 	= KeyCode.JoystickButton8;
+			public const KeyCode RIGHT_STICK 	= KeyCode.JoystickButton9;
+		}
 
         private readonly Dictionary<Action, bool> m_actions       = new Dictionary<Action, bool>();
         private readonly Dictionary<Action, float> m_actionDeltas = new Dictionary<Action, float>();
@@ -81,33 +122,36 @@ namespace cst.Common
 
         private void Update()
         {
-            float leftStickX  = Input.GetAxis(InputAxisTags.CONTROLLER_LEFT_STICK_X_AXIS);
-            float leftStickY  = Input.GetAxis(InputAxisTags.CONTROLLER_LEFT_STICK_Y_AXIS);
-            float rightStickX = Input.GetAxis(InputAxisTags.CONTROLLER_RIGHT_STICK_X_AXIS);
-            float rightStickY = Input.GetAxis(InputAxisTags.CONTROLLER_RIGHT_STICK_Y_AXIS);
-            float mouseX      = Input.GetAxis(InputAxisTags.MOUSE_X_AXIS) * MOUSE_SENSITIVITY;
-            float mouseY      = Input.GetAxis(InputAxisTags.MOUSE_Y_AXIS) * MOUSE_SENSITIVITY;
+            float leftStickX  = Input.GetAxis( InputAxisTags.CONTROLLER_LEFT_STICK_X_AXIS );
+            float leftStickY  = Input.GetAxis( InputAxisTags.CONTROLLER_LEFT_STICK_Y_AXIS );
+            float rightStickX = Input.GetAxis( InputAxisTags.CONTROLLER_RIGHT_STICK_X_AXIS );
+            float rightStickY = Input.GetAxis( InputAxisTags.CONTROLLER_RIGHT_STICK_Y_AXIS );
+            float mouseX      = Input.GetAxis( InputAxisTags.MOUSE_X_AXIS ) * MOUSE_SENSITIVITY;
+            float mouseY      = Input.GetAxis( InputAxisTags.MOUSE_Y_AXIS ) * MOUSE_SENSITIVITY;
 
             // Action states
-            m_actions[Action.MOVE_FORWARD]  = Input.GetKey(KeyCode.W) || leftStickY < 0.0f;
-            m_actions[Action.MOVE_BACKWARD] = Input.GetKey(KeyCode.S) || leftStickY > 0.0f;
-            m_actions[Action.MOVE_LEFT]     = Input.GetKey(KeyCode.A) || leftStickX < 0.0f;
-            m_actions[Action.MOVE_RIGHT]    = Input.GetKey(KeyCode.D) || leftStickX > 0.0f;
+            m_actions[Action.MOVE_FORWARD]  = Input.GetKey( KeyCode.W ) || leftStickY < 0.0f;
+            m_actions[Action.MOVE_BACKWARD] = Input.GetKey( KeyCode.S ) || leftStickY > 0.0f;
+            m_actions[Action.MOVE_LEFT]     = Input.GetKey( KeyCode.A ) || leftStickX < 0.0f;
+            m_actions[Action.MOVE_RIGHT]    = Input.GetKey( KeyCode.D ) || leftStickX > 0.0f;
 
-            m_actions[Action.LOOK_UP]    = Input.GetKey(KeyCode.UpArrow)    || mouseY > 0.0f || rightStickY < 0.0f;
-            m_actions[Action.LOOK_DOWN]  = Input.GetKey(KeyCode.DownArrow)  || mouseY < 0.0f || rightStickY > 0.0f;
-            m_actions[Action.LOOK_LEFT]  = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
-            m_actions[Action.LOOK_RIGHT] = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
+            m_actions[Action.LOOK_UP]    = Input.GetKey( KeyCode.UpArrow )    || mouseY > 0.0f || rightStickY < 0.0f;
+            m_actions[Action.LOOK_DOWN]  = Input.GetKey( KeyCode.DownArrow )  || mouseY < 0.0f || rightStickY > 0.0f;
+            m_actions[Action.LOOK_LEFT]  = Input.GetKey( KeyCode.LeftArrow )  || mouseX < 0.0f || rightStickX < 0.0f;
+            m_actions[Action.LOOK_RIGHT] = Input.GetKey( KeyCode.RightArrow ) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.ASCEND]  = Input.GetKey(KeyCode.Q);
-            m_actions[Action.DESCEND] = Input.GetKey(KeyCode.Z);
+            m_actions[Action.ASCEND]  = Input.GetKey( KeyCode.Q );
+            m_actions[Action.DESCEND] = Input.GetKey( KeyCode.Z );
 
-            m_actions[Action.INTERACT]     = Input.GetKeyDown(KeyCode.E)     || Input.GetKeyDown(KeyCode.JoystickButton0); // A
-            m_actions[Action.SHOW_MAP]     = Input.GetKeyDown(KeyCode.M)     || Input.GetKeyDown(KeyCode.JoystickButton1); // X
-            m_actions[Action.CLEAR_STATE]  = Input.GetKey(KeyCode.Return)    || Input.GetKey(KeyCode.JoystickButton3); // Y
-            m_actions[Action.GLIDE_STATE]  = Input.GetKey(KeyCode.Space)     || Input.GetKey(KeyCode.JoystickButton4); // Left bumper
-            m_actions[Action.FLIGHT_STATE] = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton5); // Right bumper
-            m_actions[Action.EXIT]         = Input.GetKey(KeyCode.Escape)    || Input.GetKey(KeyCode.JoystickButton6); // Back button
+			m_actions[Action.CLEAR_STATE]  = Input.GetKey( KeyCode.Return )    || Input.GetKey( Xbox.BUTTON_Y ); 
+			m_actions[Action.GLIDE_STATE]  = Input.GetKey( KeyCode.Space )     || Input.GetKey( Xbox.BUTTON_LB ); 
+			m_actions[Action.FLIGHT_STATE] = Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( Xbox.BUTTON_RB ); 
+			
+			m_actions[Action.INTERACT]  = Input.GetKeyDown( KeyCode.E )      || Input.GetKeyDown( Xbox.BUTTON_X );
+			m_actions[Action.PAUSE]     = Input.GetKeyDown( KeyCode.P )      || Input.GetKeyDown( Xbox.BUTTON_START );
+			m_actions[Action.SHOW_MAP]  = Input.GetKey( KeyCode.M )   	     || Input.GetKey( Xbox.BUTTON_BACK );
+			m_actions[Action.RESTART]   = Input.GetKeyDown( KeyCode.R )      || Input.GetKeyDown( Xbox.LEFT_STICK);
+			m_actions[Action.EXIT]      = Input.GetKeyDown( KeyCode.Escape ) || Input.GetKeyDown( Xbox.RIGHT_STICK); 
 
             // Action deltas
             m_actionDeltas[Action.MOVE_FORWARD]  = (m_actions[Action.MOVE_FORWARD]  ? (leftStickY < 0.0f ? -leftStickY : 1.0f) : 0.0f);
@@ -119,15 +163,19 @@ namespace cst.Common
             m_actionDeltas[Action.LOOK_DOWN]  = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_LEFT]  = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
+			
+			m_actionDeltas[Action.ASCEND]  = m_actions[Action.ASCEND]       ? 1.0f : 0.0f;
+			m_actionDeltas[Action.DESCEND] = m_actions[Action.DESCEND]      ? 1.0f : 0.0f;
 
-            m_actionDeltas[Action.ASCEND]       = m_actions[Action.ASCEND]       ? 1.0f : 0.0f;
-            m_actionDeltas[Action.DESCEND]      = m_actions[Action.DESCEND]      ? 1.0f : 0.0f;
-            m_actionDeltas[Action.INTERACT]     = m_actions[Action.INTERACT]     ? 1.0f : 0.0f;
-            m_actionDeltas[Action.SHOW_MAP]     = m_actions[Action.SHOW_MAP]     ? 1.0f : 0.0f;
-            m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
-            m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
-            m_actionDeltas[Action.FLIGHT_STATE] = m_actions[Action.FLIGHT_STATE] ? 1.0f : 0.0f;
-            m_actionDeltas[Action.EXIT]         = m_actions[Action.EXIT]         ? 1.0f : 0.0f;
+			m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
+			m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
+			m_actionDeltas[Action.FLIGHT_STATE] = m_actions[Action.FLIGHT_STATE] ? 1.0f : 0.0f;
+
+			m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
+			m_actionDeltas[Action.PAUSE]    = m_actions[Action.PAUSE]     	? 1.0f : 0.0f;
+			m_actionDeltas[Action.SHOW_MAP] = m_actions[Action.SHOW_MAP]    ? 1.0f : 0.0f;
+			m_actionDeltas[Action.RESTART]  = m_actions[Action.RESTART]     ? 1.0f : 0.0f;
+            m_actionDeltas[Action.EXIT]     = m_actions[Action.EXIT]        ? 1.0f : 0.0f;
         }
 
         private void dumpDebug()
