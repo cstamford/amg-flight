@@ -13,22 +13,22 @@ namespace sv.Triggers
     public class ArmReach : MonoBehaviour
     {
 
-        [SerializeField]
-        private GameObject m_animatedMesh;
+        [SerializeField] private GameObject m_animatedMesh;
         private bool m_isTriggered;
+
+        private bool m_started;
+        private bool m_finished;
+
+        private bool m_isIdle;
+        private bool m_animIdleEnd;
         private bool m_animIsReversed;
         private bool m_animIsDone;
-        private bool m_animStarted;
 
 
         // Use this for initialization
         void Start()
         {
-            m_isTriggered = false;
-            m_animIsReversed = false;
-            m_animIsDone = false;
-            m_animStarted = false;
-            m_animatedMesh.SetActive(false);
+            Reset();
         }
 
         // Update is called once per frame
@@ -36,10 +36,18 @@ namespace sv.Triggers
         {
             if (m_isTriggered)
             {
-                if (PlayingAnimation())
+                if (!m_finished)
                 {
-                    m_isTriggered = false;
+                    PlayingAnimation();
                 }
+                else
+                {
+                    Reset();
+                }
+            }
+            else
+            {
+
             }
         }
 
@@ -49,6 +57,8 @@ namespace sv.Triggers
             set
             {
                 m_isTriggered = value;
+                m_animIsReversed = !value;
+                m_animatedMesh.SetActive(true);
             }
         }
 
@@ -59,7 +69,7 @@ namespace sv.Triggers
             set
             {
                 m_animIsReversed = value;
-                if (m_animIsReversed)
+                if (!m_animIsReversed)
                 {
                     m_animatedMesh.animation["Reach"].speed = 1;
                     if (!m_animatedMesh.animation.IsPlaying("Reach"))
@@ -80,41 +90,86 @@ namespace sv.Triggers
 
         public bool IsDone
         {
-            get { return m_animIsDone; }
+            get { return m_finished; }
             set
             {
-                m_animIsDone = value;
+                m_finished = value;
             }
         } 
 
         // Returns false until animation cycle has finished
         private bool PlayingAnimation()
         {
-            if (m_animIsDone)
+            if (!m_started)
             {
-                return true;
+                Debug.Log("Playing animation...");
+                PlayAnim();
+                m_started = true;
             }
             else
             {
-                if (!m_animatedMesh.animation.IsPlaying("Reach"))
+
+                if (!m_isIdle)
                 {
-                    if (m_animStarted)
+                    if (!m_animIsDone)
                     {
-                        m_animIsDone = true;
+                        if (!m_animatedMesh.animation.IsPlaying("Reach"))
+                        {
+                            m_animIsDone = true;
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Model is in an idle state...");
+                        PlayIdle();
+                        m_isIdle = true;
                     }
                 }
                 else
                 {
-                    if (!m_animStarted)
+                    if (!m_animatedMesh.animation.IsPlaying("Idle"))
                     {
-                        m_animatedMesh.animation.Play("Reach");
-                        m_animStarted = true;
-                    }                    
-                }                
+                        m_animIdleEnd = true;
+                        m_animIsDone = false;
+                    }
+                }
             }
 
             return false;
         }
 
+        // Returns false until animation cycle has finished
+        private void PlayIdle()
+        {
+            if (!m_animatedMesh.animation.IsPlaying("Idle"))
+            {
+                m_animatedMesh.animation.Play("Idle");
+            }
+        }
+        
+        // Returns false until animation cycle has finished        
+        private void PlayAnim()
+        {
+            if (!m_animatedMesh.animation.IsPlaying("Reach"))
+            {
+                m_animatedMesh.animation.Play("Reach");
+            }
+        }
+
+        private void Reset()
+        {
+            m_isTriggered = false;
+            m_started = false;
+            m_finished = false;
+            m_animIsReversed = false;
+            m_animIsDone = false;
+            m_animIdleEnd = false;
+            m_isIdle = false;
+            m_animatedMesh.SetActive(false);
+        }
     }
 }

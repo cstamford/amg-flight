@@ -78,7 +78,7 @@ namespace sv.Triggers
 
                 case TriggerType.ARM_REACH:
                     {
-                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
                         trigger.ActivateTrigger = true;
                     } break;
 
@@ -134,7 +134,7 @@ namespace sv.Triggers
 
                 case TriggerType.ARM_REACH:
                     {
-                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
                         trigger.ActivateTrigger = true;
                     } break;
 
@@ -189,7 +189,7 @@ namespace sv.Triggers
 
                 case TriggerType.ARM_REACH:
                     {
-                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
                         trigger.ActivateTrigger = false;
                     } break;
 
@@ -197,10 +197,61 @@ namespace sv.Triggers
                     {
                         return false;
                     }
-            }
-           
+            }          
 
             return true;
+        }
+
+        public bool TriggerIsActive(GameObject targetTrigger)
+        {
+            switch (m_triggerType)
+            {
+                case TriggerType.OPEN_DOOR:
+                    {
+                        DoorOpen trigger = targetTrigger.GetComponent<DoorOpen>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.CLOSE_DOOR:
+                    {
+                        DoorClose trigger = targetTrigger.GetComponent<DoorClose>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.WATERFALL_STOP:
+                    {
+                        WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.TOGGLE_MATERIAL:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.WINGS_CLOSE:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.WINGS_OPEN:
+                    {
+                        ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
+                        return trigger.ActivateTrigger;
+                    };
+
+                case TriggerType.ARM_REACH:
+                    {
+                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
+                        return trigger.IsDone;
+                    };
+                default:
+                    {
+                        return false;
+                    }
+            }  
         }
     }
 }

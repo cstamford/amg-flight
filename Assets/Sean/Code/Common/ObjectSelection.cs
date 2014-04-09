@@ -37,6 +37,7 @@ namespace sv
         private InputManager m_inputManager;
         private GameObject m_selected;
         private SeraphController m_seraph;
+        TriggerController cursorController;    
         private int[] m_relicOrder;
 
 		// Relic collection (audio)
@@ -58,7 +59,7 @@ namespace sv
             }
             else
             {
-                m_cursor.SetActive(false);
+                cursorController = m_cursor.GetComponent<TriggerController>();
             }
 
             if (!m_inputManagerObject)
@@ -94,7 +95,13 @@ namespace sv
         // Update is called once per frame
         void Update()
         {
-            m_cursor.SetActive(false);          
+            if (cursorController != null)
+            {
+                if (cursorController.TriggerIsActive(m_cursor))
+                {
+                    cursorController.DeactivateTrigger(m_cursor);
+                }
+            }          
 
             // If the ray collides with an object
             if (CastRay())
@@ -165,12 +172,26 @@ namespace sv
             {
                 case "PuzzleCollect":
                 {
-                    m_cursor.SetActive(true);
+                    if (cursorController != null)
+                    {
+                        if (!cursorController.TriggerIsActive(m_cursor))
+                        {
+                            cursorController.ActivateTrigger(m_cursor);
+                        }
+                    }  
+
                     m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
                 } break;
                 case "PuzzleCollectObject":
                 {
-                    m_cursor.SetActive(true);
+                    if (cursorController != null)
+                    {
+                        if (!cursorController.TriggerIsActive(m_cursor))
+                        {
+                            cursorController.ActivateTrigger(m_cursor);
+                        }
+                    } 
+
                     m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);                    
    
                     if (m_puzzleTypeCollect != AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect))
@@ -180,12 +201,26 @@ namespace sv
                 } break;
                 case "PuzzlePassword":
                 {
-                    m_cursor.SetActive(true);
+                    if (cursorController != null)
+                    {
+                        if (!cursorController.TriggerIsActive(m_cursor))
+                        {
+                            cursorController.ActivateTrigger(m_cursor);
+                        }
+                    } 
+
                     m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_selected, m_puzzleTypePassword);
                 } break;
                 case "PuzzlePasswordObject":
                 {
-                    m_cursor.SetActive(true);
+                    if (cursorController != null)
+                    {
+                        if (!cursorController.TriggerIsActive(m_cursor))
+                        {
+                            cursorController.ActivateTrigger(m_cursor);
+                        }
+                    } 
+
                     m_puzzlePasswordKey = AcquireObjectComponent<PuzzlePasswordKey>(m_selected, m_puzzlePasswordKey);
 
                     if (!m_puzzleTypePassword != AcquireObjectComponent<PuzzlePassword>(m_puzzlePasswordKey.GetParent(), m_puzzleTypePassword))
@@ -195,7 +230,14 @@ namespace sv
                 } break;
                 case "Wings":
                 {
-                    m_cursor.SetActive(true);
+                    if (cursorController != null)
+                    {
+                        if (!cursorController.TriggerIsActive(m_cursor))
+                        {
+                            cursorController.ActivateTrigger(m_cursor);
+                        }
+                    } 
+
                     m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
                         
                     // As wings are part of 'puzzle' to open door

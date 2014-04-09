@@ -11,21 +11,11 @@
  * 		Seraph position, orientation and state will be stored using playerPrefs and restored when un-pausing.
  */
 
-//
-// Revision 1.2
-// Author : Louis Dimmock
-// Revision Notes: 
-//		Added in InputManager 
-//
-
-using cst.Common;
-using Action = cst.Common.Action;
 using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-	// Input Manager object
-	public string menuSceneName = "Menu";
+	public string menuSceneName = "Menu Scene Resized";
 	public Color fadeColour = new Color(1, 1, 1);
 
 	enum PauseState { playing, pausing, paused };
@@ -37,8 +27,7 @@ public class PauseMenu : MonoBehaviour
 	float elapsedTime;
 	float prevTime;
 
-	// Input Manager
-	private InputManager m_inputManager;
+	public string pauseKey;
 
 	// Use this for initialization
 	void Start ()
@@ -50,15 +39,6 @@ public class PauseMenu : MonoBehaviour
 		//	TimeScale persists despite level being unloaded
 		//	Reset timeScale here
 		Time.timeScale = 1.0f;
-
-		// Find the input manager
-		m_inputManager = gameObject.GetComponent<InputManager>();
-		
-		// Check if the input manager was found
-		if( m_inputManager == null)
-		{
-			Debug.Log("InputManager could not been found");
-		}
 
 		loadData ();
 	}
@@ -96,11 +76,10 @@ public class PauseMenu : MonoBehaviour
 			fadeColour.a = 1.0f - Time.timeScale;
 		}
 
-		// Check the input manager to see if the pause button has been pressed
-		if( m_inputManager.actionFired(Action.PAUSE) )
+		//	Detecting key presses
+		if(Input.GetKeyDown(KeyCode.P))
 		{
-			if(pauseState == PauseState.playing)
-			{
+			if(pauseState == PauseState.playing){
 				pauseState = PauseState.pausing;
 				print ("Pausing");
 			}

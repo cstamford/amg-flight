@@ -59,6 +59,7 @@ ModelImporter:
     400052: Thumb_Nub
     4300000: SeraphArm004
     7400000: Reach
+    7400002: Idle
     9500000: //RootNode
     11100000: //RootNode
     13700000: SeraphArm004
@@ -83,6 +84,86 @@ ModelImporter:
       firstFrame: 0
       lastFrame: 20
       wrapMode: 1
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/HandNub
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Index_1
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Index_1/Index_2
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Index_1/Index_2/Index_3
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Index_1/Index_2/Index_3/Index_Nub
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Middle_1
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Middle_1/Middle_2
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Middle_1/Middle_2/Middle_3
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Middle_1/Middle_2/Middle_3/Middle_Nub
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Pinkie_1
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Pinkie_1/Pinkie_2
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Pinkie_1/Pinkie_2/Pinkie_3
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Pinkie_1/Pinkie_2/Pinkie_3/Pinkie_Nub
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Ring_1
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Ring_1/Ring_2
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Ring_1/Ring_2/Ring_3
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Ring_1/Ring_2/Ring_3/Ring_Nub
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Thumb_1
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Thumb_1/Thumb_2
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Thumb_1/Thumb_2/Thumb_3
+        weight: 1
+      - path: Seraph_R_Shoulder_Bone/Seraph_R_Forearm_Bone/Seraph_R_Wrist_Bone/Hand/Thumb_1/Thumb_2/Thumb_3/Thumb_Nub
+        weight: 1
+      - path: SeraphArm004
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      firstFrame: 20
+      lastFrame: 20
+      wrapMode: 2
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

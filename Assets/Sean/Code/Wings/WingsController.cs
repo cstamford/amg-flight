@@ -114,7 +114,7 @@ namespace sv
             Transform wingPos = m_wingPosition.transform;
             Transform newPos = this.transform;
 
-            newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y - 1.0f, wingPos.localPosition.z);
+            newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y - 1.3f, wingPos.localPosition.z);
             newPos.localRotation = Quaternion.Euler(90, 0, 0);
 
             // Set to default
