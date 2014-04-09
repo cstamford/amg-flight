@@ -15,6 +15,7 @@
 //   - FLYING                                                           \\
 // ==================================================================== \\
 
+using System;
 using cst.Common;
 using UnityEngine;
 using Action = cst.Common.Action;
@@ -25,6 +26,7 @@ namespace cst.Flight
     {
         public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
 
+        private const float HEIGHT_CUTOFF         = 92.5f;
         private const float MAX_ROLL_ANGLE        = 37.5f;
         private const float MAX_PITCH_ANGLE       = 65.0f;
         private const float TURN_TIGHTNESS        = 2.0f;
@@ -33,7 +35,7 @@ namespace cst.Flight
         private const float MAX_RETURN_TURN_SPEED = 30.0f;
         private const float INCREMENT_PITCH_SPEED = 45.0f;
         private const float INCREMENT_VELOCITY    = 5.0f;
-        private const float DECREMENT_VELOCITY    = 5.0f;
+        private const float DECREMENT_VELOCITY    = 0.75f;
         private const float RESTING_VELOCITY      = 10.0f;
         private const float MIN_VELOCITY          = 0.0f;
 
@@ -246,9 +248,16 @@ namespace cst.Flight
                 step = -step;
 
             if (step > 0.0f)
+            {
                 step *= INCREMENT_VELOCITY;
+            }
             else
-                step *= DECREMENT_VELOCITY;
+            {
+                if (m_position.y >= HEIGHT_CUTOFF)
+                    step *= DECREMENT_VELOCITY * 15.0f;
+                else
+                    step *= DECREMENT_VELOCITY;
+            }
 
             m_forwardSpeed += step;
 
