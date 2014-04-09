@@ -143,9 +143,6 @@ namespace cst.Flight
 
             if (inputManager.actionFired(Action.GLIDE_STATE) && capability >= SeraphCapability.GLIDE)
                 state = SeraphState.GLIDING;
-
-            if (inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT)
-                state = SeraphState.FLYING;
         }
 
         private float getActualSpeed()

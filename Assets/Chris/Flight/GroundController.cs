@@ -79,9 +79,6 @@ namespace cst.Flight
         {
             if (!Helpers.nearestHitDistance(transform.position, Vector3.down, height + HEIGHT_PADDING).HasValue)
                 state = SeraphState.FALLING;
-
-            if ((inputManager.actionFired(Action.FLIGHT_STATE) && capability >= SeraphCapability.FLIGHT))
-                state = SeraphState.FLYING;
         }
     }
 }

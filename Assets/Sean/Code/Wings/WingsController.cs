@@ -58,7 +58,7 @@ namespace sv
                 {
                     SeraphController seraph = m_parentObject.GetComponent<SeraphController>();
 
-                    if (seraph.state == SeraphState.GLIDING || seraph.state == SeraphState.FLYING)
+                    if (seraph.state == SeraphState.GLIDING)
                     {
                         if (!m_playerIsFlying)
                         {

@@ -27,15 +27,13 @@ namespace cst.Flight
         LANDING,
         FALLING,
         GLIDING,
-        FLYING,
         WARPING
     }
 
     public enum SeraphCapability
     {
         NONE,
-        GLIDE,
-        FLIGHT
+        GLIDE
     }
 
     public class SeraphController : MonoBehaviour
@@ -49,7 +47,6 @@ namespace cst.Flight
         private FallingController m_fallingController;
         private LandingController m_landingController;
         private GlideController   m_glideController;		
-        private FlightController  m_flightController;
         private WarpingController m_warpingController;
 
         public void Start()
@@ -72,7 +69,6 @@ namespace cst.Flight
             m_fallingController = new FallingController(this);
             m_landingController = new LandingController(this);
             m_glideController   = new GlideController(this);
-            m_flightController  = new FlightController(this);
             m_warpingController = new WarpingController(this);
             assignActiveController();
         }
@@ -167,10 +163,6 @@ namespace cst.Flight
 
                 case SeraphState.GLIDING:
                     activeController = m_glideController;
-                    break;
-
-                case SeraphState.FLYING:
-                    activeController = m_flightController;
                     break;
 
                 case SeraphState.WARPING:
