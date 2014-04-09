@@ -88,8 +88,8 @@ public class MapController : MonoBehaviour
         if (!m_mapObject.renderer.enabled)
             m_mapObject.renderer.enabled = true;
 
-        Vector3 offset = m_mapOffset == Vector3.zero ? transform.forward * 0.5f : m_mapOffset;
-        m_mapObject.transform.position = transform.position + offset - (Vector3.up / 5.0f);
+        Vector3 offset = m_mapOffset == Vector3.zero ? transform.forward * 0.35f : m_mapOffset;
+        m_mapObject.transform.position = transform.position + offset - (Vector3.up / 4.25f);
         m_mapObject.transform.LookAt(transform);
     }
 
