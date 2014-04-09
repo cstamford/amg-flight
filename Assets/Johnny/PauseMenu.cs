@@ -1,31 +1,38 @@
 ﻿/*
  * File: PauseMenu.cs
  * 
- * Version: 1.1
+ * Version: 1.2
  * 
  * Author: Johnathon Forster
  * 
  * Description: 
  * 		When the user presses the 'p' key the game will slow down over the course of several seconds
+ * 		Scene is loaded asynchronously while the game slows to nothing and fades to the specified colour;
  * 		When the game has slowed to nothing the scene "Menu Scene" will be loaded.
  * 		Seraph position, orientation and state will be stored using playerPrefs and restored when un-pausing.
  */
 
 using UnityEngine;
+using System.Collections;
+using cst.Flight;
 
 public class PauseMenu : MonoBehaviour
 {
-	public string menuSceneName = "Menu Scene Resized";
-	public Color fadeColour = new Color(1, 1, 1);
+	public string menuSceneName = "Menu";
+	public Color fadeColour = new Color(1, 1, 1, 0);
+
+	public bool loadAsync = true;
 
 	enum PauseState { playing, pausing, paused };
-	PauseState pauseState;
+	private PauseState pauseState;
 
 	//	Time taken for game to pause
-	float pauseTime;
+	private float pauseTime;
 	//	Time passed since game was paused
-	float elapsedTime;
-	float prevTime;
+	private float elapsedTime;
+	private float prevTime;
+
+	private AsyncOperation async;
 
 	public string pauseKey;
 
@@ -66,7 +73,12 @@ public class PauseMenu : MonoBehaviour
 				//pauseState = PauseState.paused;
 
 				//pause ();
-				Application.LoadLevel(menuSceneName);
+				if(loadAsync == true)
+				{
+					activateScene();
+				} else {
+					Application.LoadLevel(menuSceneName);
+				}
 				//Application.LoadLevelAdditive("Menu Scene");
 
                 //Time.timeScale = 1.0f;
@@ -81,6 +93,7 @@ public class PauseMenu : MonoBehaviour
 		{
 			if(pauseState == PauseState.playing){
 				pauseState = PauseState.pausing;
+				if(loadAsync == true) startLoading();
 				print ("Pausing");
 			}
 		}
@@ -111,8 +124,8 @@ public class PauseMenu : MonoBehaviour
 
 	void saveData()
 	{
-		//	Search for an object named "Seraph"
-		cst.Flight.SeraphController seraphController = (cst.Flight.SeraphController)GameObject.Find("Seraph").GetComponentsInChildren(typeof(cst.Flight.SeraphController))[0];
+		//	Search for an object tagged "Player"
+		SeraphController seraphController = (SeraphController)GameObject.FindWithTag("Player").GetComponent<SeraphController>();
 		
 		//	Setting a flag to signify that there's data saved
 		PlayerPrefs.SetInt("DATA_SAVED", 1);
@@ -154,29 +167,47 @@ public class PauseMenu : MonoBehaviour
 	void loadData()
 	{
 		//	Check if data has been saved
-		GameObject seraph = GameObject.Find("Seraph");
-		if (seraph != null) {
+		SeraphController seraphController = (SeraphController)GameObject.FindWithTag("Player").GetComponent<SeraphController>();
+		if (seraphController != null) {
 			print ("Load called");
 			if (PlayerPrefs.GetInt ("DATA_SAVED") == 1) {
 				//	Loading player position
 				Vector3 position = new Vector3 (PlayerPrefs.GetFloat ("PLAYER_POSITION_X"),
                        PlayerPrefs.GetFloat ("PLAYER_POSITION_Y"),
                        PlayerPrefs.GetFloat ("PLAYER_POSITION_Z"));
-				seraph.transform.position = position;
+				seraphController.transform.position = position;
 			}
 			//	Loading player rotation
 			Quaternion rotation = new Quaternion (PlayerPrefs.GetFloat ("PLAYER_ROTATION_X"),
                      PlayerPrefs.GetFloat ("PLAYER_ROTATION_Y"),
                      PlayerPrefs.GetFloat ("PLAYER_ROTATION_Z"),
                      PlayerPrefs.GetFloat ("PLAYER_ROTATION_W"));
-			seraph.transform.rotation = rotation;
+			seraphController.transform.rotation = rotation;
 
 			//	Loading player prefs
-			//seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
-			//seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
+			seraphController.state = (cst.Flight.SeraphState)System.Enum.Parse(typeof(cst.Flight.SeraphState), PlayerPrefs.GetString("PLAYER_STATE"));
+			seraphController.capability = (cst.Flight.SeraphCapability)System.Enum.Parse(typeof(cst.Flight.SeraphCapability), PlayerPrefs.GetString("PLAYER_CAPABILITY"));
 
 			PlayerPrefs.SetInt ("DATA_SAVED", 0);
 		}
+	}
+
+	//	This is required for ASyncLoading
+
+	public void startLoading() {
+		StartCoroutine("load");
+	}
+	
+	IEnumerator load() {
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		async = Application.LoadLevelAsync(menuSceneName);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+	
+	public void activateScene() {
+		async.allowSceneActivation = true;
 	}
 
 	void OnApplicationQuit()
@@ -190,5 +221,6 @@ public class PauseMenu : MonoBehaviour
 /*
  *		Version History:
  *			1.0: File was created
- *			1.1: 
+ *			1.1: Added colour fading ad time fading options within inspector
+ *			1.2: Added asynchronous loading
  */

@@ -1,7 +1,7 @@
 ﻿/*
  * 		File: DoorTrigger.cs
  * 
- * 		Version: 1.2
+ * 		Version: 1.3
  * 
  * 		Author: Johnathon Forster
  * 
@@ -28,11 +28,15 @@ public class DoorTrigger : MonoBehaviour {
 
 	public bool savePlayerOrientation;
 	public GameObject player;
+
+	public bool loadAsync = true;
 	
 	private bool finished;
 	
 	private float elapsedTime;
 	private float prevTime;
+
+	private AsyncOperation async;
 
 	void Start()
 	{
@@ -54,6 +58,7 @@ public class DoorTrigger : MonoBehaviour {
 				warpToLocation();
 			} else {
 				finished = false;
+				if(loadAsync == true) startLoading();
 			}
 		}
 	}
@@ -79,7 +84,12 @@ public class DoorTrigger : MonoBehaviour {
 				{
 					saveOrientation();
 				}
-				warpToLocation();
+				if(loadAsync == true)
+				{
+					activateScene();
+				} else {
+					warpToLocation();
+				}
 				return;
 			}
 			if(useTimeFade == true)
@@ -125,6 +135,24 @@ public class DoorTrigger : MonoBehaviour {
 			}
 		}
 	}
+	
+	//	This is required for ASyncLoading
+	
+	public void startLoading() {
+		StartCoroutine("load");
+	}
+	
+	IEnumerator load() {
+		Debug.LogWarning("ASYNC LOAD STARTED - " +
+		                 "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH");
+		async = Application.LoadLevelAsync(warp);
+		async.allowSceneActivation = false;
+		yield return async;
+	}
+	
+	public void activateScene() {
+		async.allowSceneActivation = true;
+	}
 }
 
 /*
@@ -132,4 +160,5 @@ public class DoorTrigger : MonoBehaviour {
  *			1.0: File was created
  *			1.1: Added colour fading and timescale slowing
  *			1.2: Added saving player orientation
+ *			1.3: Added asynchronous loading
  */
