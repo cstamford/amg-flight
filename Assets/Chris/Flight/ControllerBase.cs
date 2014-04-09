@@ -48,8 +48,10 @@ namespace cst.Flight
         void start(TransitionData data);
         void update();
         void triggerEnter(Collider other);
+        void triggerStay(Collider other);
         void triggerExit(Collider other);
         void collisionEnter(Collision other);
+        void collisionStay(Collision other);
         void collisionExit(Collision other);
         TransitionData transitionData();
     }
@@ -251,8 +253,10 @@ namespace cst.Flight
         public abstract void start(TransitionData data);
         public abstract void update();
         public abstract void triggerEnter(Collider other);
+        public abstract void triggerStay(Collider other);
         public abstract void triggerExit(Collider other);
         public abstract void collisionEnter(Collision other);
+        public abstract void collisionStay(Collision other);
         public abstract void collisionExit(Collision other);
         public abstract TransitionData transitionData();
     }

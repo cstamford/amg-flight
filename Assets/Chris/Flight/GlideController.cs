@@ -42,7 +42,7 @@ namespace cst.Flight
         private Vector3 m_position;
         private Vector3 m_rotation;
         private float   m_forwardSpeed;
-        private int     m_noFlyCount;
+        private bool    m_noFly;
 
         public GlideController(SeraphController controller)
             : base(controller)
@@ -52,6 +52,7 @@ namespace cst.Flight
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
             m_forwardSpeed = data.velocity > MAX_VELOCITY * 1.25f ? MAX_VELOCITY : data.velocity;
+            m_noFly        = false;
         }
 
         public void update()
@@ -62,6 +63,7 @@ namespace cst.Flight
             handleOrientationChange();
             handleMoveForward();
             handleTransition();
+            m_noFly = false;
 
             transform.eulerAngles = m_rotation;
             transform.position    = m_position;
@@ -69,29 +71,29 @@ namespace cst.Flight
 
         public void triggerEnter(Collider other)
         {
-            Debug.Log(GetType().Name + " triggerEnter()");
+        }
 
+        public void triggerStay(Collider other)
+        {
             if (String.Equals(other.tag, NO_FLY_TAG))
-                ++m_noFlyCount;
+                m_noFly = true;
         }
 
         public void triggerExit(Collider other)
         {
-            Debug.Log(GetType().Name + " triggerExit()");
-
-            if (String.Equals(other.tag, NO_FLY_TAG))
-                --m_noFlyCount;
         }
 
         public void collisionEnter(Collision other)
         {
-            Debug.Log(GetType().Name + " collisionEnter()");
             state = SeraphState.FALLING;
+        }
+
+        public void collisionStay(Collision other)
+        {   
         }
 
         public void collisionExit(Collision other)
         {
-            Debug.Log(GetType().Name + " collisionExit()");
         }
 
         public TransitionData transitionData()
@@ -240,7 +242,11 @@ namespace cst.Flight
         {
             float step = Time.deltaTime;
 
-            if (m_noFlyCount == 0)
+            if (m_noFly)
+            {
+                step *= -DECREMENT_VELOCITY * 17.5f;
+            }
+            else
             {
                 // Get the normalized pitch
                 float pitch = Helpers.getNormalizedAngle(m_rotation.x);
@@ -262,11 +268,6 @@ namespace cst.Flight
                     step *= INCREMENT_VELOCITY;
                 else
                     step *= DECREMENT_VELOCITY;
-
-            }
-            else
-            {
-                step *= -DECREMENT_VELOCITY * 17.5f;
             }
 
             m_forwardSpeed += step;

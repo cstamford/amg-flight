@@ -79,9 +79,29 @@ namespace cst.Flight
             activeController.update();
         }
 
+        public void OnTriggerEnter(Collider other)
+        {
+            activeController.triggerEnter(other);
+        }
+
+        public void OnTriggerStay(Collider other)
+        {
+            activeController.triggerStay(other);
+        }
+
+        public void OnTriggerExit(Collider other)
+        {
+            activeController.triggerExit(other);
+        }
+
         public void OnCollisionEnter(Collision other)
         {
             activeController.collisionEnter(other);
+        }
+
+        public void OnCollisionStay(Collision other)
+        {
+            activeController.collisionStay(other);
         }
 
         public void OnCollisionExit(Collision other)
@@ -92,15 +112,6 @@ namespace cst.Flight
             rigidbody.velocity = Vector3.zero;
         }
 
-        public void OnTriggerEnter(Collider other)
-        {
-            activeController.triggerEnter(other);
-        }
-
-        public void OnTriggerExit(Collider other)
-        {
-            activeController.triggerExit(other);
-        }
         public IControllerBase activeController 
         { 
             get; 

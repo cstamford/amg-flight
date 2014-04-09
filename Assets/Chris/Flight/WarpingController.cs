@@ -45,22 +45,26 @@ namespace cst.Flight
 
         public override void triggerEnter(Collider other)
         {
-            Debug.Log(GetType().Name + " triggerEnter()");
+        }
+
+        public override void triggerStay(Collider other)
+        {
         }
 
         public override void triggerExit(Collider other)
         {
-            Debug.Log(GetType().Name + " triggerExit()");
         }
 
         public override void collisionEnter(Collision other)
         {
-            Debug.Log(GetType().Name + " collisionEnter()");
+        }
+
+        public override void collisionStay(Collision other)
+        {
         }
 
         public override void collisionExit(Collision other)
         {
-            Debug.Log(GetType().Name + " collisionExit()");
         }
 
         public override TransitionData transitionData()
