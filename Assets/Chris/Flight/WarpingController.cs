@@ -25,6 +25,7 @@ namespace cst.Flight
         public override void start(TransitionData data)
         {
             Debug.Log(GetType().Name + " received transition data: " + data);
+            gameObject.rigidbody.isKinematic = true;
         }
 
         public override void update()
@@ -131,6 +132,7 @@ namespace cst.Flight
         {
             if (m_currentNodeIndex >= m_nodes.Count)
             {
+                gameObject.rigidbody.isKinematic = false;
                 state = SeraphState.FALLING;
             }
             else
