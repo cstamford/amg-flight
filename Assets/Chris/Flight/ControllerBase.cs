@@ -116,13 +116,14 @@ namespace cst.Flight
     // Hack because C# doesn't support multiple inheritance
     public abstract class SharedGroundControls : ControllerBase, IControllerBase
     {
-        public bool moved { get; set; }
+        public bool moved     { get; private set; }
+        public bool sprinting { get; private set; }
 
         protected Vector3 m_rotation;
         protected Vector3 m_position;
         protected float   m_desiredHeight;
 
-        protected const float HEIGHT_PADDING = 2.0f;
+        protected const float  HEIGHT_PADDING = 2.0f;
 
         private const float    FORWARD_SPEED = 5.0f;
         private const float    STRAFE_SPEED = 5.0f;
@@ -144,13 +145,23 @@ namespace cst.Flight
             if (Helpers.nearestHitDistance(transform.position, Vector3.down, height + 0.1f, WATER_TAG).HasValue)
                 movementDelta /= 1.5f;
 
+            if (inputManager.actionFired(Action.SPRINT))
+            {
+                movementDelta *= 1.75f;
+                sprinting = true;
+            }
+            else
+            {
+                sprinting = false;
+            }
+
             // Strip the height component from our vectors
             Vector3 forwardVector = transform.forward;
-            Vector3 rightVector = transform.right;
-            forwardVector.y = 0.0f;
-            rightVector.y = 0.0f;
+            Vector3 rightVector   = transform.right;
+            forwardVector.y       = 0.0f;
+            rightVector.y         = 0.0f;
 
-            bool movedThisFrame = false;
+            bool movedThisFrame   = false;
 
             if (inputManager.actionFired(Action.MOVE_FORWARD))
             {
