@@ -26,22 +26,23 @@ namespace cst.Flight
     {
         public const float  MAX_VELOCITY          = RESTING_VELOCITY * 1.5f;
 
-        private const float HEIGHT_CUTOFF         = 92.5f;
-        private const float MAX_ROLL_ANGLE        = 37.5f;
-        private const float MAX_PITCH_ANGLE       = 65.0f;
-        private const float TURN_TIGHTNESS        = 2.0f;
-        private const float INCREMENT_TURN_SPEED  = 35.0f;
-        private const float MIN_RETURN_TURN_SPEED = 10.0f;
-        private const float MAX_RETURN_TURN_SPEED = 30.0f;
-        private const float INCREMENT_PITCH_SPEED = 45.0f;
-        private const float INCREMENT_VELOCITY    = 5.0f;
-        private const float DECREMENT_VELOCITY    = 0.75f;
-        private const float RESTING_VELOCITY      = 10.0f;
-        private const float MIN_VELOCITY          = 0.0f;
+        private const float  MAX_ROLL_ANGLE        = 37.5f;
+        private const float  MAX_PITCH_ANGLE       = 65.0f;
+        private const float  TURN_TIGHTNESS        = 2.0f;
+        private const float  INCREMENT_TURN_SPEED  = 35.0f;
+        private const float  MIN_RETURN_TURN_SPEED = 10.0f;
+        private const float  MAX_RETURN_TURN_SPEED = 30.0f;
+        private const float  INCREMENT_PITCH_SPEED = 45.0f;
+        private const float  INCREMENT_VELOCITY    = 5.0f;
+        private const float  DECREMENT_VELOCITY    = 0.5f;
+        private const float  RESTING_VELOCITY      = 10.0f;
+        private const float  MIN_VELOCITY          = 0.0f;
+        private const string NO_FLY_TAG            = "No Fly Zone";
 
         private Vector3 m_position;
         private Vector3 m_rotation;
-        private float m_forwardSpeed;
+        private float   m_forwardSpeed;
+        private int     m_noFlyCount;
 
         public GlideController(SeraphController controller)
             : base(controller)
@@ -69,11 +70,17 @@ namespace cst.Flight
         public void triggerEnter(Collider other)
         {
             Debug.Log(GetType().Name + " triggerEnter()");
+
+            if (String.Equals(other.tag, NO_FLY_TAG))
+                ++m_noFlyCount;
         }
 
         public void triggerExit(Collider other)
         {
             Debug.Log(GetType().Name + " triggerExit()");
+
+            if (String.Equals(other.tag, NO_FLY_TAG))
+                --m_noFlyCount;
         }
 
         public void collisionEnter(Collision other)
@@ -231,32 +238,35 @@ namespace cst.Flight
         // Handles moving forward
         private void handleMoveForward()
         {
-            // Get the normalized pitch
-            float pitch = Helpers.getNormalizedAngle(m_rotation.x);
+            float step = Time.deltaTime;
 
-            // Get rest speed based on pitch
-            float restSpeed = RESTING_VELOCITY + ((pitch * MAX_VELOCITY - RESTING_VELOCITY) / MAX_PITCH_ANGLE);
-
-            // Convert pitch to a unit vector
-            pitch /= MAX_PITCH_ANGLE;
-
-            // Calculate the step each frame
-            float step = pitch * Time.deltaTime;
-
-            // Don't go above the calculated rest speed
-            if (m_forwardSpeed > restSpeed && pitch > 0.0f)
-                step = -step;
-
-            if (step > 0.0f)
+            if (m_noFlyCount == 0)
             {
-                step *= INCREMENT_VELOCITY;
+                // Get the normalized pitch
+                float pitch = Helpers.getNormalizedAngle(m_rotation.x);
+
+                // Get rest speed based on pitch
+                float restSpeed = RESTING_VELOCITY + ((pitch * MAX_VELOCITY - RESTING_VELOCITY) / MAX_PITCH_ANGLE);
+
+                // Convert pitch to a unit vector
+                pitch /= MAX_PITCH_ANGLE;
+
+                // Calculate the step each frame
+                step *= pitch;
+
+                // Don't go above the calculated rest speed
+                if (m_forwardSpeed > restSpeed && pitch > 0.0f)
+                    step = -step;
+
+                if (step > 0.0f)
+                    step *= INCREMENT_VELOCITY;
+                else
+                    step *= DECREMENT_VELOCITY;
+
             }
             else
             {
-                if (m_position.y >= HEIGHT_CUTOFF)
-                    step *= DECREMENT_VELOCITY * 15.0f;
-                else
-                    step *= DECREMENT_VELOCITY;
+                step *= -DECREMENT_VELOCITY * 17.5f;
             }
 
             m_forwardSpeed += step;
