@@ -18,7 +18,8 @@ namespace cst.Waypoints
             START,
             INTERMEDIARY,
             END,
-            INFER
+            INFER,
+            INVALID
         }
 
         [SerializeField] private NodeMode   m_nodeMode           = NodeMode.INFER;
@@ -61,7 +62,11 @@ namespace cst.Waypoints
             if (m_nextNodeObject != null)
                 m_nextNode = m_nextNodeObject.GetComponent<WaypointNode>();
 
-            if (m_nodeMode == NodeMode.INFER)
+            if (m_previousNode == null && m_nextNode == null)
+            {
+                m_nodeMode = NodeMode.INVALID;
+            }
+            else if (m_nodeMode == NodeMode.INFER)
             {
                 if (m_previousNode != null && m_nextNode != null)
                     m_nodeMode = NodeMode.INTERMEDIARY;
@@ -69,18 +74,12 @@ namespace cst.Waypoints
                     m_nodeMode = NodeMode.END;        
                 else if (m_nextNode != null && m_previousNode == null)
                     m_nodeMode = NodeMode.START;            
-                else
-                    invalidNode();
-            }
-            else if (m_previousNode == null && m_nextNode == null)
-            {
-                invalidNode();
             }
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            if (!other.gameObject.name.Contains("Seraph")) 
+            if (m_nodeMode == NodeMode.INVALID || !other.gameObject.name.Contains("Seraph")) 
                 return;
 
             SeraphController controller = other.gameObject.GetComponent<SeraphController>();
@@ -91,12 +90,6 @@ namespace cst.Waypoints
                 WarpingController warpController = controller.activeController as WarpingController;
                 warpController.setFirstNode(this);
             }
-        }
-
-        private void invalidNode()
-        {
-            enabled = false;
-            throw new Exception("This node has no previous node and no next node - it is invalid.");
         }
     }
 }

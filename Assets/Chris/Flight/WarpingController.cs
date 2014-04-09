@@ -14,9 +14,10 @@ namespace cst.Flight
         private readonly List<WaypointNode> m_nodes = new List<WaypointNode>(); 
         private readonly List<Vector3>      m_interpNodesList = new List<Vector3>();
 
-        private float   m_interpTime;
-        private int     m_currentNodeIndex;
-        private int     m_currentNodeInterpStep;
+        private WaypointNode m_tempNode;
+        private float        m_interpTime;
+        private int          m_currentNodeIndex;
+        private int          m_currentNodeInterpStep;
 
         public WarpingController(SeraphController controller)
             : base(controller)
@@ -81,18 +82,21 @@ namespace cst.Flight
                 node = node.nextNode;
             }
 
+            // Create a temporary node with the Seraph's position, then add it to the node list.
+            // This provides a transition time for the initial node.
+            m_tempNode                = gameObject.AddComponent<WaypointNode>();
+            m_tempNode.nextNode       = m_nodes[0];
+            m_tempNode.transitionTime = 0.5f;
+            m_nodes.Insert(0, m_tempNode);
+
             generateInterpolatedNodeList();
         }
 
         private void generateInterpolatedNodeList()
         {
-            List<Vector3> nodeVecList = m_nodes.Select(node => node.transform.position).ToList();
-            nodeVecList.Insert(0, transform.position);
-            m_interpNodesList.AddRange(Helpers.smoothCurve(nodeVecList, CURVE_SMOOTH_FACTOR));
-
-            // Create a temporary node with the Seraph's position, then add it to the node list.
-            // This provides a transition time for the initial node.
-            m_nodes.Insert(0, new WaypointNode { transitionTime = 0.5f });
+            m_interpNodesList.AddRange(Helpers.smoothCurve(
+                m_nodes.Select(node => node.transform.position).ToList(), 
+                CURVE_SMOOTH_FACTOR));
         }
 
         private void resetWarping()
@@ -102,6 +106,7 @@ namespace cst.Flight
             m_currentNodeIndex      = 0;
             m_currentNodeInterpStep = 0;
             m_interpTime            = 0.0f;
+            m_tempNode              = null;
         }
 
         // TODO: Find a way to share code nicely between here and LandingController
@@ -132,6 +137,7 @@ namespace cst.Flight
         {
             if (m_currentNodeIndex >= m_nodes.Count)
             {
+                Object.Destroy(m_tempNode);
                 gameObject.rigidbody.isKinematic = false;
                 state = SeraphState.FALLING;
             }
