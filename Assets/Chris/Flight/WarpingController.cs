@@ -37,6 +37,7 @@ namespace cst.Flight
             handleFacing();
             handleWarpingTransitionRoll();
             handleWarpingMovement();
+            handleTransition();
 
             transform.eulerAngles = m_rotation;
             transform.position    = m_position;
@@ -137,9 +138,7 @@ namespace cst.Flight
         {
             if (m_currentNodeIndex >= m_nodes.Count)
             {
-                Object.Destroy(m_tempNode);
-                gameObject.rigidbody.isKinematic = false;
-                state = SeraphState.FALLING;
+                endTraversal();
             }
             else
             {
@@ -168,6 +167,19 @@ namespace cst.Flight
                     m_position      = Vector3.Lerp(current, next, normalised);
                 }
             }
+        }
+
+        private void handleTransition()
+        {
+            if (inputManager.actionFired(Action.CLEAR_STATE))
+                endTraversal();
+        }
+
+        private void endTraversal()
+        {
+            Object.Destroy(m_tempNode);
+            gameObject.rigidbody.isKinematic = false;
+            state = SeraphState.FALLING;
         }
     }
 }
