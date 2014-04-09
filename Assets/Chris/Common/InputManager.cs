@@ -50,11 +50,10 @@ namespace cst.Common
         LOOK_LEFT,
         LOOK_RIGHT,
 
-        ASCEND,
-        DESCEND,
-
         GLIDE_STATE,
         CLEAR_STATE,
+
+        SPRINT,
 
         INTERACT,
 		RESTART,
@@ -136,11 +135,10 @@ namespace cst.Common
             m_actions[Action.LOOK_LEFT]  = Input.GetKey( KeyCode.LeftArrow )  || mouseX < 0.0f || rightStickX < 0.0f;
             m_actions[Action.LOOK_RIGHT] = Input.GetKey( KeyCode.RightArrow ) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.ASCEND]  = Input.GetKey( KeyCode.Q );
-            m_actions[Action.DESCEND] = Input.GetKey( KeyCode.Z );
+            m_actions[Action.SPRINT] = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(Xbox.BUTTON_B);
 
-			m_actions[Action.CLEAR_STATE]  = Input.GetKey( KeyCode.Return )    || Input.GetKey( Xbox.BUTTON_Y ); 
-			m_actions[Action.GLIDE_STATE]  = Input.GetKey( KeyCode.Space )     || Input.GetKey( Xbox.BUTTON_LB ); 
+			m_actions[Action.CLEAR_STATE] = Input.GetKey( KeyCode.Return )    || Input.GetKey( Xbox.BUTTON_Y ); 
+			m_actions[Action.GLIDE_STATE] = Input.GetKey( KeyCode.Space )     || Input.GetKey( Xbox.BUTTON_LB ); 
 			
 			m_actions[Action.INTERACT]  = Input.GetKeyDown( KeyCode.E )      || Input.GetKeyDown( Xbox.BUTTON_X );
 			m_actions[Action.PAUSE]     = Input.GetKeyDown( KeyCode.P )      || Input.GetKeyDown( Xbox.BUTTON_START );
@@ -158,12 +156,11 @@ namespace cst.Common
             m_actionDeltas[Action.LOOK_DOWN]  = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_LEFT]  = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
             m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
-			
-			m_actionDeltas[Action.ASCEND]  = m_actions[Action.ASCEND]       ? 1.0f : 0.0f;
-			m_actionDeltas[Action.DESCEND] = m_actions[Action.DESCEND]      ? 1.0f : 0.0f;
 
-			m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
-			m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
+            m_actionDeltas[Action.SPRINT] = m_actions[Action.SPRINT] ? 1.0f : 0.0f;
+
+			m_actionDeltas[Action.CLEAR_STATE] = m_actions[Action.CLEAR_STATE] ? 1.0f : 0.0f;
+			m_actionDeltas[Action.GLIDE_STATE] = m_actions[Action.GLIDE_STATE] ? 1.0f : 0.0f;
 
 			m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
 			m_actionDeltas[Action.PAUSE]    = m_actions[Action.PAUSE]     	? 1.0f : 0.0f;
