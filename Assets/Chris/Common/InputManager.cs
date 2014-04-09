@@ -117,34 +117,34 @@ namespace cst.Common
 
         private void Update()
         {
-            float leftStickX  = Input.GetAxis( InputAxisTags.CONTROLLER_LEFT_STICK_X_AXIS );
-            float leftStickY  = Input.GetAxis( InputAxisTags.CONTROLLER_LEFT_STICK_Y_AXIS );
-            float rightStickX = Input.GetAxis( InputAxisTags.CONTROLLER_RIGHT_STICK_X_AXIS );
-            float rightStickY = Input.GetAxis( InputAxisTags.CONTROLLER_RIGHT_STICK_Y_AXIS );
-            float mouseX      = Input.GetAxis( InputAxisTags.MOUSE_X_AXIS ) * MOUSE_SENSITIVITY;
-            float mouseY      = Input.GetAxis( InputAxisTags.MOUSE_Y_AXIS ) * MOUSE_SENSITIVITY;
+            float leftStickX  = Input.GetAxis(InputAxisTags.CONTROLLER_LEFT_STICK_X_AXIS);
+            float leftStickY  = Input.GetAxis(InputAxisTags.CONTROLLER_LEFT_STICK_Y_AXIS);
+            float rightStickX = Input.GetAxis(InputAxisTags.CONTROLLER_RIGHT_STICK_X_AXIS);
+            float rightStickY = Input.GetAxis(InputAxisTags.CONTROLLER_RIGHT_STICK_Y_AXIS);
+            float mouseX      = Input.GetAxis(InputAxisTags.MOUSE_X_AXIS) * MOUSE_SENSITIVITY;
+            float mouseY      = Input.GetAxis(InputAxisTags.MOUSE_Y_AXIS) * MOUSE_SENSITIVITY;
 
             // Action states
-            m_actions[Action.MOVE_FORWARD]  = Input.GetKey( KeyCode.W ) || leftStickY < 0.0f;
-            m_actions[Action.MOVE_BACKWARD] = Input.GetKey( KeyCode.S ) || leftStickY > 0.0f;
-            m_actions[Action.MOVE_LEFT]     = Input.GetKey( KeyCode.A ) || leftStickX < 0.0f;
-            m_actions[Action.MOVE_RIGHT]    = Input.GetKey( KeyCode.D ) || leftStickX > 0.0f;
+            m_actions[Action.MOVE_FORWARD]  = Input.GetKey(KeyCode.W) || leftStickY < 0.0f;
+            m_actions[Action.MOVE_BACKWARD] = Input.GetKey(KeyCode.S) || leftStickY > 0.0f;
+            m_actions[Action.MOVE_LEFT]     = Input.GetKey(KeyCode.A) || leftStickX < 0.0f;
+            m_actions[Action.MOVE_RIGHT]    = Input.GetKey(KeyCode.D) || leftStickX > 0.0f;
 
-            m_actions[Action.LOOK_UP]    = Input.GetKey( KeyCode.UpArrow )    || mouseY > 0.0f || rightStickY < 0.0f;
-            m_actions[Action.LOOK_DOWN]  = Input.GetKey( KeyCode.DownArrow )  || mouseY < 0.0f || rightStickY > 0.0f;
-            m_actions[Action.LOOK_LEFT]  = Input.GetKey( KeyCode.LeftArrow )  || mouseX < 0.0f || rightStickX < 0.0f;
-            m_actions[Action.LOOK_RIGHT] = Input.GetKey( KeyCode.RightArrow ) || mouseX > 0.0f || rightStickX > 0.0f;
+            m_actions[Action.LOOK_UP]       = Input.GetKey(KeyCode.UpArrow)    || mouseY > 0.0f || rightStickY < 0.0f;
+            m_actions[Action.LOOK_DOWN]     = Input.GetKey(KeyCode.DownArrow)  || mouseY < 0.0f || rightStickY > 0.0f;
+            m_actions[Action.LOOK_LEFT]     = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
+            m_actions[Action.LOOK_RIGHT]    = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.SPRINT] = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(Xbox.BUTTON_B);
+            m_actions[Action.SPRINT]        = Input.GetKey(KeyCode.LeftShift)  || Input.GetKey(Xbox.BUTTON_B);
 
-			m_actions[Action.CLEAR_STATE] = Input.GetKey( KeyCode.Return )    || Input.GetKey( Xbox.BUTTON_Y ); 
-			m_actions[Action.GLIDE_STATE] = Input.GetKey( KeyCode.Space )     || Input.GetKey( Xbox.BUTTON_LB ); 
+            m_actions[Action.CLEAR_STATE]   = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(Xbox.BUTTON_Y);
+            m_actions[Action.GLIDE_STATE]   = Input.GetKeyDown(KeyCode.Space)  || Input.GetKeyDown(Xbox.BUTTON_A); 
 			
-			m_actions[Action.INTERACT]  = Input.GetKeyDown( KeyCode.E )      || Input.GetKeyDown( Xbox.BUTTON_X );
-			m_actions[Action.PAUSE]     = Input.GetKeyDown( KeyCode.P )      || Input.GetKeyDown( Xbox.BUTTON_START );
-			m_actions[Action.SHOW_MAP]  = Input.GetKey( KeyCode.M )   	     || Input.GetKey    ( Xbox.BUTTON_BACK );
-			m_actions[Action.RESTART]   = Input.GetKeyDown( KeyCode.R )      || Input.GetKeyDown( Xbox.LEFT_STICK);
-			m_actions[Action.EXIT]      = Input.GetKeyDown( KeyCode.Escape ) || Input.GetKeyDown( Xbox.RIGHT_STICK); 
+			m_actions[Action.INTERACT]      = Input.GetKeyDown(KeyCode.E)      || Input.GetKeyDown(Xbox.BUTTON_X);
+			m_actions[Action.PAUSE]         = Input.GetKeyDown(KeyCode.P)      || Input.GetKeyDown(Xbox.BUTTON_START);
+			m_actions[Action.SHOW_MAP]      = Input.GetKeyDown(KeyCode.M)      || Input.GetKeyDown(Xbox.BUTTON_BACK);
+			m_actions[Action.RESTART]       = Input.GetKeyDown(KeyCode.R)      || Input.GetKeyDown(Xbox.LEFT_STICK);
+			m_actions[Action.EXIT]          = Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(Xbox.RIGHT_STICK); 
 
             // Action deltas
             m_actionDeltas[Action.MOVE_FORWARD]  = (m_actions[Action.MOVE_FORWARD]  ? (leftStickY < 0.0f ? -leftStickY : 1.0f) : 0.0f);
@@ -152,21 +152,21 @@ namespace cst.Common
             m_actionDeltas[Action.MOVE_LEFT]     = (m_actions[Action.MOVE_LEFT]     ? (leftStickX < 0.0f ? -leftStickX : 1.0f) : 0.0f);
             m_actionDeltas[Action.MOVE_RIGHT]    = (m_actions[Action.MOVE_RIGHT]    ? (leftStickX > 0.0f ? leftStickX  : 1.0f) : 0.0f);
 
-            m_actionDeltas[Action.LOOK_UP]    = (m_actions[Action.LOOK_UP]    ? (rightStickY < 0.0f ? -rightStickY : mouseY > 0.0f ? mouseY  : 1.0f) : 0.0f);
-            m_actionDeltas[Action.LOOK_DOWN]  = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY : 1.0f) : 0.0f);
-            m_actionDeltas[Action.LOOK_LEFT]  = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
-            m_actionDeltas[Action.LOOK_RIGHT] = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_UP]       = (m_actions[Action.LOOK_UP]    ? (rightStickY < 0.0f ? -rightStickY : mouseY > 0.0f ? mouseY  : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_DOWN]     = (m_actions[Action.LOOK_DOWN]  ? (rightStickY > 0.0f ? rightStickY  : mouseY < 0.0f ? -mouseY : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_LEFT]     = (m_actions[Action.LOOK_LEFT]  ? (rightStickX < 0.0f ? -rightStickX : mouseX < 0.0f ? -mouseX : 1.0f) : 0.0f);
+            m_actionDeltas[Action.LOOK_RIGHT]    = (m_actions[Action.LOOK_RIGHT] ? (rightStickX > 0.0f ? rightStickX  : mouseX > 0.0f ? mouseX  : 1.0f) : 0.0f);
 
-            m_actionDeltas[Action.SPRINT] = m_actions[Action.SPRINT] ? 1.0f : 0.0f;
+            m_actionDeltas[Action.SPRINT]        = m_actions[Action.SPRINT]      ? 1.0f : 0.0f;
 
-			m_actionDeltas[Action.CLEAR_STATE] = m_actions[Action.CLEAR_STATE] ? 1.0f : 0.0f;
-			m_actionDeltas[Action.GLIDE_STATE] = m_actions[Action.GLIDE_STATE] ? 1.0f : 0.0f;
+			m_actionDeltas[Action.CLEAR_STATE]   = m_actions[Action.CLEAR_STATE] ? 1.0f : 0.0f;
+			m_actionDeltas[Action.GLIDE_STATE]   = m_actions[Action.GLIDE_STATE] ? 1.0f : 0.0f;
 
-			m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
-			m_actionDeltas[Action.PAUSE]    = m_actions[Action.PAUSE]     	? 1.0f : 0.0f;
-			m_actionDeltas[Action.SHOW_MAP] = m_actions[Action.SHOW_MAP]    ? 1.0f : 0.0f;
-			m_actionDeltas[Action.RESTART]  = m_actions[Action.RESTART]     ? 1.0f : 0.0f;
-            m_actionDeltas[Action.EXIT]     = m_actions[Action.EXIT]        ? 1.0f : 0.0f;
+			m_actionDeltas[Action.INTERACT]      = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
+			m_actionDeltas[Action.PAUSE]         = m_actions[Action.PAUSE]     	 ? 1.0f : 0.0f;
+			m_actionDeltas[Action.SHOW_MAP]      = m_actions[Action.SHOW_MAP]    ? 1.0f : 0.0f;
+			m_actionDeltas[Action.RESTART]       = m_actions[Action.RESTART]     ? 1.0f : 0.0f;
+            m_actionDeltas[Action.EXIT]          = m_actions[Action.EXIT]        ? 1.0f : 0.0f;
         }
 
         private void dumpDebug()
