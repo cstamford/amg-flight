@@ -85,9 +85,13 @@ namespace cst.Flight
 
         private void generateInterpolatedNodeList()
         {
-            List<Vector3> nodesList = m_nodes.Select(node => node.transform.position).ToList();
-            nodesList.Insert(0, transform.position);
-            m_interpNodesList.AddRange(Helpers.smoothCurve(nodesList, CURVE_SMOOTH_FACTOR));
+            List<Vector3> nodeVecList = m_nodes.Select(node => node.transform.position).ToList();
+            nodeVecList.Insert(0, transform.position);
+            m_interpNodesList.AddRange(Helpers.smoothCurve(nodeVecList, CURVE_SMOOTH_FACTOR));
+
+            // Create a temporary node with the Seraph's position, then add it to the node list.
+            // This provides a transition time for the initial node.
+            m_nodes.Insert(0, new WaypointNode { transitionTime = 0.5f });
         }
 
         private void resetWarping()

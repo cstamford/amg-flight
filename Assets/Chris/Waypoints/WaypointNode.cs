@@ -32,21 +32,25 @@ namespace cst.Waypoints
         public NodeMode mode
         {
             get { return m_nodeMode; }
+            set { m_nodeMode = value; }
         }
 
         public WaypointNode lastNode
         {
             get { return m_previousNode; }
+            set { m_previousNode = value; }
         }
 
         public WaypointNode nextNode
         {
             get { return m_nextNode; }
+            set { m_nextNode = value; }
         }
 
         public float transitionTime
         {
             get { return m_transitionTime; }
+            set { m_transitionTime = value; }
         }
 
         public void Start()
