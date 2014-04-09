@@ -53,7 +53,6 @@ namespace cst.Common
         ASCEND,
         DESCEND,
 
-        FLIGHT_STATE,
         GLIDE_STATE,
         CLEAR_STATE,
 
@@ -78,22 +77,18 @@ namespace cst.Common
 
 		public struct Xbox
 		{
-			// MAC OSX (REMOVE OR LEAVE IN?)
-			//public const KeyCode DPAD_UP 		= KeyCode.JoystickButton5;
-			//public const KeyCode DPAD_DOWN 	= KeyCode.JoystickButton6
-			//public const KeyCode DPAD_LEFT 	= KeyCode.JoystickButton7;
-			//public const KeyCode DPAD_RIGHT 	= KeyCode.JoystickButton8;
-			//public const KeyCode BUTTON_START	= KeyCode.JoystickButton9;
-			//public const KeyCode BUTTON_BACK 	= KeyCode.JoystickButton10;
-			//public const KeyCode LEFT_STICK 	= KeyCode.JoystickButton11;
-			//public const KeyCode RIGHT_STICK 	= KeyCode.JoystickButton12;
-			//public const KeyCode BUTTON_LB 	= KeyCode.JoystickButton13;
-			//public const KeyCode BUTTON_RB 	= KeyCode.JoystickButton14;
-			//public const KeyCode GUIDE_BUTTON	= KeyCode.JoystickButton15;
-			//public const KeyCode BUTTON_B 	= KeyCode.JoystickButton17;
-			//public const KeyCode BUTTON_X 	= KeyCode.JoystickButton18;
-			//public const KeyCode BUTTON_Y 	= KeyCode.JoystickButton19;
-			
+#if UNITY_STANDALONE_OSX
+            public const KeyCode BUTTON_A     = KeyCode.JoystickButton16;
+			public const KeyCode BUTTON_B 	  = KeyCode.JoystickButton17;
+			public const KeyCode BUTTON_X 	  = KeyCode.JoystickButton18;
+			public const KeyCode BUTTON_Y     = KeyCode.JoystickButton19;
+            public const KeyCode BUTTON_LB    = KeyCode.JoystickButton13;
+            public const KeyCode BUTTON_RB    = KeyCode.JoystickButton14;
+            public const KeyCode BUTTON_BACK  = KeyCode.JoystickButton10;
+            public const KeyCode BUTTON_START = KeyCode.JoystickButton9;
+            public const KeyCode LEFT_STICK   = KeyCode.JoystickButton11;
+            public const KeyCode RIGHT_STICK  = KeyCode.JoystickButton12;
+#else
 			public const KeyCode BUTTON_A 		= KeyCode.JoystickButton0;
 			public const KeyCode BUTTON_B 		= KeyCode.JoystickButton1;
 			public const KeyCode BUTTON_X 		= KeyCode.JoystickButton2;
@@ -104,6 +99,7 @@ namespace cst.Common
 			public const KeyCode BUTTON_START 	= KeyCode.JoystickButton7;
 			public const KeyCode LEFT_STICK 	= KeyCode.JoystickButton8;
 			public const KeyCode RIGHT_STICK 	= KeyCode.JoystickButton9;
+#endif
 		}
 
         private readonly Dictionary<Action, bool> m_actions       = new Dictionary<Action, bool>();
@@ -145,11 +141,10 @@ namespace cst.Common
 
 			m_actions[Action.CLEAR_STATE]  = Input.GetKey( KeyCode.Return )    || Input.GetKey( Xbox.BUTTON_Y ); 
 			m_actions[Action.GLIDE_STATE]  = Input.GetKey( KeyCode.Space )     || Input.GetKey( Xbox.BUTTON_LB ); 
-			m_actions[Action.FLIGHT_STATE] = Input.GetKey( KeyCode.LeftShift ) || Input.GetKey( Xbox.BUTTON_RB ); 
 			
 			m_actions[Action.INTERACT]  = Input.GetKeyDown( KeyCode.E )      || Input.GetKeyDown( Xbox.BUTTON_X );
 			m_actions[Action.PAUSE]     = Input.GetKeyDown( KeyCode.P )      || Input.GetKeyDown( Xbox.BUTTON_START );
-			m_actions[Action.SHOW_MAP]  = Input.GetKey( KeyCode.M )   	     || Input.GetKey( Xbox.BUTTON_BACK );
+			m_actions[Action.SHOW_MAP]  = Input.GetKey( KeyCode.M )   	     || Input.GetKey    ( Xbox.BUTTON_BACK );
 			m_actions[Action.RESTART]   = Input.GetKeyDown( KeyCode.R )      || Input.GetKeyDown( Xbox.LEFT_STICK);
 			m_actions[Action.EXIT]      = Input.GetKeyDown( KeyCode.Escape ) || Input.GetKeyDown( Xbox.RIGHT_STICK); 
 
@@ -169,7 +164,6 @@ namespace cst.Common
 
 			m_actionDeltas[Action.CLEAR_STATE]  = m_actions[Action.CLEAR_STATE]  ? 1.0f : 0.0f;
 			m_actionDeltas[Action.GLIDE_STATE]  = m_actions[Action.GLIDE_STATE]  ? 1.0f : 0.0f;
-			m_actionDeltas[Action.FLIGHT_STATE] = m_actions[Action.FLIGHT_STATE] ? 1.0f : 0.0f;
 
 			m_actionDeltas[Action.INTERACT] = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
 			m_actionDeltas[Action.PAUSE]    = m_actions[Action.PAUSE]     	? 1.0f : 0.0f;
