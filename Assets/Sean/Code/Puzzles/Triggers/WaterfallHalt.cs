@@ -38,10 +38,7 @@ namespace sv.Triggers
                 {
                     m_isTriggered = false;
 
-                    Collider collider = GetComponent<Collider>();
-                    collider.enabled = false;
-
-                    if (m_deactivateTimer >= 50.0f)
+                    if (m_deactivateTimer >= 2.5f)
                     {
                         this.gameObject.SetActive(false);
                         if (m_partnerFoam != null)
@@ -53,9 +50,13 @@ namespace sv.Triggers
                         m_isTriggered = false;
                     }
                 }
+                else
+                {
+
+                }
             }
 
-            m_deactivateTimer += Time.deltaTime;
+            m_deactivateTimer += m_deactivateTimer * Time.deltaTime;
         }
 
         public bool ActivateTrigger

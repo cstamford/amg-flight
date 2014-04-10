@@ -37,11 +37,11 @@ namespace sv
         private InputManager m_inputManager;
         private GameObject m_selected;
         private SeraphController m_seraph;
-        private ArmReach m_cursorController;    
         private int[] m_relicOrder;
 
 		// Relic collection (audio)
 		private bool m_collected;
+		private bool m_relicPlaced;
         private String m_collectedName;
         private int m_totalNumOfRelicsCollected;
         private int m_numOfObelisksPressed;
@@ -59,7 +59,7 @@ namespace sv
             }
             else
             {
-                m_cursorController = m_cursor.GetComponent<ArmReach>();
+                m_cursor.SetActive(false);
             }
 
             if (!m_inputManagerObject)
@@ -95,10 +95,13 @@ namespace sv
         // Update is called once per frame
         void Update()
         {
+            m_cursor.SetActive(false);          
+
             // If the ray collides with an object
             if (CastRay())
             {
-                m_selected = m_hit.collider.gameObject;                  
+                m_selected = m_hit.collider.gameObject;
+                  
                 if (!m_selected)
                 {
                     if (m_inputManager.actionFired(Action.INTERACT))
@@ -118,14 +121,6 @@ namespace sv
                 {
                     Debug.Log("Ray has no intersections");
                 }
-
-                if (m_cursorController != null)
-                {
-                    if (m_cursorController.State != AnimState.Retracting)
-                    {
-                        m_cursorController.State = AnimState.Retracting;
-                    }
-                } 
             }   
         }
 
@@ -171,28 +166,12 @@ namespace sv
             {
                 case "PuzzleCollect":
                 {
-                    if (m_cursorController != null)
-                    {
-                        m_cursorController.ActivateTrigger = true;
-                        if (m_cursorController.State != AnimState.Idle)
-                        {
-                            m_cursorController.State = AnimState.Extending;
-                        }
-                    }  
-
+                    m_cursor.SetActive(true);
                     m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_selected, m_puzzleTypeCollect);
                 } break;
                 case "PuzzleCollectObject":
                 {
-                    if (m_cursorController != null)
-                    {
-                        m_cursorController.ActivateTrigger = true;
-                        if (m_cursorController.State != AnimState.Idle)
-                        {
-                            m_cursorController.State = AnimState.Extending;
-                        }
-                    } 
-
+                    m_cursor.SetActive(true);
                     m_puzzleCollectable = AcquireObjectComponent<PuzzleCollectObject>(m_selected, m_puzzleCollectable);                    
    
                     if (m_puzzleTypeCollect != AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect))
@@ -202,28 +181,12 @@ namespace sv
                 } break;
                 case "PuzzlePassword":
                 {
-                    if (m_cursorController != null)
-                    {
-                        m_cursorController.ActivateTrigger = true;
-                        if (m_cursorController.State != AnimState.Idle)
-                        {
-                            m_cursorController.State = AnimState.Extending;
-                        }
-                    } 
-
+                    m_cursor.SetActive(true);
                     m_puzzleTypePassword = AcquireObjectComponent<PuzzlePassword>(m_selected, m_puzzleTypePassword);
                 } break;
                 case "PuzzlePasswordObject":
                 {
-                    if (m_cursorController != null)
-                    {
-                        m_cursorController.ActivateTrigger = true;
-                        if (m_cursorController.State != AnimState.Idle)
-                        {
-                            m_cursorController.State = AnimState.Extending;
-                        }
-                    } 
-
+                    m_cursor.SetActive(true);
                     m_puzzlePasswordKey = AcquireObjectComponent<PuzzlePasswordKey>(m_selected, m_puzzlePasswordKey);
 
                     if (!m_puzzleTypePassword != AcquireObjectComponent<PuzzlePassword>(m_puzzlePasswordKey.GetParent(), m_puzzleTypePassword))
@@ -233,15 +196,7 @@ namespace sv
                 } break;
                 case "Wings":
                 {
-                    if (m_cursorController != null)
-                    {
-                        m_cursorController.ActivateTrigger = true;
-                        if (m_cursorController.State != AnimState.Idle)
-                        {
-                            m_cursorController.State = AnimState.Extending;
-                        }
-                    } 
-
+                    m_cursor.SetActive(true);
                     m_wingsController = AcquireObjectComponent<WingsController>(m_selected, m_wingsController);
                         
                     // As wings are part of 'puzzle' to open door
@@ -252,11 +207,7 @@ namespace sv
                         m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                     }
                 } break;
-                default:
-                    {
-                        m_cursorController.State = AnimState.Retracting;
-                    } break;
-            }            
+            }
         }
 
         void CheckForObjectInteraction()
@@ -267,63 +218,55 @@ namespace sv
                 Debug.Log("Ray intersects with " + m_selected.name);
 				m_collectedName = m_selected.name;
 
-                if (m_cursorController.State != AnimState.Retracting)
+                switch (m_selected.tag)
                 {
-                    switch (m_selected.tag)
+                    case "PuzzleCollectObject":
                     {
-                        case "PuzzleCollectObject":
-                            {
-                                int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
-                                m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);
+                        int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
+                        m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);                        
 
-                                m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                                m_selected.SetActive(false);
+                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                        m_selected.SetActive(false);
+                        m_collected = true;
+
+                        m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
+                        m_totalNumOfRelicsCollected++;
+                    } break;
+
+                    case "PuzzlePasswordObject":
+                    {
+                        if (m_puzzlePasswordKey.GetParent().name == "Level End Puzzle")
+                        {
+                            HandleEndPuzzle();
+                        }
+                        else
+                        {
+                            if (m_puzzlePasswordKey.IsEntered)
+                            {
+                                m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
+                                m_puzzlePasswordKey.IsEntered = true;
+                            }
+                            else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
+                            {
+                                m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
+                                m_puzzlePasswordKey.IsEntered = false;
+                            }
+                        }
+                    } break;
+
+                    case "Wings":
+                    {
+                        //if (m_narrationIsDone)
+                        {
+                            if (!m_wingsController.IsAttachedToPlayer)
+                            {
+                                m_wingsController.ParentObject = this.gameObject;
+                                m_seraph.capability = SeraphCapability.FLIGHT;
                                 m_collected = true;
-
-                                m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
-                                m_totalNumOfRelicsCollected++;
-                            } break;
-
-                        case "PuzzlePasswordObject":
-                            {
-                                if (m_cursorController.State != AnimState.Retracting)
-                                {
-                                    m_cursorController.State = AnimState.Retracting;
-                                }
-                                
-                                if (m_puzzlePasswordKey.GetParent().name == "Level End Puzzle")
-                                {
-                                    HandleEndPuzzle();
-                                }
-                                else
-                                {
-                                    if (m_puzzlePasswordKey.IsEntered)
-                                    {
-                                        m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
-                                        m_puzzlePasswordKey.IsEntered = true;
-                                    }
-                                    else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
-                                    {
-                                        m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
-                                        m_puzzlePasswordKey.IsEntered = false;
-                                    }
-                                }
-                            } break;
-
-                        case "Wings":
-                            {
-                                //if (m_narrationIsDone)
-                                {
-                                    if (!m_wingsController.IsAttachedToPlayer)
-                                    {
-                                        m_wingsController.ParentObject = this.gameObject;
-                                        m_seraph.capability = SeraphCapability.GLIDE;
-                                        m_collected = true;
-                                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                                    }
-                                }
-                            } break;                            
-                    }
+                                m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                            }
+                        }
+                    } break;
                 }
             }
         }
@@ -358,13 +301,14 @@ namespace sv
                 {
                     m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
                     m_puzzlePasswordKey.IsEntered = true;
-                    m_numOfObelisksPressed++;
+					m_numOfObelisksPressed++;
 
                     // Trigger the relic in the obelisk
                     if (trigger)
                     {
                         Material newMat = ChooseNewMaterial();
-                        trigger.ActivateTrigger<Material>(m_puzzlePasswordKey.gameObject, newMat);
+						trigger.ActivateTrigger<Material>(m_puzzlePasswordKey.gameObject, newMat);
+						m_relicPlaced = true;
                     }
                 }
             }
@@ -443,6 +387,13 @@ namespace sv
         {
             return m_totalNumOfRelicsCollected;
         }
+
+		public bool RelicPlaced()
+		{
+			bool temp = m_relicPlaced;
+			m_relicPlaced = false;
+			return temp;
+		}
 
         // End Marc Stuff =================
     }
