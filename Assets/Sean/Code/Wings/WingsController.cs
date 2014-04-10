@@ -150,9 +150,12 @@ namespace sv
             {
                 if (m_parentObject.tag == "Player")
                 {
-                    Collider box = GetComponent<Collider>();
+                    Collider[] box = GetComponents<Collider>();
 
-                    box.enabled = false;
+                    for (int i = 0; i < box.Length; i++)
+                    {
+                        box[i].enabled = false;
+                    }
 
                     return true;
                 }

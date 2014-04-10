@@ -18,7 +18,6 @@ namespace sv.Triggers
         TOGGLE_MATERIAL,
         WINGS_CLOSE,
         WINGS_OPEN,
-        ARM_REACH
     }
     
     public class TriggerController : MonoBehaviour
@@ -76,12 +75,6 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = true;
                     } break;
 
-                case TriggerType.ARM_REACH:
-                    {
-                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
-                        trigger.ActivateTrigger = true;
-                    } break;
-
                 default :
                     {
                         return false;
@@ -129,12 +122,6 @@ namespace sv.Triggers
                 case TriggerType.WINGS_OPEN:
                     {
                         ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
-                        trigger.ActivateTrigger = true;
-                    } break;
-
-                case TriggerType.ARM_REACH:
-                    {
-                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
                         trigger.ActivateTrigger = true;
                     } break;
 
@@ -187,12 +174,6 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = false;
                     } break;
 
-                case TriggerType.ARM_REACH:
-                    {
-                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
-                        trigger.ActivateTrigger = false;
-                    } break;
-
                 default:
                     {
                         return false;
@@ -240,12 +221,6 @@ namespace sv.Triggers
                     {
                         ToggleMaterial trigger = targetTrigger.GetComponent<ToggleMaterial>();
                         return trigger.ActivateTrigger;
-                    };
-
-                case TriggerType.ARM_REACH:
-                    {
-                        ArmReach trigger = targetTrigger.GetComponent<ArmReach>();
-                        return trigger.IsDone;
                     };
                 default:
                     {

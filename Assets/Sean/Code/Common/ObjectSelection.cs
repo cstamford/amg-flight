@@ -37,7 +37,7 @@ namespace sv
         private InputManager m_inputManager;
         private GameObject m_selected;
         private SeraphController m_seraph;
-        TriggerController cursorController;    
+        private ArmReach m_cursorController;    
         private int[] m_relicOrder;
 
 		// Relic collection (audio)
@@ -59,7 +59,7 @@ namespace sv
             }
             else
             {
-                cursorController = m_cursor.GetComponent<TriggerController>();
+                m_cursorController = m_cursor.GetComponent<ArmReach>();
             }
 
             if (!m_inputManagerObject)
@@ -95,19 +95,10 @@ namespace sv
         // Update is called once per frame
         void Update()
         {
-            if (cursorController != null)
-            {
-                if (cursorController.TriggerIsActive(m_cursor))
-                {
-                    cursorController.DeactivateTrigger(m_cursor);
-                }
-            }          
-
             // If the ray collides with an object
             if (CastRay())
             {
-                m_selected = m_hit.collider.gameObject;
-                  
+                m_selected = m_hit.collider.gameObject;                  
                 if (!m_selected)
                 {
                     if (m_inputManager.actionFired(Action.INTERACT))
@@ -127,6 +118,14 @@ namespace sv
                 {
                     Debug.Log("Ray has no intersections");
                 }
+
+                if (m_cursorController != null)
+                {
+                    if (m_cursorController.State != AnimState.Retracting)
+                    {
+                        m_cursorController.State = AnimState.Retracting;
+                    }
+                } 
             }   
         }
 
@@ -172,11 +171,12 @@ namespace sv
             {
                 case "PuzzleCollect":
                 {
-                    if (cursorController != null)
+                    if (m_cursorController != null)
                     {
-                        if (!cursorController.TriggerIsActive(m_cursor))
+                        m_cursorController.ActivateTrigger = true;
+                        if (m_cursorController.State != AnimState.Idle)
                         {
-                            cursorController.ActivateTrigger(m_cursor);
+                            m_cursorController.State = AnimState.Extending;
                         }
                     }  
 
@@ -184,11 +184,12 @@ namespace sv
                 } break;
                 case "PuzzleCollectObject":
                 {
-                    if (cursorController != null)
+                    if (m_cursorController != null)
                     {
-                        if (!cursorController.TriggerIsActive(m_cursor))
+                        m_cursorController.ActivateTrigger = true;
+                        if (m_cursorController.State != AnimState.Idle)
                         {
-                            cursorController.ActivateTrigger(m_cursor);
+                            m_cursorController.State = AnimState.Extending;
                         }
                     } 
 
@@ -201,11 +202,12 @@ namespace sv
                 } break;
                 case "PuzzlePassword":
                 {
-                    if (cursorController != null)
+                    if (m_cursorController != null)
                     {
-                        if (!cursorController.TriggerIsActive(m_cursor))
+                        m_cursorController.ActivateTrigger = true;
+                        if (m_cursorController.State != AnimState.Idle)
                         {
-                            cursorController.ActivateTrigger(m_cursor);
+                            m_cursorController.State = AnimState.Extending;
                         }
                     } 
 
@@ -213,11 +215,12 @@ namespace sv
                 } break;
                 case "PuzzlePasswordObject":
                 {
-                    if (cursorController != null)
+                    if (m_cursorController != null)
                     {
-                        if (!cursorController.TriggerIsActive(m_cursor))
+                        m_cursorController.ActivateTrigger = true;
+                        if (m_cursorController.State != AnimState.Idle)
                         {
-                            cursorController.ActivateTrigger(m_cursor);
+                            m_cursorController.State = AnimState.Extending;
                         }
                     } 
 
@@ -230,11 +233,12 @@ namespace sv
                 } break;
                 case "Wings":
                 {
-                    if (cursorController != null)
+                    if (m_cursorController != null)
                     {
-                        if (!cursorController.TriggerIsActive(m_cursor))
+                        m_cursorController.ActivateTrigger = true;
+                        if (m_cursorController.State != AnimState.Idle)
                         {
-                            cursorController.ActivateTrigger(m_cursor);
+                            m_cursorController.State = AnimState.Extending;
                         }
                     } 
 
@@ -248,7 +252,11 @@ namespace sv
                         m_puzzleTypeCollect = AcquireObjectComponent<PuzzleCollect>(m_puzzleCollectable.GetParent(), m_puzzleTypeCollect);
                     }
                 } break;
-            }
+                default:
+                    {
+                        m_cursorController.State = AnimState.Retracting;
+                    } break;
+            }            
         }
 
         void CheckForObjectInteraction()
@@ -259,55 +267,63 @@ namespace sv
                 Debug.Log("Ray intersects with " + m_selected.name);
 				m_collectedName = m_selected.name;
 
-                switch (m_selected.tag)
+                if (m_cursorController.State != AnimState.Retracting)
                 {
-                    case "PuzzleCollectObject":
+                    switch (m_selected.tag)
                     {
-                        int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
-                        m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);                        
-
-                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                        m_selected.SetActive(false);
-                        m_collected = true;
-
-                        m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
-                        m_totalNumOfRelicsCollected++;
-                    } break;
-
-                    case "PuzzlePasswordObject":
-                    {
-                        if (m_puzzlePasswordKey.GetParent().name == "Level End Puzzle")
-                        {
-                            HandleEndPuzzle();
-                        }
-                        else
-                        {
-                            if (m_puzzlePasswordKey.IsEntered)
+                        case "PuzzleCollectObject":
                             {
-                                m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
-                                m_puzzlePasswordKey.IsEntered = true;
-                            }
-                            else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
-                            {
-                                m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
-                                m_puzzlePasswordKey.IsEntered = false;
-                            }
-                        }
-                    } break;
+                                int passwordValueOfRelic = m_puzzleCollectable.GetIndex() + 1;
+                                m_puzzleTypePassword.AddKeyToTargetPassword(passwordValueOfRelic);
 
-                    case "Wings":
-                    {
-                        //if (m_narrationIsDone)
-                        {
-                            if (!m_wingsController.IsAttachedToPlayer)
-                            {
-                                m_wingsController.ParentObject = this.gameObject;
-                                m_seraph.capability = SeraphCapability.GLIDE;
-                                m_collected = true;
                                 m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
-                            }
-                        }
-                    } break;
+                                m_selected.SetActive(false);
+                                m_collected = true;
+
+                                m_relicOrder[m_totalNumOfRelicsCollected] = passwordValueOfRelic;
+                                m_totalNumOfRelicsCollected++;
+                            } break;
+
+                        case "PuzzlePasswordObject":
+                            {
+                                if (m_cursorController.State != AnimState.Retracting)
+                                {
+                                    m_cursorController.State = AnimState.Retracting;
+                                }
+                                
+                                if (m_puzzlePasswordKey.GetParent().name == "Level End Puzzle")
+                                {
+                                    HandleEndPuzzle();
+                                }
+                                else
+                                {
+                                    if (m_puzzlePasswordKey.IsEntered)
+                                    {
+                                        m_puzzleTypePassword.AddKeyToUserPassword(m_puzzlePasswordKey.Value);
+                                        m_puzzlePasswordKey.IsEntered = true;
+                                    }
+                                    else if (m_puzzlePasswordKey.Value == m_puzzleTypePassword.LastKeyEntered)
+                                    {
+                                        m_puzzleTypePassword.RemoveLastKeyFromUserPassword();
+                                        m_puzzlePasswordKey.IsEntered = false;
+                                    }
+                                }
+                            } break;
+
+                        case "Wings":
+                            {
+                                //if (m_narrationIsDone)
+                                {
+                                    if (!m_wingsController.IsAttachedToPlayer)
+                                    {
+                                        m_wingsController.ParentObject = this.gameObject;
+                                        m_seraph.capability = SeraphCapability.GLIDE;
+                                        m_collected = true;
+                                        m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
+                                    }
+                                }
+                            } break;                            
+                    }
                 }
             }
         }
