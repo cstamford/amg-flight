@@ -98,13 +98,8 @@ namespace cst.Flight
             m_forwardTransitionSpeed = Helpers.quadraticInterpOut(0.0f, m_forwardInitialSpeed,
                 m_forwardTransitionTimer, LANDING_TRANSITION_MAX_TIME);
 
-            Vector3 delta = transform.forward * m_forwardTransitionSpeed *
-                Time.deltaTime;
-
-            // Strip the height component
-            delta.y = 0.0f;
-
-            m_position += delta;
+            Vector3 movementVector = getMovementVector(transform.forward);
+            m_position += movementVector * m_forwardTransitionSpeed * Time.deltaTime;
         }
 
         private void handleLandingTransitionRoll()

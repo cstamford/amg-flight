@@ -209,6 +209,29 @@ namespace cst.Flight
                 Time.deltaTime * INTERP_VALUE);
         }
 
+        protected Vector3 getMovementVector(Vector3 originalVector)
+        {
+            // Strip the height component from the movement vector and normalise it
+            originalVector.y = 0.0f;
+            originalVector = Vector3.Normalize(originalVector);
+
+            // Check if we're near terrain
+            RaycastHit? surface = Helpers.nearestHit(transform.position, Vector3.down, height + HEIGHT_PADDING);
+
+            // If we are, we need to get the vector along the surface of the plane below us
+            if (surface.HasValue)
+            {
+                // Get the normal vector from terrain below us
+                Vector3 surfaceNormalVec = surface.Value.normal;
+
+                // MATHS, HOW DOES IT WORK?
+                originalVector = Vector3.Cross(
+                    Vector3.Cross(surfaceNormalVec, originalVector),
+                    surfaceNormalVec);
+            }
+
+            return originalVector;
+        }
 
         private void handleMoving(float delta)
         { 
@@ -254,30 +277,6 @@ namespace cst.Flight
 
                 moved = true;
             }
-        }
-
-        private Vector3 getMovementVector(Vector3 originalVector)
-        {
-            // Strip the height component from the movement vector and normalise it
-            originalVector.y = 0.0f;
-            originalVector = Vector3.Normalize(originalVector);
-
-            // Check if we're near terrain
-            RaycastHit? surface = Helpers.nearestHit(transform.position, Vector3.down, height + HEIGHT_PADDING);
-
-            // If we are, we need to get the vector along the surface of the plane below us
-            if (surface.HasValue)
-            {
-                // Get the normal vector from terrain below us
-                Vector3 surfaceNormalVec = surface.Value.normal;
-
-                // MATHS, HOW DOES IT WORK?
-                originalVector = Vector3.Cross(
-                    Vector3.Cross(surfaceNormalVec, originalVector),
-                    surfaceNormalVec);
-            }
-
-            return originalVector;
         }
 
         public abstract void start(TransitionData data);
