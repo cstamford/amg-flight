@@ -25,6 +25,7 @@ public class SeraphAudio : MonoBehaviour
 {
     private const int WALK_VARIANTS = 15;
 	private const int WATER_VARIANTS = 8;
+	private const int WOOD_VARIANTS = 3;
 	private const int COLLECT_VARIANTS = 8;
 
     private AudioSource m_ambientAudioSource;
@@ -41,6 +42,7 @@ public class SeraphAudio : MonoBehaviour
     private AudioClip m_glidingAudioClip;
 	private AudioClip m_warpingAudioClip;
 	private AudioClip m_placementAudioClip;
+	private AudioClip[] m_walkWoodAudioClips = new AudioClip[WOOD_VARIANTS];
 	private AudioClip[] m_walkWaterAudioClips = new AudioClip[WATER_VARIANTS];
     private AudioClip[] m_walkGrassAudioClips = new AudioClip[WALK_VARIANTS];
 	private AudioClip[] m_walkStoneAudioClips = new AudioClip[WALK_VARIANTS];
@@ -73,6 +75,11 @@ public class SeraphAudio : MonoBehaviour
 		{
 			m_walkWaterAudioClips[i] = (AudioClip)Resources.Load(String.Format("water footstep {0}", i + 1));
         }
+
+		for (int i = 0; i < WOOD_VARIANTS - 1; ++i)
+		{
+			m_walkWoodAudioClips[i] = (AudioClip)Resources.Load(String.Format("wood footstep {0}", i + 1));
+		}
 
 		for (int i = 0; i < COLLECT_VARIANTS - 1; ++i)
 		{
@@ -309,6 +316,13 @@ public class SeraphAudio : MonoBehaviour
 						// Set audio to water steps
 						m_walkingAudioSource.clip = m_walkWaterAudioClips[Random.Range (1, WATER_VARIANTS)];
 						m_walkingAudioSource.pitch = 0.5f;
+						m_walkingAudioSource.volume = 0.3f;
+					}
+					else if(hit.collider.gameObject.tag == "WoodObject")
+					{
+						// Set audio to wood steps
+						m_walkingAudioSource.clip = m_walkWoodAudioClips[Random.Range (1, WOOD_VARIANTS)];
+						m_walkingAudioSource.pitch = 2.3f;
 						m_walkingAudioSource.volume = 0.3f;
 					}
 					else
