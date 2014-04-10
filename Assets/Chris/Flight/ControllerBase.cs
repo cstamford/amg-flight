@@ -125,12 +125,12 @@ namespace cst.Flight
         protected Vector3 m_position;
         protected float   m_desiredHeight;
 
-        protected const float  HEIGHT_PADDING = 2.0f;
+        protected const float  HEIGHT_PADDING = 1.5f;
 
         private const float    FORWARD_SPEED = 5.0f;
         private const float    STRAFE_SPEED = 5.0f;
         private const float    LOOK_SENSITIVITY = 100.0f;
-        private const float    INTERP_VALUE = 10.0f;
+        private const float    INTERP_VALUE = 12.5f;
         private readonly float MOVEMENT_DELTA;
 
         protected SharedGroundControls(SeraphController controller, float movementDelta = 1.0f)
@@ -141,8 +141,10 @@ namespace cst.Flight
 
         protected void handleMovement()
         {
-            float movementDelta = MOVEMENT_DELTA;
+            sprinting = false;
+            moved     = false;
             const string WATER_TAG = "WaterObject";
+            float movementDelta = MOVEMENT_DELTA;
 
             if (Helpers.nearestHitDistance(transform.position, Vector3.down, height + 0.1f, WATER_TAG).HasValue)
                 movementDelta /= 1.5f;
@@ -152,56 +154,9 @@ namespace cst.Flight
                 movementDelta *= 1.75f;
                 sprinting = true;
             }
-            else
-            {
-                sprinting = false;
-            }
 
-            // Strip the height component from our vectors
-            Vector3 forwardVector = transform.forward;
-            Vector3 rightVector   = transform.right;
-            forwardVector.y       = 0.0f;
-            rightVector.y         = 0.0f;
-
-            bool movedThisFrame   = false;
-
-            if (inputManager.actionFired(Action.MOVE_FORWARD))
-            {
-                m_position += forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_FORWARD) * 
-                              movementDelta;
-
-                movedThisFrame = true;
-            }
-
-            if (inputManager.actionFired(Action.MOVE_BACKWARD))
-            {
-                m_position -= forwardVector * FORWARD_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_BACKWARD) * 
-                              movementDelta;
-                
-                movedThisFrame = true;
-            }
-
-            if (inputManager.actionFired(Action.MOVE_LEFT))
-            {
-                m_position -= rightVector * STRAFE_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_LEFT) *
-                              movementDelta;
-
-                movedThisFrame = true;
-            }
-
-            if (inputManager.actionFired(Action.MOVE_RIGHT))
-            {
-                m_position += rightVector * STRAFE_SPEED * Time.deltaTime *
-                              inputManager.actionDelta(Action.MOVE_RIGHT) *
-                              movementDelta;
-
-                movedThisFrame = true;
-            }
-
-            moved = movedThisFrame;
+            handleMoving(movementDelta);
+            handleStrafing(movementDelta);
         }
 
         protected void handleFacing()
@@ -210,18 +165,21 @@ namespace cst.Flight
 
             if (inputManager.actionFired(Action.LOOK_UP))
             {
+                const float MIN_PITCH = -85.0f;
                 float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
                 float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_UP) * LOOK_SENSITIVITY;
 
-                if (normalisedPitch - change > -85.0f)
+                if (normalisedPitch - change > MIN_PITCH)
                     rotation.x -= change;
             }
+
             else if (inputManager.actionFired(Action.LOOK_DOWN))
             {
+                const float MAX_PITCH = 85.0f;
                 float normalisedPitch = Helpers.getNormalizedAngle(rotation.x);
                 float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_DOWN) * LOOK_SENSITIVITY;
 
-                if (normalisedPitch + change < 85.0f)
+                if (normalisedPitch + change < MAX_PITCH)
                     rotation.x += change;
             }
 
@@ -230,6 +188,7 @@ namespace cst.Flight
                 float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_LEFT) * LOOK_SENSITIVITY;
                 rotation.y -= change;
             }
+
             else if (inputManager.actionFired(Action.LOOK_RIGHT))
             {
                 float change = Time.deltaTime * inputManager.actionDelta(Action.LOOK_RIGHT) * LOOK_SENSITIVITY;
@@ -248,6 +207,77 @@ namespace cst.Flight
 
             m_position = Vector3.Lerp(m_position, new Vector3(m_position.x, m_desiredHeight, m_position.z),
                 Time.deltaTime * INTERP_VALUE);
+        }
+
+
+        private void handleMoving(float delta)
+        { 
+            Vector3 movementVec = getMovementVector(transform.forward);
+
+            if (inputManager.actionFired(Action.MOVE_FORWARD))
+            {
+                m_position += movementVec * FORWARD_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_FORWARD) *
+                              delta;
+
+                moved = true;
+            }
+
+            if (inputManager.actionFired(Action.MOVE_BACKWARD))
+            {
+                m_position -= movementVec * FORWARD_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_BACKWARD) *
+                              delta;
+
+                moved = true;
+            }
+        }
+
+        private void handleStrafing(float delta)
+        {
+            Vector3 movementVec = getMovementVector(transform.right);
+
+            if (inputManager.actionFired(Action.MOVE_LEFT))
+            {
+                m_position -= movementVec * STRAFE_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_LEFT) *
+                              delta;
+
+                moved = true;
+            }
+
+            if (inputManager.actionFired(Action.MOVE_RIGHT))
+            {
+                m_position += movementVec * STRAFE_SPEED * Time.deltaTime *
+                              inputManager.actionDelta(Action.MOVE_RIGHT) *
+                              delta;
+
+                moved = true;
+            }
+        }
+
+        private Vector3 getMovementVector(Vector3 originalVector)
+        {
+            // Strip the height component from the movement vector and normalise it
+            originalVector.y = 0.0f;
+            originalVector = Vector3.Normalize(originalVector);
+
+            // Check if we're near terrain
+            RaycastHit? surface = Helpers.nearestHit(transform.position, Vector3.down, height + HEIGHT_PADDING);
+
+            // If we are, we need to get the vector along the surface of the plane below us
+            if (surface.HasValue)
+            {
+                // Get the normal vector from terrain below us
+                Vector3 surfaceNormalVec = surface.Value.normal;
+
+                // MATHS, HOW DOES IT WORK?
+                originalVector = Vector3.Cross(
+                    Vector3.Cross(surfaceNormalVec, originalVector),
+                    surfaceNormalVec);
+            }
+
+            return originalVector;
         }
 
         public abstract void start(TransitionData data);
