@@ -38,7 +38,10 @@ namespace sv.Triggers
                 {
                     m_isTriggered = false;
 
-                    if (m_deactivateTimer >= 2.5f)
+                    Collider collider = GetComponent<Collider>();
+                    collider.enabled = false;
+
+                    if (m_deactivateTimer >= 50.0f)
                     {
                         this.gameObject.SetActive(false);
                         if (m_partnerFoam != null)
@@ -50,13 +53,9 @@ namespace sv.Triggers
                         m_isTriggered = false;
                     }
                 }
-                else
-                {
-
-                }
             }
 
-            m_deactivateTimer += m_deactivateTimer * Time.deltaTime;
+            m_deactivateTimer += Time.deltaTime;
         }
 
         public bool ActivateTrigger
@@ -92,7 +91,7 @@ namespace sv.Triggers
 
         public bool GetWaterfallHalt()
         {
-            return m_isTriggered && GradualReduction();
+            return m_isTriggered && !GradualReduction();
         }
     }
 }

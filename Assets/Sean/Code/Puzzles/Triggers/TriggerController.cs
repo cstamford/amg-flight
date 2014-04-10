@@ -14,7 +14,7 @@ namespace sv.Triggers
     {
         OPEN_DOOR,
         CLOSE_DOOR,
-        WATERFALL_STOP,
+        WATERFALL_HALT,
         TOGGLE_MATERIAL,
         WINGS_CLOSE,
         WINGS_OPEN,
@@ -51,7 +51,7 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = true;
                     } break;
 
-                case TriggerType.WATERFALL_STOP:
+                case TriggerType.WATERFALL_HALT:
                     {
                         WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
                         trigger.ActivateTrigger = true;
@@ -100,7 +100,7 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = true;
                     } break;
 
-                case TriggerType.WATERFALL_STOP:
+                case TriggerType.WATERFALL_HALT:
                     {
                         WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
                         trigger.ActivateTrigger = true;
@@ -150,7 +150,7 @@ namespace sv.Triggers
                         trigger.ActivateTrigger = false;
                     } break;
 
-                case TriggerType.WATERFALL_STOP:
+                case TriggerType.WATERFALL_HALT:
                     {
                         WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
                         trigger.ActivateTrigger = false;
@@ -199,7 +199,7 @@ namespace sv.Triggers
                         return trigger.ActivateTrigger;
                     };
 
-                case TriggerType.WATERFALL_STOP:
+                case TriggerType.WATERFALL_HALT:
                     {
                         WaterfallHalt trigger = targetTrigger.GetComponent<WaterfallHalt>();
                         return trigger.ActivateTrigger;
