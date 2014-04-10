@@ -1,5 +1,5 @@
 ﻿//
-// Filename : Lightbea.shader
+// Filename : Lightbeam.shader
 // Author : Louis Dimmock
 // Date : 3rd April 2014
 //
