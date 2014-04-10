@@ -85,7 +85,7 @@ namespace cst.Flight
 
         public void collisionEnter(Collision other)
         {
-            state = SeraphState.FALLING;
+            state = SeraphState.LANDING;
         }
 
         public void collisionStay(Collision other)
@@ -281,9 +281,6 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            if (Helpers.nearestHitDistance(transform.position, Vector3.down, height).HasValue)
-                state = SeraphState.LANDING;
-
             if (inputManager.actionFired(Action.CLEAR_STATE))
                 state = SeraphState.FALLING;
         }

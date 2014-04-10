@@ -132,8 +132,13 @@ namespace cst.Flight
 
         private void handleTransition()
         {
-            const float EPSILON = 0.000001f;
+            if (!Helpers.nearestHitDistance(transform.position, Vector3.down, height + HEIGHT_PADDING).HasValue)
+            {
+                m_rotation.z = 0.0f;
+                state = SeraphState.FALLING;
+            }
 
+            const float EPSILON = 0.000001f;
             if (Math.Abs(m_rotation.z) < EPSILON && Math.Abs(m_forwardTransitionSpeed) < EPSILON)
                 state = SeraphState.GROUNDED;
         }
