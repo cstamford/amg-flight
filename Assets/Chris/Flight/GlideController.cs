@@ -242,6 +242,9 @@ namespace cst.Flight
         {
             float step = Time.deltaTime;
 
+			if (m_forwardSpeed < MAX_VELOCITY * 1.25f && inputManager.actionFired (Action.SPRINT)) 
+				m_forwardSpeed += INCREMENT_VELOCITY * 0.35f * Time.deltaTime;
+
             if (m_noFly)
             {
                 step *= -DECREMENT_VELOCITY * 17.5f;
