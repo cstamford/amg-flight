@@ -189,20 +189,21 @@ namespace sv.Triggers
                     if (!m_animRetractStarted)
                     {
                         m_animStarted = false;
+                        m_animFinished = false;
                         m_animRetractStarted = true;
                     }
                     else
                     {
-                        if (m_animFinished)
+                        if (!m_animFinished)
                         {
                             if (!m_animatedMesh.animation.IsPlaying("Reach"))
                             {
-                                IsFinished = true;
+                                m_animFinished = true;
                             }
                         }
                         else
                         {
-
+                            IsFinished = true;
                         }
                     }
                     

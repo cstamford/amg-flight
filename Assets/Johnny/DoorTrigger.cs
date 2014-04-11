@@ -27,7 +27,6 @@ public class DoorTrigger : MonoBehaviour {
 	public bool useTimeFade = true;
 
 	public bool savePlayerOrientation;
-	public GameObject player;
 
 	public bool loadAsync = true;
 	
@@ -35,6 +34,8 @@ public class DoorTrigger : MonoBehaviour {
 	
 	private float elapsedTime;
 	private float prevTime;
+
+	private GameObject player;
 
 	private AsyncOperation async;
 
@@ -106,6 +107,7 @@ public class DoorTrigger : MonoBehaviour {
 	private void saveOrientation()
 	{
 		if (savePlayerOrientation == true) {
+            player = GameObject.FindGameObjectWithTag("Player");
 			if (player != null)
 			{
 				//	Getting player rotation from controller

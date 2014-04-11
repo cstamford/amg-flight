@@ -14,7 +14,8 @@ namespace sv
     public class WingsController : MonoBehaviour
     {
         [SerializeField] private GameObject m_wingPosition;
-        [SerializeField] private GameObject m_characterObject;        
+        [SerializeField] private GameObject m_characterObject;
+        [SerializeField] private SeraphController m_seraphObject;
         private bool m_isAttachedToPlayer;
         private bool m_playerIsFlying;
         private GameObject m_parentObject;
@@ -56,9 +57,7 @@ namespace sv
                 }
                 else
                 {
-                    SeraphController seraph = m_parentObject.GetComponent<SeraphController>();
-
-                    if (seraph.state == SeraphState.GLIDING)
+                    if (m_seraphObject.state == SeraphState.GLIDING)
                     {
                         if (!m_playerIsFlying)
                         {
@@ -87,6 +86,15 @@ namespace sv
             }
         }
 
+        public GameObject WingPosition
+        {
+            get { return m_wingPosition; }
+            set
+            {
+                m_wingPosition = value;
+            }
+        }
+
         public GameObject ParentObject
         {
             get { return m_parentObject; }
@@ -98,7 +106,6 @@ namespace sv
                     Debug.Log("The parent object of the wings has been set to " + value);
 
                     this.transform.parent = value.transform;
-                    m_characterObject.transform.parent = this.transform.parent;
                 }
                 else
                 {
@@ -117,10 +124,6 @@ namespace sv
             newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y - 1.3f, wingPos.localPosition.z);
             newPos.localRotation = Quaternion.Euler(90, 0, 0);
 
-            // Set to default
-            m_characterObject.transform.localRotation = Quaternion.Euler(-90, 0, 0);
-            m_characterObject.transform.localPosition = m_characterDefaultPosition;
-
             m_animation.Play("Idle Closed");
         }
 
@@ -133,13 +136,12 @@ namespace sv
             Transform wingPos = m_wingPosition.transform;
             Transform newPos = this.transform;
 
-            newPos.localPosition = new Vector3(wingPos.localPosition.x, wingPos.localPosition.y + 0.25f, wingPos.localPosition.z - 1.25f);
-            newPos.localRotation = Quaternion.Euler(180, 0, 0);
+            newPos.localPosition = new Vector3(0.0f, -1.0f, 0.0f);
+            newPos.localRotation = Quaternion.Euler(90, 180, 0);
 
             // Rotate with wings
             m_characterObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
-            m_characterObject.transform.localPosition = new Vector3(0, -0.60f, -0.5f);
-            
+			m_characterObject.transform.localPosition = new Vector3 (0.0f, -0.2f, -0.5f);
 
             m_animation.Play("Idle Open");
         }
@@ -148,7 +150,7 @@ namespace sv
         {
             if (m_parentObject != null)
             {
-                if (m_parentObject.tag == "Player")
+                if (m_parentObject.tag == "Player" || m_parentObject.name == "WingPosition")
                 {
                     Collider[] box = GetComponents<Collider>();
 

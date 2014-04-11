@@ -1,12 +1,12 @@
 ﻿/*
  * File: PauseMenu.cs
  * 
- * Version: 1.2
+ * Version: 1.3
  * 
  * Author: Johnathon Forster
  * 
  * Description: 
- * 		When the user presses the 'p' key the game will slow down over the course of several seconds
+ * 		When the user initiates the "PAUSE" action the game will slow down over the course of several seconds
  * 		Scene is loaded asynchronously while the game slows to nothing and fades to the specified colour;
  * 		When the game has slowed to nothing the scene "Menu Scene" will be loaded.
  * 		Seraph position, orientation and state will be stored using playerPrefs and restored when un-pausing.
@@ -14,12 +14,17 @@
 
 using UnityEngine;
 using System.Collections;
+using System;
+using cst.Common;
 using cst.Flight;
+using Action = cst.Common.Action;
 
 public class PauseMenu : MonoBehaviour
 {
 	public string menuSceneName = "Menu";
 	public Color fadeColour = new Color(1, 1, 1, 0);
+
+    public GameObject inputManagerObject;
 
 	public bool loadAsync = true;
 
@@ -34,6 +39,8 @@ public class PauseMenu : MonoBehaviour
 
 	private AsyncOperation async;
 
+    private InputManager inputManager;
+
 	public string pauseKey;
 
 	// Use this for initialization
@@ -45,7 +52,23 @@ public class PauseMenu : MonoBehaviour
 		prevTime = Time.realtimeSinceStartup;
 		//	TimeScale persists despite level being unloaded
 		//	Reset timeScale here
-		Time.timeScale = 1.0f;
+        Time.timeScale = 1.0f;
+
+        if (!inputManagerObject)
+        {
+            enabled = false;
+            Debug.Log("No input manager added to the Seraph. Please define one in the inspector.");
+        }
+        else
+        {
+            inputManager = inputManagerObject.GetComponent<InputManager>();
+
+            if (!inputManager)
+            {
+                enabled = false;
+                throw new Exception("No InputManager script detected on the provided InputManagerObject.");
+            }
+        }
 
 		loadData ();
 	}
@@ -89,7 +112,7 @@ public class PauseMenu : MonoBehaviour
 		}
 
 		//	Detecting key presses
-		if(Input.GetKeyDown(KeyCode.P))
+        if (inputManager.actionFired(Action.PAUSE))
 		{
 			if(pauseState == PauseState.playing){
 				pauseState = PauseState.pausing;
@@ -223,4 +246,5 @@ public class PauseMenu : MonoBehaviour
  *			1.0: File was created
  *			1.1: Added colour fading ad time fading options within inspector
  *			1.2: Added asynchronous loading
+ *		    1.3: Implemented InputManager
  */
