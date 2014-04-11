@@ -5,7 +5,7 @@
 //
 // Current Version : 1.0
 // Version Info : 
-// 		Simple particle shader based 
+// 		Simple particle shader based on unity's alpha blend shader
 //
 
 Shader "Flight/Lightbeam/1.0"

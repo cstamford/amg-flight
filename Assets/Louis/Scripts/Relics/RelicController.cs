@@ -6,7 +6,7 @@
 // Version : 1.0
 // Version Info : 
 // 		Simple script that provides visual functionality to the relic.
-//		Rotates the relic around its center pivot by a set speed.
+//		Rotates the relic around its centre pivot by a set speed.
 //		Moves the relic up and down using a Sine wave based.
 //
 

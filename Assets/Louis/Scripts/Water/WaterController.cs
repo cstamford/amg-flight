@@ -7,6 +7,9 @@
 // Version Info : 
 // 		Removed unnecessary functionality due to shader rewrites.
 //
+// Previous Versions:
+//		1.1 - Rewritten the script to provide better functionality.
+//		1.0 - Simple script that animates a texture by offsetting it.
 
 using UnityEngine;
 using System.Collections;

@@ -5,8 +5,8 @@
 // 
 // Version : 1.0
 // Version Info :
-//		Rewritten script based on Johnathon Forster's DoorTrigger.cs
-//		Quickly restarts the game by reloading the scene
+//		Rewritten script based on DoorTrigger.cs
+//		Quickly restarts the game by reloading the scene.
 //
 
 using cst.Common;

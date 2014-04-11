@@ -5,7 +5,7 @@
 //
 // Current Version : 1.0
 // Version Info : 
-//		An altered version of my Waypoint.shader
+//		A slightly altered version of my Lightbeam.shader
 //
 
 Shader "Flight/Waypoint/1.0"
@@ -23,7 +23,7 @@ Shader "Flight/Waypoint/1.0"
 		// Define our shader tags
         Tags
 		{
-			"Queue" = "Transparent"
+			"Queue" = "AlphaTest"
 			"RenderType" = "Transparent"
 		}
 

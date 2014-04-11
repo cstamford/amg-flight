@@ -6,6 +6,7 @@
 // Version : 1.0
 // Version Info : 
 // 		Simple script to quit the application when the EXIT button has been pressed 
+//
 
 using cst.Common;
 using UnityEngine;

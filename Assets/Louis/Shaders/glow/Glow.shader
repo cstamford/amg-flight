@@ -7,8 +7,12 @@
 // Version Info : 
 // 		Removed the ability to use transparency for the actual object
 //
-// Previous Versions:
+// Previous Versions :
 //		1.0 : Simple surface shader that adds an inside glow effect to the attached object. Main use is for relics.
+//
+// Reference : 
+//		Used the below video, provided by Digital-Tutors as a reference
+//		https://www.youtube.com/watch?v=nZZ6MDY3JOk
 //
 
 Shader "Flight/Glow/1.1"
