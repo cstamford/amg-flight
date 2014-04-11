@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{40CB0B0E-CC78-1750-9836-1F2D679B85F4}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_4;UNITY_4_3;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\OVR\Editor\OVRBuild.cs" />
+     <Compile Include="Assets\OVR\Editor\OVRCameraControllerEditor.cs" />
+     <Compile Include="Assets\OVR\Editor\OVRDeviceEditor.cs" />
+     <Compile Include="Assets\OVR\Editor\OVREditorGUIUtility.cs" />
+     <Compile Include="Assets\OVR\Editor\OVRPlayerControllerEditor.cs" />
+     <Compile Include="Assets\OVR\Editor\OVRPrefabs.cs" />
+     <None Include="Assets\Standard Assets\BlendOneOne.shader" />
+     <None Include="Assets\Standard Assets\NoiseEffectShaderRGB.shader" />
+     <None Include="Assets\Standard Assets\SeparableWeightedBlurDof34.shader" />
+     <None Include="Assets\Standard Assets\ShowAlphaChannel.shader" />
+     <None Include="Assets\Standard Assets\GlowConeTap.shader" />
+     <None Include="Assets\Standard Assets\SunShaftsComposite.shader" />
+     <None Include="Assets\Standard Assets\ColorCorrectionCurves.shader" />
+     <None Include="Assets\Standard Assets\ScreenSpaceAmbientObscurance.shader" />
+     <None Include="Assets\Standard Assets\NFAA.shader" />
+     <None Include="Assets\Standard Assets\TiltShiftHdrLensBlur.shader" />
+     <None Include="Assets\Standard Assets\VignetteShader.shader" />
+     <None Include="Assets\Standard Assets\DepthOfFieldScatter.shader" />
+     <None Include="Assets\Louis\Shaders\Lightbeam\Lightbeam.shader" />
+     <None Include="Assets\Hattle\Tuscany\Models\Materials\Vertex color unlit 5.shader" />
+     <None Include="Assets\Standard Assets\MotionBlur.shader" />
+     <None Include="Assets\Standard Assets\MobileBloom.shader" />
+     <None Include="Assets\Standard Assets\GlowCompose.shader" />
+     <None Include="Assets\Standard Assets\MinMaxReduction.shader" />
+     <None Include="Assets\Standard Assets\SSAA.shader" />
+     <None Include="Assets\Standard Assets\RadialBlur.shader" />
+     <None Include="Assets\Standard Assets\DepthOfFieldDX11.shader" />
+     <None Include="Assets\Standard Assets\ContrastComposite.shader" />
+     <None Include="Assets\Standard Assets\FXAAPreset3.shader" />
+     <None Include="Assets\Standard Assets\FisheyeShader.shader" />
+     <None Include="Assets\Standard Assets\Apply.shader" />
+     <None Include="Assets\Hattle\Standard Assets\Skyboxes\_skybox info.txt" />
+     <None Include="Assets\Standard Assets\frag_ao.cginc" />
+     <None Include="Assets\Standard Assets\DepthOfField34.shader" />
+     <None Include="Assets\Standard Assets\MobileBlur.shader" />
+     <None Include="Assets\Standard Assets\SSAOShader.shader" />
+     <None Include="Assets\Standard Assets\ConvertDepth.shader" />
+     <None Include="Assets\Standard Assets\ColorCorrectionCurvesSimple.shader" />
+     <None Include="Assets\Standard Assets\NoiseEffectShaderYUV.shader" />
+     <None Include="Assets\Standard Assets\GlowEffectDownsample.shader" />
+     <None Include="Assets\Standard Assets\CreaseApply.shader" />
+     <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection_CA.shader" />
+     <None Include="Assets\Standard Assets\ChromaticAberrationShader.shader" />
+     <None Include="Assets\Standard Assets\GlobalFog.shader" />
+     <None Include="Assets\Standard Assets\Luminance.shader" />
+     <None Include="Assets\Standard Assets\ColorCorrectionSelective.shader" />
+     <None Include="Assets\Standard Assets\Bokeh34.shader" />
+     <None Include="Assets\Standard Assets\CameraMotionBlurDX11.shader" />
+     <None Include="Assets\Louis\Shaders\Glow\Glow.shader" />
+     <None Include="Assets\Standard Assets\SeparableBlurPlus.shader" />
+     <None Include="Assets\Standard Assets\MultiPassHollywoodFlares.shader" />
+     <None Include="Assets\Standard Assets\BlurEffectConeTaps.shader" />
+     <None Include="Assets\Standard Assets\CameraMotionBlur.shader" />
+     <None Include="Assets\Standard Assets\DLAA.shader" />
+     <None Include="Assets\Standard Assets\NoiseAndGrainDX11.shader" />
+     <None Include="Assets\Standard Assets\BrightPassFilter2.shader" />
+     <None Include="Assets\Louis\Shaders\Water\Water.shader" />
+     <None Include="Assets\Standard Assets\SeparableBlur.shader" />
+     <None Include="Assets\Standard Assets\MotionBlurClear.shader" />
+     <None Include="Assets\Standard Assets\ColorCorrectionEffect.shader" />
+     <None Include="Assets\Standard Assets\GrayscaleEffect.shader" />
+     <None Include="Assets\Standard Assets\SepiaToneEffect.shader" />
+     <None Include="Assets\Standard Assets\TwirlEffect.shader" />
+     <None Include="Assets\Standard Assets\VortexEffect.shader" />
+     <None Include="Assets\Standard Assets\Adaptation.shader" />
+     <None Include="Assets\Louis\Shaders\Waypoint\Waypoint.shader" />
+     <None Include="Assets\Standard Assets\NoiseAndGrain.shader" />
+     <None Include="Assets\Standard Assets\VignettingShader.shader" />
+     <None Include="Assets\Standard Assets\Tonemapper.shader" />
+     <None Include="Assets\Standard Assets\BrightPassFilter.shader" />
+     <None Include="Assets\OVR\OVRImageEffects\OVRLensCorrection.shader" />
+     <None Include="Assets\OVR\Shaders\OVRGUIShader.shader" />
+     <None Include="Assets\Standard Assets\FXAA2.shader" />
+     <None Include="Assets\Plugins\donotdelete.txt" />
+     <None Include="Assets\Standard Assets\ColorCorrection3DLut.shader" />
+     <None Include="Assets\Standard Assets\LensFlareCreate.shader" />
+     <None Include="Assets\Standard Assets\EdgeDetectNormals.shader" />
+     <None Include="Assets\Standard Assets\PrepareSunShaftsBlur.shader" />
+     <None Include="Assets\Standard Assets\Blend.shader" />
+     <None Include="Assets\Standard Assets\BlendModesOverlay.shader" />
+     <None Include="Assets\Standard Assets\SimpleClear.shader" />
+     <None Include="Assets\Sean\Shaders\WingShader.shader" />
+     <None Include="Assets\Standard Assets\FXAA3Console.shader" />
+     <None Include="Assets\Standard Assets\FXAAPreset2.shader" />
+     <None Include="Assets\Standard Assets\BlurAndFlares.shader" />
+     <None Include="Assets\Standard Assets\BlendForBloom.shader" />
+ <Reference Include="UnityEditor.Graphs">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.iOS.Extensions">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\iPhonePlayer\EditorExtensions\UnityEditor.iOS.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.WP8.Extensions">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\WP8Support\EditorExtensions\UnityEditor.WP8.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.Metro.Extensions">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\MetroSupport\EditorExtensions\UnityEditor.Metro.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.BB10.Extensions">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\BB10Player\EditorExtensions\UnityEditor.BB10.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.Android.Extensions">
+ <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{1ECCC056-403F-DE82-16EC-800D8F942A9F}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+    <ProjectReference Include="Assembly-UnityScript-firstpass.unityproj">
+      <Project>{86B659CC-1081-2BE2-8A2F-2F1FD391F4DA}</Project>      <Name>Assembly-UnityScript-firstpass</Name>    </ProjectReference>
+    <ProjectReference Include="Assembly-CSharp.csproj">
+      <Project>{C9C5ACED-AF37-B251-9AC8-2374AADD4A08}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>

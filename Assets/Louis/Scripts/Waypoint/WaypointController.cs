@@ -20,10 +20,10 @@ namespace Louis.Waypoint
 	public class WaypointController : MonoBehaviour
 	{
 		// Color of the lightbeam
-		public Color m_colorTint = new Color(1.0f, 1.0f , 1.0f, 1.0f);
+		public Color m_colorTint = new Color(1.0f, 1.0f , 1.0f, 0.0f);
 
 		// The distance before the beam starts to become visible
-		public float m_minDistance = 50.0f;
+		public float m_minDistance = 75.0f;
 
 		// Variable for accessing the player
 		private GameObject m_player;
@@ -84,8 +84,6 @@ namespace Louis.Waypoint
 			// We want it to be opaque when we are near it
 			// We want to be transparent if we are no where near it
 			m_colorTint.a = Alpha;
-
-			Debug.Log ("ALPHA VALUE : " + Alpha + " AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 			// Apply it to the alpha
 			renderer.material.SetColor ("_Color", m_colorTint);

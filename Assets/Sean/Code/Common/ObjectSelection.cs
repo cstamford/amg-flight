@@ -261,7 +261,7 @@ namespace sv
                             if (!m_wingsController.IsAttachedToPlayer)
                             {
                                 m_wingsController.ParentObject = this.gameObject;
-                                m_seraph.capability = SeraphCapability.FLIGHT;
+								m_seraph.capability = SeraphCapability.GLIDE;
                                 m_collected = true;
                                 m_puzzleTypeCollect.SetPuzzleObjectCollectedState(m_puzzleCollectable.GetIndex(), true);
                             }

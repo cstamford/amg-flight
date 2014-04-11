@@ -6,7 +6,7 @@
 // Version : 1.0
 // Version Info :
 //		Script that draws an interpolated line between waypoint nodes using the LineRenderer component
-//		Based on Christopher Stamford's scripts
+//		Based on Christopher Stamford's WarpingController.cs and WaypointRenderer.cs scripts
 //
 
 using System;
@@ -35,6 +35,9 @@ namespace Louis.Waypoint
 
 		// Define our seraph game object
         private GameObject m_seraph;
+
+		// Define our seraph controller
+		private SeraphController m_seraphController;
 		
 		// Define the line renderer to use
         private LineRenderer m_lineRenderer;
@@ -54,6 +57,10 @@ namespace Louis.Waypoint
 			m_seraph = GameObject.FindWithTag("Player");
             if (m_seraph == null)
                 throw new Exception("Seraph object was null");
+
+			m_seraphController = m_seraph.GetComponent<SeraphController>();
+			if(m_seraphController == null)
+				throw new Exception("Seraph controller was null");
 			
 			// Get the waypoint node from the object
 			m_currentNode = this.gameObject.GetComponent<WaypointNode>();
@@ -86,6 +93,10 @@ namespace Louis.Waypoint
         void Update()
         {
 			// Nothing to do here
+			if(m_seraphController.state == SeraphState.WARPING)
+				m_lineRenderer.enabled = false;
+			else 
+				m_lineRenderer.enabled = true;
         }
 
 		private void CreateLineRender()
