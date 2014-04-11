@@ -164,7 +164,6 @@ namespace cst.Common
 			m_actionDeltas[Action.INTERACT]      = m_actions[Action.INTERACT]    ? 1.0f : 0.0f;
 			m_actionDeltas[Action.PAUSE]         = m_actions[Action.PAUSE]     	 ? 1.0f : 0.0f;
 			m_actionDeltas[Action.SHOW_MAP]      = m_actions[Action.SHOW_MAP]    ? 1.0f : 0.0f;
-			m_actionDeltas[Action.RESTART]       = m_actions[Action.RESTART]     ? 1.0f : 0.0f;
             m_actionDeltas[Action.EXIT]          = m_actions[Action.EXIT]        ? 1.0f : 0.0f;
         }
 
