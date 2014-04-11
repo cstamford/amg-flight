@@ -135,16 +135,15 @@ namespace cst.Common
             m_actions[Action.LOOK_LEFT]     = Input.GetKey(KeyCode.LeftArrow)  || mouseX < 0.0f || rightStickX < 0.0f;
             m_actions[Action.LOOK_RIGHT]    = Input.GetKey(KeyCode.RightArrow) || mouseX > 0.0f || rightStickX > 0.0f;
 
-            m_actions[Action.SPRINT]        = Input.GetKey(KeyCode.LeftShift)  || Input.GetKey(Xbox.BUTTON_B);
+			m_actions[Action.SPRINT]        = Input.GetKey(KeyCode.LeftShift)  || Input.GetKey(Xbox.BUTTON_RB);
 
             m_actions[Action.CLEAR_STATE]   = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(Xbox.BUTTON_Y);
             m_actions[Action.GLIDE_STATE]   = Input.GetKeyDown(KeyCode.Space)  || Input.GetKeyDown(Xbox.BUTTON_A); 
 			
 			m_actions[Action.INTERACT]      = Input.GetKeyDown(KeyCode.E)      || Input.GetKeyDown(Xbox.BUTTON_X);
 			m_actions[Action.PAUSE]         = Input.GetKeyDown(KeyCode.P)      || Input.GetKeyDown(Xbox.BUTTON_START);
-			m_actions[Action.SHOW_MAP]      = Input.GetKeyDown(KeyCode.M)      || Input.GetKeyDown(Xbox.BUTTON_BACK);
-			m_actions[Action.RESTART]       = Input.GetKeyDown(KeyCode.R)      || Input.GetKeyDown(Xbox.LEFT_STICK);
-			m_actions[Action.EXIT]          = Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(Xbox.RIGHT_STICK); 
+			m_actions[Action.SHOW_MAP]      = Input.GetKeyDown(KeyCode.M)      || Input.GetKeyDown(Xbox.BUTTON_B);
+			m_actions[Action.EXIT]          = Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(Xbox.BUTTON_BACK); 
 
             // Action deltas
             m_actionDeltas[Action.MOVE_FORWARD]  = (m_actions[Action.MOVE_FORWARD]  ? (leftStickY < 0.0f ? -leftStickY : 1.0f) : 0.0f);

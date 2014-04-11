@@ -33,7 +33,7 @@ namespace cst.Waypoints
             m_lineRenderer = gameObject.AddComponent<LineRenderer>();
             m_lineRenderer.SetWidth(1.5f, 1.5f);
             m_lineRenderer.material = m_beamMaterial;
-            m_lineRenderer.material.shader = Shader.Find("Particles/Additive");
+            m_lineRenderer.material.shader = Shader.Find("Flight/Lightbeam/1.0");
             m_lineRenderer.SetColors(Color.white, Color.white);
         }
 

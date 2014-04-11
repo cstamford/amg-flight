@@ -322,7 +322,7 @@ public class SeraphAudio : MonoBehaviour
 					{
 						// Set audio to wood steps
 						m_walkingAudioSource.clip = m_walkWoodAudioClips[Random.Range (1, WOOD_VARIANTS)];
-						m_walkingAudioSource.pitch = 2.3f;
+						m_walkingAudioSource.pitch = 0.5f;
 						m_walkingAudioSource.volume = 0.3f;
 					}
 					else
