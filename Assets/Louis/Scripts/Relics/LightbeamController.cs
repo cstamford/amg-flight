@@ -9,8 +9,7 @@
 //
 // Previous Versions:
 //		1.1 : Added more functionality. Opacity reduces as the player gets closer.
-// 		1.0 : Simple script that controls the relic lightbeam. 
-//			  Applys a texture offset every frame to provide visuals.
+// 		1.0 : Simple script that animates the lightbeam by offsetting its texture.
 //
 
 using UnityEngine;

@@ -5,7 +5,7 @@
 //
 // Version : 1.0
 // Version Info : 
-// 		Simple script that rotates an object around its center pivot at a set speed
+// 		Simple script that rotates an object around its centre pivot at a set speed.
 //
 
 using UnityEngine;
