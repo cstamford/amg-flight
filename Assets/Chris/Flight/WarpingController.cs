@@ -1,0 +1,189 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using cst.Waypoints;
+using cst.Common;
+using UnityEngine;
+
+namespace cst.Flight
+{
+    public class WarpingController : SharedGroundControls
+    {
+        private const int   CURVE_SMOOTH_FACTOR = 6;
+        private const float LANDING_TRANSITION_RETURN_ROLL_SPEED = 180.0f;
+
+        private readonly List<WaypointNode> m_nodes = new List<WaypointNode>(); 
+        private readonly List<Vector3>      m_interpNodesList = new List<Vector3>();
+
+        private WaypointNode m_tempNode;
+        private float        m_interpTime;
+        private int          m_currentNodeIndex;
+        private int          m_currentNodeInterpStep;
+
+        public WarpingController(SeraphController controller)
+            : base(controller)
+        { }
+
+        public override void start(TransitionData data)
+        {
+            Debug.Log(GetType().Name + " received transition data: " + data);
+            gameObject.rigidbody.isKinematic = true;
+        }
+
+        public override void update()
+        {
+            m_position = transform.position;
+            m_rotation = transform.eulerAngles;
+
+            handleFacing();
+            handleWarpingTransitionRoll();
+            handleWarpingMovement();
+            handleTransition();
+
+            transform.eulerAngles = m_rotation;
+            transform.position    = m_position;
+        }
+
+        public override void triggerEnter(Collider other)
+        {
+        }
+
+        public override void triggerStay(Collider other)
+        {
+        }
+
+        public override void triggerExit(Collider other)
+        {
+        }
+
+        public override void collisionEnter(Collision other)
+        {
+        }
+
+        public override void collisionStay(Collision other)
+        {
+        }
+
+        public override void collisionExit(Collision other)
+        {
+        }
+
+        public override TransitionData transitionData()
+        {
+            return new TransitionData { direction = Vector3.zero, velocity = 0.0f };
+        }
+
+        public List<Vector3> pathList
+        {
+            get { return m_interpNodesList; }
+        }
+
+        public void setFirstNode(WaypointNode node)
+        {
+            resetWarping();
+
+            while (node != null)
+            {
+                m_nodes.Add(node);
+                node = node.nextNode;
+            }
+
+            // Create a temporary node with the Seraph's position, then add it to the node list.
+            // This provides a transition time for the initial node.
+            m_tempNode                = gameObject.AddComponent<WaypointNode>();
+            m_tempNode.nextNode       = m_nodes[0];
+            m_tempNode.transitionTime = 0.5f;
+            m_nodes.Insert(0, m_tempNode);
+
+            generateInterpolatedNodeList();
+        }
+
+        private void generateInterpolatedNodeList()
+        {
+            m_interpNodesList.AddRange(Helpers.smoothCurve(
+                m_nodes.Select(node => node.transform.position).ToList(), 
+                CURVE_SMOOTH_FACTOR));
+        }
+
+        private void resetWarping()
+        {
+            m_nodes.Clear();
+            m_interpNodesList.Clear();
+            m_currentNodeIndex      = 0;
+            m_currentNodeInterpStep = 0;
+            m_interpTime            = 0.0f;
+            m_tempNode              = null;
+        }
+
+        // TODO: Find a way to share code nicely between here and LandingController
+        private void handleWarpingTransitionRoll()
+        {
+            float angleStep = LANDING_TRANSITION_RETURN_ROLL_SPEED *
+                Time.deltaTime;
+
+            float angle = m_rotation.z - 180.0f;
+
+            if (angle > 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z + angleStep);
+
+                if (m_rotation.z - 180.0f < 0.0f)
+                    m_rotation.z = 0.0f;
+            }
+            else if (angle < 0.0f)
+            {
+                m_rotation.z = Helpers.wrapAngle(m_rotation.z - angleStep);
+
+                if (m_rotation.z - 180.0f > 0.0f)
+                    m_rotation.z = 0.0f;
+            }
+        }
+
+        private void handleWarpingMovement()
+        {
+            if (m_currentNodeIndex >= m_nodes.Count)
+            {
+                endTraversal();
+            }
+            else
+            {
+                m_interpTime += Time.deltaTime;
+                float normalised = m_interpTime / (m_nodes[m_currentNodeIndex].transitionTime / CURVE_SMOOTH_FACTOR);
+
+                if (normalised > 1.0f)
+                {
+                    m_interpTime = 0.0f;
+
+                    if (m_currentNodeInterpStep >= CURVE_SMOOTH_FACTOR - 1)
+                    {
+                        ++m_currentNodeIndex;
+                        m_currentNodeInterpStep = 0;
+                    }
+                    else
+                    {
+                        ++m_currentNodeInterpStep;
+                    }
+                }
+                else
+                {
+                    int index       = m_currentNodeInterpStep + (m_currentNodeIndex * CURVE_SMOOTH_FACTOR);
+                    Vector3 current = m_interpNodesList[index];
+                    Vector3 next    = m_interpNodesList[index + 1];
+                    m_position      = Vector3.Lerp(current, next, normalised);
+                }
+            }
+        }
+
+        private void handleTransition()
+        {
+            if (inputManager.actionFired(Action.CLEAR_STATE))
+                endTraversal();
+        }
+
+        private void endTraversal()
+        {
+            Object.Destroy(m_tempNode);
+            gameObject.rigidbody.isKinematic = false;
+            state = SeraphState.FALLING;
+        }
+    }
+}
