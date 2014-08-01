@@ -1,14 +1,12 @@
 fileFormatVersion: 2
-guid: 3864be22bae304390b9f13fa63503266
+guid: bb91c4664d4be4c6e8c5f637108faa44
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: Hoodoo_01
-    100002: //RootNode
-    400000: Hoodoo_01
-    400002: //RootNode
-    2300000: Hoodoo_01
-    3300000: Hoodoo_01
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
     4300000: Hoodoo_01
     9500000: //RootNode
   materials:
