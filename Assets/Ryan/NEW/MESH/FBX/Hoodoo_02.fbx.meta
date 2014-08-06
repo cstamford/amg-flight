@@ -1,20 +1,30 @@
 fileFormatVersion: 2
-guid: 3d59a2ebcb0c246bf8c51b1bb2e2e360
+guid: 9290a79c3f51d457d9b2e12887ee3226
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Hoodoo_02
-    100004: polySurface39
+    100002: Hoodoo_022
+    100004: polySurface53
+    100006: polySurface54
+    100008: polySurface59
     400000: //RootNode
-    400002: Hoodoo_02
-    400004: polySurface39
-    2300000: Hoodoo_02
-    2300002: polySurface39
-    3300000: Hoodoo_02
-    3300002: polySurface39
-    4300000: Hoodoo_02
-    4300002: polySurface39
+    400002: Hoodoo_022
+    400004: polySurface53
+    400006: polySurface54
+    400008: polySurface59
+    2300000: Hoodoo_022
+    2300002: polySurface53
+    2300004: polySurface54
+    2300006: polySurface59
+    3300000: Hoodoo_022
+    3300002: polySurface53
+    3300004: polySurface54
+    3300006: polySurface59
+    4300000: polySurface53
+    4300002: polySurface54
+    4300004: Hoodoo_022
+    4300006: polySurface59
     9500000: //RootNode
   materials:
     importMaterials: 1
