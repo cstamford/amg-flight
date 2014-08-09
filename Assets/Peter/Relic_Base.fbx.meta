@@ -1,14 +1,30 @@
 fileFormatVersion: 2
-guid: 71d5c5034084c5a4bb7d0ad0aa9bf465
+guid: c2d6f689fbc63f745a570d3522bdab35
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Relic_Base
+    100004: Relic_Frag-01
+    100006: Relic_Frag-02
+    100008: Relic_Frag-03
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: pCylinder1
-    4300002: Tipharath_Relic
+    400002: Relic_Base
+    400004: Relic_Frag-01
+    400006: Relic_Frag-02
+    400008: Relic_Frag-03
+    2300000: Relic_Base
+    2300002: Relic_Frag-01
+    2300004: Relic_Frag-02
+    2300006: Relic_Frag-03
+    3300000: Relic_Base
+    3300002: Relic_Frag-01
+    3300004: Relic_Frag-02
+    3300006: Relic_Frag-03
+    4300000: Relic_Base
+    4300002: Relic_Frag-02
+    4300004: Relic_Frag-03
+    4300006: Relic_Frag-01
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -34,7 +50,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     weldVertices: 1
